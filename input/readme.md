@@ -1,4 +1,5 @@
-Data from ISIMIP2 inputs watch + wfdei
+Data from ISIMIP2 inputs watch + wfdei monthly data - processed to 1980-2010 means
+
 https://www.isimip.org/gettingstarted/details/5/
 
 When referring to this data set, the following papers should be cited:
