@@ -28,7 +28,6 @@ import sys
 import glob
 import time
 from math import ceil
-import pickle
 import multiprocessing as mp
 import concurrent.futures as conc
 import numpy as np
@@ -42,15 +41,16 @@ from caete_module import global_pars as gp
 
 #RUN IN SOMBRERO
 HOME_DIR = homedir.HOMEDIR
-RESULTS_DIR = os.sep.join([HOME_DIR,'results'])
-TMP_DIR = os.sep.join([HOME_DIR,'tmp'])
-OUTPUT_NC_DIR = os.sep.join([TMP_DIR,'outputs_nc'])
+RESULTS_DIR = os.sep.join([HOME_DIR, 'results'])
+TMP_DIR = os.sep.join([HOME_DIR, 'tmp'])
+OUTPUT_NC_DIR = os.sep.join([TMP_DIR, 'outputs_nc'])
 
 # RUN IN DESKTOP
 #RESULTS_DIR = '/home/jpdarela/Desktop/rtest_model'
 #TMP_DIR = '/home/jpdarela/Desktop/tmp1_testm'
 #OUTPUT_NC_DIR = TMP_DIR + os.sep + 'outputs_nc'
 
+disp_processors = os.cpu_count()
 nx = gp.nx
 ny = gp.ny
 nz = gp.ntimes
@@ -109,33 +109,24 @@ def chunks(lst, chunck_size):
 
 def pls_generator():
     pls.table_gen(C.global_pars.npls)
-    C.photo.ascii2bin('pls.txt','pls.bin',gp.ntraits,gp.npls)
+    C.photo.ascii2bin('pls.txt', 'pls.bin', gp.ntraits, gp.npls)
 
 
 #(1)
 
-# A global var -- pls-table
-pls_generator()
-attr_table = C.photo.pft_par2()
-
-# Creating directories structure
-make_dir_spe(RESULTS_DIR)
-make_dir_spe(TMP_DIR)
-make_dir_spe(OUTPUT_NC_DIR)
-
 
 def init_caete(grd):
 
-    grd.pr = global_pr[:,grd.y, grd.x]
-    grd.ps = global_ps[:,grd.y, grd.x]
-    grd.rsds = global_rsds[:,grd.y, grd.x]
-    grd.tas = global_tas[:,grd.y, grd.x]
-    grd.rhs = global_rhs[:,grd.y, grd.x]
+    grd.pr = global_pr[:, grd.y, grd.x]
+    grd.ps = global_ps[:, grd.y, grd.x]
+    grd.rsds = global_rsds[:, grd.y, grd.x]
+    grd.tas = global_tas[:, grd.y, grd.x]
+    grd.rhs = global_rhs[:, grd.y, grd.x]
     grd.npp0 = npp_init[grd.y, grd.x]
     grd.filled = True
 
 
-def run_model(grd, at=attr_table):
+def run_model(grd, at):
 
     #print('running_model (inside)')
     if grd.filled and not grd.complete:
@@ -145,28 +136,28 @@ def run_model(grd, at=attr_table):
         outputs = C.water_balance.wbm(at, grd.pr, grd.tas, grd.ps, grd.rsds,
                                       grd.rhs, grd.clin, grd.cwin, grd.cfin)
 
-        grd.emaxm  = outputs[0]
-        grd.tsoil  = outputs[1]
-        grd.photo  = outputs[2]
-        grd.aresp  = outputs[3]
-        grd.npp    = outputs[4]
-        grd.lai    = outputs[5]
-        grd.clit   = outputs[6]
-        grd.csoil  = outputs[7]
+        grd.emaxm = outputs[0]
+        grd.tsoil = outputs[1]
+        grd.photo = outputs[2]
+        grd.aresp = outputs[3]
+        grd.npp = outputs[4]
+        grd.lai = outputs[5]
+        grd.clit = outputs[6]
+        grd.csoil = outputs[7]
         grd.hresp  = outputs[8]
-        grd.rcm    = outputs[9]
-        grd.runom  = outputs[10]
-        grd.evapm  = outputs[11]
-        grd.wsoil  = outputs[12]
-        grd.rm     = outputs[13]
-        grd.rg     = outputs[14]
-        grd.cleaf  = outputs[15]
+        grd.rcm = outputs[9]
+        grd.runom = outputs[10]
+        grd.evapm = outputs[11]
+        grd.wsoil = outputs[12]
+        grd.rm = outputs[13]
+        grd.rg = outputs[14]
+        grd.cleaf = outputs[15]
         grd.cawood = outputs[16]
         grd.cfroot = outputs[17]
-        grd.area   = outputs[18]
-        grd.area0  = outputs[19]
-        grd.wue    = outputs[20]
-        grd.cue    = outputs[21]
+        grd.area = outputs[18]
+        grd.area0 = outputs[19]
+        grd.wue = outputs[20]
+        grd.cue = outputs[21]
         grd.complete = True
     else:
         print('Gridcell %s is either not filled or already completed' % grd.name)
@@ -176,15 +167,15 @@ def run_model(grd, at=attr_table):
 def grd_dict(grd):
 
     def nan_remove(arr):
-        np.place(arr,np.isnan(arr),(0.0,0.0))
-        np.place(arr,np.isinf(arr),(0.0,0.0))
+        np.place(arr,np.isnan(arr), (0.0,0.0))
+        np.place(arr,np.isinf(arr), (0.0,0.0))
         return arr
 
     if grd.complete:
         a = nan_remove(grd.area)
-        w = (nan_remove(grd.cawood)) * (a/100.)
-        l = (nan_remove(grd.cleaf))  * (a/100.)
-        r = (nan_remove(grd.cfroot)) * (a/100.)
+        w = (nan_remove(grd.cawood)) * (a / 100.)
+        l = (nan_remove(grd.cleaf))  * (a / 100.)
+        r = (nan_remove(grd.cfroot)) * (a / 100.)
 
         cmass =  w + r + l
         #cmass = cmass.sum(axis=0,)
@@ -255,19 +246,6 @@ def model_flush(grd):
     grd.cue    = None
 
 
-def rm_apply(gridcell_obj):
-
-    # FLOW OF EXECUTION
-    # Run model
-    run_model(gridcell_obj)
-    # Generate outputs
-    grd_dict(gridcell_obj)
-    # Clean Memory
-    model_flush(gridcell_obj)
-    # Return the modeled input gridcell 
-    return(gridcell_obj)
-
-
 def catch_nt(input_file, nx, ny, pixel_depht):
 
     """Get the number of layers in input_file
@@ -336,7 +314,7 @@ def assemble(land_data_list,dic=None,f=False):
         fname = OUTPUT_NC_DIR + os.sep + varin + '.nc'
         wo.write_CAETE_output(fname,arr,varin)
 
-    with conc.ThreadPoolExecutor(max_workers=128) as executor:
+    with conc.ThreadPoolExecutor(max_workers=26) as executor:
         for k in adata.keys():
             f = executor.submit(write_nc,k)
 ##            f.result()
@@ -485,6 +463,28 @@ assert global_rhs.shape == std_shape
 assert input_data.check_dataset()
 
 if __name__ == "__main__":
+    
+    pls_generator()
+    attr_table = C.photo.pft_par2()
+
+    def rm_apply(gridcell_obj):
+
+        # FLOW OF EXECUTION
+        # Run model
+        run_model(gridcell_obj, attr_table)
+        # Generate outputs
+        grd_dict(gridcell_obj)
+        # Clean Memory
+        model_flush(gridcell_obj)
+        # Return the modeled input gridcell 
+        return(gridcell_obj)
+
+
+    # Creating directories structure
+    make_dir_spe(RESULTS_DIR)
+    make_dir_spe(TMP_DIR)
+    make_dir_spe(OUTPUT_NC_DIR)
+
     t0 = time.time()
     log = open('exec.log', mode='a')
     # iniciando o modelo para todas (land) as celulas do grid
@@ -502,8 +502,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(130, 191):
-        for X in range(200, 261):
+    for Y in range(130, 251):
+        for X in range(200, 280):
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
@@ -511,16 +511,16 @@ if __name__ == "__main__":
                 land_data.append(grd_cell)
     log.write('--CAETE-in-filled--%s\n' % time.ctime())
     # del input arrays
-    del(global_pr)
-    del(global_ps)
-    del(global_tas)
-    del(global_rhs)
-    del(global_rsds)
-    del(npp_init)
+    del global_pr
+    del global_ps
+    del global_tas
+    del global_rhs
+    del global_rsds
+    del npp_init
     # divide land_data when data is too big - npls > i
-    if npls <= 50:
+    if npls <= 12:
         log.write('Iniciando multiprocessing - fila única\n')
-        with mp.Pool(processes=10,maxtasksperchild=20) as p:
+        with mp.Pool(processes=disp_processors * 2, maxtasksperchild=20) as p:
             result = p.map(rm_apply, land_data)
         t1 = time.time()
         log.write('Elapsed time in model run:  %f seconds\n'% (t1 - t0))
@@ -542,12 +542,12 @@ if __name__ == "__main__":
         log.write('end_run %s\n' % time.ctime())
 
     else:
-        if npls <= 300:
-            hi = 1983
-            n_process = 331
+        if npls <= 51:
+            hi = 60
+            n_process = disp_processors * 2
         else:
-            hi = 733
-            n_process = 368
+            hi = 60
+            n_process = disp_processors * 3 
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
         id = 1
