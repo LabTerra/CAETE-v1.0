@@ -20,7 +20,7 @@
 program env
   
   use global_pars
-  use photo, only: spinup, pft_par2
+    use photo, only: spinup, pft_par2
   use water_balance
   
   implicit none

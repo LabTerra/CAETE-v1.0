@@ -452,14 +452,14 @@ class gridcell:
 
 ## GLOBAL VARS
 
-lr  = catch_nt('../input/npp.bin',nx,ny,32)
-npp_init = catch_data('../input/npp.bin',lr,nx,ny)
+lr  = catch_nt('./inputs/npp.bin',nx,ny,32)
+npp_init = catch_data('./inputs/npp.bin',lr,nx,ny)
 npp_init = np.ma.masked_array(npp_init,mask12)
 npp_init = npp_init.mean(axis=0,)
 
 std_shape = (12, ny, nx)
 
-input_data = datasets('../input')
+input_data = datasets('./inputs')
 assert input_data.check_dataset()
 
 global_pr = input_data.get_var('pr')
