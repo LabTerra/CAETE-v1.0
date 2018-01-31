@@ -6,9 +6,12 @@ from shutil import copyfile
 from caete import OUTPUT_NC_DIR
 from caete import RESULTS_DIR
 from caete import TMP_DIR
+# from caete import make_dir_spe
 from caete_module import global_pars as gp
 
 ROOT_DIR = os.getcwd()
+
+# make_dir_spe(OUTPUT_NC_DIR)
 
 def sys_tar(duplet):
     os.system('tar -czf %s %s' % duplet)
@@ -23,13 +26,12 @@ def log_file(f_con):
         fh.write(descr)
         fh.write('------\n')
 
-
 def fprocess(npls, run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls = False):
     os.chdir(res)
     # COMPRESS FILES
     files = glob1(os.getcwd(),'*.nc')
     out1  = [n.split('.')[0] + '.tar.gz' for n in files]
-    with conc.ThreadPoolExecutor(max_workers=128) as executor:
+    with conc.ThreadPoolExecutor(max_workers=26) as executor:
         for ft in list(zip(out1,files)):
             f = executor.submit(sys_tar,ft)
             #f.result() # uncomment to simulate a serial execution
@@ -39,7 +41,7 @@ def fprocess(npls, run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls = False):
     if not os.path.exists(outputs_folder):
         os.mkdir(outputs_folder)
     outnames = [outputs_folder + os.sep + n for n in tars ]
-    with conc.ThreadPoolExecutor(max_workers=128) as executor:
+    with conc.ThreadPoolExecutor(max_workers=26) as executor:
         for ft in list(zip(tars,outnames)):
             f = executor.submit(cpfile,ft)
             #f.result() # uncomment to simulate a serial execution
@@ -49,6 +51,7 @@ def fprocess(npls, run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls = False):
     os.system('rm -rf outputs_nc')
     os.chdir(ROOT_DIR)
     os.system('./clean_out.sh')
+
 
 def model_driver():
     npls = gp.npls
@@ -77,11 +80,10 @@ def model_driver():
             fh.write('\n\n\t---Rodada n° %d\n\n' % x )
         os.system(comm)
         if comm == 'ipython3 caete_pfts.py':
-            fprocess(npls,x)
+            pass # fprocess(npls, x, res=None)
         else:
             fprocess(npls,x,pls=True)
         os.system('./clean_dir.sh')
 
 if __name__ == '__main__':
     model_driver()
-
