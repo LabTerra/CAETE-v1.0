@@ -55,7 +55,11 @@ module global_pars
 !  integer(kind=i4) :: ndmonth(12)       !Number of months
 !  data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
 
+<<<<<<< HEAD
   integer(kind=i4),parameter :: npls = 12
+=======
+  integer(kind=i4),parameter :: npls = 50
+>>>>>>> upstream/master
   integer(kind=i4),parameter :: ntimes = 12
   integer(kind=i4),parameter :: ntraits = 8
 

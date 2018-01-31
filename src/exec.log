@@ -1,0 +1,41 @@
+
+
+
+------
+teste 1------
+
+
+	---Rodada n° 1
+
+
+
+
+init caete --- 70 PLSs
+--init-time--Wed Jan 31 00:30:11 2018
+
+--CAETE-in-filled--Wed Jan 31 00:30:11 2018
+Iniciando multiprocessing - chunks mode
+->->-chunck 1 -- gridcell data transfer to dic in 0.287268 seconds
+->->-chunck 2 -- gridcell data transfer to dic in 0.202895 seconds
+
+
+
+------
+eawasdf------
+
+
+	---Rodada n° 1
+
+
+
+
+init caete --- 50 PLSs
+--init-time--Wed Jan 31 00:57:31 2018
+
+--CAETE-in-filled--Wed Jan 31 00:57:31 2018
+Iniciando multiprocessing - fila única
+Elapsed time in model run:  232.028958 seconds
+
+Modelo aplicado a 1882 localidades-- 50 PLSs
+Em: Wed Jan 31 01:01:23 2018files_saved in 7.443674 seconds
+end_run Wed Jan 31 01:01:31 2018

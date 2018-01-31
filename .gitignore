@@ -1,2 +1,6 @@
 .vscode
+<<<<<<< HEAD
 ##/src/homedir.py
+=======
+/src/homedir.py
+>>>>>>> upstream/master
