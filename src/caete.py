@@ -33,13 +33,15 @@ import multiprocessing as mp
 import concurrent.futures as conc
 import numpy as np
 
+import homedir
 import plsgen as pls
 import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
 
+
 #RUN IN SOMBRERO
-HOME_DIR = os.sep.join(['','home','amazonfaceme','jpdarela'])
+HOME_DIR = homedir.HOMEDIR
 RESULTS_DIR = os.sep.join([HOME_DIR,'results'])
 TMP_DIR = os.sep.join([HOME_DIR,'tmp'])
 OUTPUT_NC_DIR = os.sep.join([TMP_DIR,'outputs_nc'])
@@ -303,7 +305,7 @@ def make_output_array(var):
         z = npls
     else:
         return None
-    return np.zeros(shape=(z,ny,nx), dtype=np.float32)
+    return np.zeros(shape=(z,ny,nx), dtype=np.float32) - 9999.0
 
 
 def ld_dict():
@@ -452,14 +454,14 @@ class gridcell:
 
 ## GLOBAL VARS
 
-lr  = catch_nt('./inputs/npp.bin',nx,ny,32)
-npp_init = catch_data('./inputs/npp.bin',lr,nx,ny)
+lr  = catch_nt('../input/npp.bin',nx,ny,32)
+npp_init = catch_data('../input/npp.bin',lr,nx,ny)
 npp_init = np.ma.masked_array(npp_init,mask12)
 npp_init = npp_init.mean(axis=0,)
 
 std_shape = (12, ny, nx)
 
-input_data = datasets('./inputs')
+input_data = datasets('../input')
 assert input_data.check_dataset()
 
 global_pr = input_data.get_var('pr')
@@ -500,8 +502,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(ny):
-        for X in range(nx):
+    for Y in range(130, 191):
+        for X in range(200, 261):
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
@@ -516,9 +518,9 @@ if __name__ == "__main__":
     del(global_rsds)
     del(npp_init)
     # divide land_data when data is too big - npls > i
-    if npls < 50:
+    if npls <= 50:
         log.write('Iniciando multiprocessing - fila única\n')
-        with mp.Pool(processes=338,maxtasksperchild=200) as p:
+        with mp.Pool(processes=10,maxtasksperchild=20) as p:
             result = p.map(rm_apply, land_data)
         t1 = time.time()
         log.write('Elapsed time in model run:  %f seconds\n'% (t1 - t0))
