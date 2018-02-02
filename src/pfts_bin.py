@@ -27,6 +27,6 @@ out[6] = out[6] / 100.
 out[7] = out[7] / 100.
 
 np.savetxt('pft.txt', out, fmt='%.12f')
-tobin('pft.txt', 'pft.bin', 12, 8)
+tobin('pft.txt', 'pls.bin', 12, 8)
 
 

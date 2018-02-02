@@ -52,15 +52,14 @@ varlist = wo.monthly_out + wo.npls_out
 # defining functions that (1)drive model throghout the grid data & (2) save outputs
 
 def pls_generator():
-    # pls.table_gen(C.global_pars.npls)
-    # os.system('ipython3 pfts_bin.py' )
+    os.system('ipython3 pfts_bin.py' )
     C.photo.ascii2bin('pft.txt', 'pls.bin', npls, gp.ntraits)
 
 #(1)
 
 # A global var -- nplss-table
 pls_generator()
-attr_table = C.photo.pft_par().T
+attr_table = np.asfortranarray(C.photo.pft_par().T, dtype=np.float32)
 
 def init_caete(grd):
 
@@ -86,26 +85,26 @@ def run_model(grd, at=attr_table):
 
         grd.emaxm = outputs[0]
         grd.tsoil = outputs[1]
-        grd.photo = outputs[2].T
-        grd.aresp = outputs[3].T
-        grd.npp = outputs[4].T
-        grd.lai = outputs[5].T
-        grd.clit = outputs[6].T
-        grd.csoil = outputs[7].T
-        grd.hresp = outputs[8].T
-        grd.rcm = outputs[9].T
-        grd.runom = outputs[10].T
-        grd.evapm = outputs[11].T
-        grd.wsoil = outputs[12].T
-        grd.rm = outputs[13].T
-        grd.rg = outputs[14].T
+        grd.photo = outputs[2]#.T
+        grd.aresp = outputs[3]#.T
+        grd.npp = outputs[4]#.T
+        grd.lai = outputs[5]#.T
+        grd.clit = outputs[6]#.T
+        grd.csoil = outputs[7]#.T
+        grd.hresp = outputs[8]#.T
+        grd.rcm = outputs[9]#.T
+        grd.runom = outputs[10]#.T
+        grd.evapm = outputs[11]#.T
+        grd.wsoil = outputs[12]#.T
+        grd.rm = outputs[13]#.T
+        grd.rg = outputs[14]#.T
         grd.cleaf = outputs[15]
         grd.cawood = outputs[16]
         grd.cfroot = outputs[17]
         grd.area = outputs[18]
         grd.area0 = outputs[19]
-        grd.wue = outputs[20].T
-        grd.cue = outputs[21].T
+        grd.wue = outputs[20]#.T
+        grd.cue = outputs[21]#.T
         grd.complete = True
     else:
         print('Gridcell %s is either not filled or already completed' % grd.name)

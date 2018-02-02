@@ -428,39 +428,39 @@ class gridcell:
         self.area0   = None
 
 
-## GLOBAL VARS
-
-lr  = catch_nt('../input/npp.bin',nx,ny,32)
-npp_init = catch_data('../input/npp.bin',lr,nx,ny)
-npp_init = np.ma.masked_array(npp_init,mask12)
-npp_init = npp_init.mean(axis=0,)
-
-std_shape = (12, ny, nx)
-
-input_data = datasets('../input')
-assert input_data.check_dataset()
-
-global_pr = input_data.get_var('pr')
-assert global_pr.shape == std_shape
-assert input_data.check_dataset()
-
-global_ps = input_data.get_var('ps')
-assert global_ps.shape == std_shape
-assert input_data.check_dataset()
-
-global_rsds = input_data.get_var('rsds')
-assert global_rsds.shape == std_shape
-assert input_data.check_dataset()
-
-global_tas = input_data.get_var('tas')
-assert global_tas.shape == std_shape
-assert input_data.check_dataset()
-
-global_rhs = input_data.get_var('hurs')
-assert global_rhs.shape == std_shape
-assert input_data.check_dataset()
-
 if __name__ == "__main__":
+    
+    ## GLOBAL VARS
+    lr = catch_nt('../input/npp.bin', nx, ny, 32)
+    npp_init = catch_data('../input/npp.bin', lr, nx, ny)
+    npp_init = np.ma.masked_array(npp_init, mask12)
+    npp_init = npp_init.mean(axis=0,)
+
+    std_shape = (12, ny, nx)
+
+    input_data = datasets('../input')
+    assert input_data.check_dataset()
+
+    global_pr = input_data.get_var('pr')
+    assert global_pr.shape == std_shape
+    assert input_data.check_dataset()
+
+    global_ps = input_data.get_var('ps')
+    assert global_ps.shape == std_shape
+    assert input_data.check_dataset()
+
+    global_rsds = input_data.get_var('rsds')
+    assert global_rsds.shape == std_shape
+    assert input_data.check_dataset()
+
+    global_tas = input_data.get_var('tas')
+    assert global_tas.shape == std_shape
+    assert input_data.check_dataset()
+
+    global_rhs = input_data.get_var('hurs')
+    assert global_rhs.shape == std_shape
+    assert input_data.check_dataset()
+
     attr_table = pls_generator()
 
     def rm_apply(gridcell_obj):
@@ -539,10 +539,10 @@ if __name__ == "__main__":
 
     else:
         if npls <= 50:
-            hi = 60
+            hi = 240
             n_process = disp_processors * 2
         else:
-            hi = 60
+            hi = 360
             n_process = disp_processors * 3 
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
@@ -551,7 +551,7 @@ if __name__ == "__main__":
         adata = ld_dict()
         print_progress(0, n_chunks, prefix = 'Progress:', suffix = 'Complete')
         for lst in chunks(land_data, hi):
-            with mp.Pool(processes=n_process) as p:
+            with mp.Pool(processes=n_process, maxtasksperchild=60) as p:
                 result = p.map(rm_apply, lst)
             print_progress(id, n_chunks, prefix = 'Progress:', suffix = 'Complete')
             t2 = time.time()

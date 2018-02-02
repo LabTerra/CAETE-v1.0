@@ -87,3 +87,4 @@ def model_driver():
 
 if __name__ == '__main__':
     model_driver()
+    os.system('rm -rf %s' % TMP_DIR)
