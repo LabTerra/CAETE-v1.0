@@ -52,7 +52,8 @@ varlist = wo.monthly_out + wo.npls_out
 # defining functions that (1)drive model throghout the grid data & (2) save outputs
 
 def pls_generator():
-    #pls.table_gen(C.global_pars.npls)
+    # pls.table_gen(C.global_pars.npls)
+    # os.system('ipython3 pfts_bin.py' )
     C.photo.ascii2bin('pft.txt', 'pls.bin', npls, gp.ntraits)
 
 #(1)
@@ -191,20 +192,9 @@ def model_flush(grd):
     grd.cue = None
 
 def rm_apply(gridcell_obj):
-
-    #if gridcell_obj.filled and not gridcell_obj.complete:
-        #print('running_model')
     run_model(gridcell_obj)
     grd_dict(gridcell_obj)
     model_flush(gridcell_obj)
-        #grd_dict(gridcell_obj)
-    #elif not gridcell_obj.filled and not gridcell_obj.complete:
-    #    init_caete(gridcell_obj)
-    #    run_model(gridcell_obj)
-    #    #grd_dict(gridcell_obj)
-    #else:
-    #    print('erro em rm_apply')
-
     return gridcell_obj
 
 
@@ -241,14 +231,13 @@ def catch_data(input_file, layers, nx, ny):
 
 def assemble(land_data_list, var, x=nx, y=ny):
 
-#    flt_attrs = wo.flt_attrs
-
+#   flt_attrs = wo.flt_attrs
     if var in wo.monthly_out:
         z = nz
-#        maskz = wo.mask_gen(z)
+#       maskz = wo.mask_gen(z)
     elif var in wo.npls_out:
         z = npls
-#        maskz = wo.mask_gen(z)
+#       maskz = wo.mask_gen(z)
     else:
         print('assemble failed')
         return None
