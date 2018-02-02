@@ -108,9 +108,7 @@ def chunks(lst, chunck_size):
 
 
 def pls_generator():
-    pls.table_gen(C.global_pars.npls)
-    C.photo.ascii2bin('pls.txt', 'pls.bin', gp.ntraits, gp.npls)
-
+    return pls.table_gen(npls)
 
 #(1)
 
@@ -463,9 +461,7 @@ assert global_rhs.shape == std_shape
 assert input_data.check_dataset()
 
 if __name__ == "__main__":
-    
-    pls_generator()
-    attr_table = C.photo.pft_par2()
+    attr_table = pls_generator()
 
     def rm_apply(gridcell_obj):
 
@@ -542,7 +538,7 @@ if __name__ == "__main__":
         log.write('end_run %s\n' % time.ctime())
 
     else:
-        if npls <= 51:
+        if npls <= 50:
             hi = 60
             n_process = disp_processors * 2
         else:

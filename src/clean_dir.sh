@@ -1,6 +1,7 @@
 #!/bin/sh
 
 rm -rf __pycache__/
+rm -rf *.mod
 #HOME_OFFICE
 #rm -rf caete_module.cpython-35m-i386-linux-gnu.so
 #SOMBRERO

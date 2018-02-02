@@ -41,6 +41,7 @@ module photo
        pft_area_frac          ,& ! area fraction by biomass
        pft_par                ,& ! aux subroutine to read pls data
        pft_par2               ,&
+       spinup3                 ,&
        spinup                 ,&
        ascii2bin              ,&
        ascii2bin2             ,&
@@ -836,123 +837,224 @@ contains
   !====================================================================
   
   subroutine spinup(nppot,dt,cleafini,cfrootini,cawoodini)
-    use types
-    use global_pars, only: ntraits,npls
-    implicit none
+        use types
+      use global_pars, only: ntraits,npls
+      implicit none
 
-    !parameters
-    integer(kind=i4),parameter :: npfts = npls
-    integer(kind=i4),parameter :: ntl=36525
-    
-    ! inputs
-    integer(kind=i4) :: i6, kk, k
-    
-    real(kind=r4),intent(in) :: nppot
-    real(kind=r4),dimension(ntraits, npfts),intent(in) :: dt
-    ! intenal
-    real(kind=r4) :: sensitivity
-    real(kind=r4) :: nppot2
-    ! outputs
-    real(kind=r4),dimension(npfts),intent(out) :: cleafini
-    real(kind=r4),dimension(npfts),intent(out) :: cawoodini
-    real(kind=r4),dimension(npfts),intent(out) :: cfrootini
+      !parameters
+      integer(kind=i4),parameter :: ntl=36525
 
-    ! more internal
-    real(kind=rbig),dimension(ntl) :: cleafi_aux
-    real(kind=rbig),dimension(ntl) :: cfrooti_aux
-    real(kind=rbig),dimension(ntl) :: cawoodi_aux
-    
-    real(kind=r4),dimension(npfts) :: aleaf  !npp percentage alocated to leaf compartment
-    real(kind=r4),dimension(npfts) :: aawood !npp percentage alocated to aboveground woody biomass compartment
-    real(kind=r4),dimension(npfts) :: afroot !npp percentage alocated to fine roots compartmentc 
-    real(kind=r4),dimension(npfts) :: tleaf  !turnover time of the leaf compartment (yr)
-    real(kind=r4),dimension(npfts) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
-    real(kind=r4),dimension(npfts) :: tfroot !turnover time of the fine roots compartment
-    
+      ! inputs
+      integer(kind=i4) :: i6, kk, k
 
-    tleaf(:)  = dt(3,:)
-    tawood(:) = dt(4,:)
-    tfroot(:) = dt(5,:)
-    aleaf(:)  = dt(6,:)
-    aawood(:) = dt(7,:)
-    afroot(:) = dt(8,:)
-    !call pft_par(6, aleaf)
-    !call pft_par(7, aawood)
-    !call pft_par(8, afroot)
-    !call pft_par(3, tleaf)
-    !call pft_par(4, tawood)
-    !call pft_par(5, tfroot)
-    
-    
-    sensitivity = 1.01
-    if(nppot .lt. 0.0) goto 200
-    nppot2 = nppot !/real(npfts,kind=r4)
-    do i6=1,npfts
-       do k=1,ntl
-          if (k.eq.1) then
-             cleafi_aux (k) =  aleaf(i6)*(nppot2)
-             cawoodi_aux(k) = aawood(i6)*(nppot2)
-             cfrooti_aux(k) = afroot(i6)*(nppot2)
-             
-          else
-             if(aawood(i6) .gt. 0.0) then
-                cleafi_aux(k) = ((aleaf(i6)*(nppot2))-(cleafi_aux(k-1)&
-                     &/(tleaf(i6)))) + cleafi_aux(k-1)
-                cawoodi_aux(k) = ((aawood(i6)*(nppot2))-(cawoodi_aux(k&
-                     &-1)/(tawood(i6)))) + cawoodi_aux(k-1)
-                cfrooti_aux(k) = ((afroot(i6)*(nppot2))-(cfrooti_aux(k&
-                     &-1)/(tfroot(i6)))) + cfrooti_aux(k-1)
-             else
-                cleafi_aux(k) = ((aleaf(i6)*(nppot2))-(cleafi_aux(k-1)&
-                     &/(tleaf(i6)))) + cleafi_aux(k-1)
-                cawoodi_aux(k) = 0.0
-                cfrooti_aux(k) = ((afroot(i6)*(nppot2))-(cfrooti_aux(k&
-                     &-1)/(tfroot(i6)))) + cfrooti_aux(k-1)
-             endif
-             
-             kk =  nint(k*0.66)
-             if(cawoodi_aux(kk) .gt. 0.0) then
-                if((cfrooti_aux(k)/cfrooti_aux(kk).lt.sensitivity).and.&
-                     &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity).and.&
-                     &(cawoodi_aux(k)/cawoodi_aux(kk).lt.sensitivity)) then
-                   
-                   cleafini(i6) = real(cleafi_aux(k),r4) ! carbon content (kg m-2)
-                   cfrootini(i6) = real(cfrooti_aux(k),r4)
-                   cawoodini(i6) = real(cawoodi_aux(k),r4)
-                   exit
-                ENDIF
-             else
-                if((cfrooti_aux(k)&
-                     &/cfrooti_aux(kk).lt.sensitivity).and.&
-                     &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity)) then
-                   
-                   cleafini(i6) = real(cleafi_aux(k),r4) ! carbon content (kg m-2)
-                   cfrootini(i6) = real(cfrooti_aux(k),r4)
-                   cawoodini(i6) = 0.0
-                   exit
-                endif
-             endif
-          endif
-       enddo                  !nt
-       if(cleafini(i6) .gt. 1e12 .or. cleafini(i6) .lt. 0.0) then
-          cleafini(i6) = 0.0
-          cfrootini(i6) = 0.0
-          cawoodini(i6) = 0.0
-       endif
-       if(cfrootini(i6) .gt. 1e12 .or. cfrootini(i6) .lt. 0.0) then
-          cleafini(i6) = 0.0
-          cfrootini(i6) = 0.0
-          cawoodini(i6) = 0.0
-       endif
-       if(cawoodini(i6) .gt. 1e12 .or. cawoodini(i6) .lt. 0.0) then
-          cleafini(i6) = 0.0
-          cfrootini(i6) = 0.0
-          cawoodini(i6) = 0.0
-       endif
-    enddo                     !npfts
-200 continue
+      real(kind=r4),intent(in) :: nppot
+      real(kind=r4),dimension(ntraits, npls),intent(in) :: dt
+      ! intenal
+      real(kind=r4) :: sensitivity
+      real(kind=r4) :: nppot2
+      ! outputs
+      real(kind=r4),dimension(npls),intent(out) :: cleafini
+      real(kind=r4),dimension(npls),intent(out) :: cawoodini
+      real(kind=r4),dimension(npls),intent(out) :: cfrootini
+
+      ! more internal
+      real(kind=r4),dimension(ntl) :: cleafi_aux
+      real(kind=r4),dimension(ntl) :: cfrooti_aux
+      real(kind=r4),dimension(ntl) :: cawoodi_aux
+
+      real(kind=r4) :: aux_leaf
+      real(kind=r4) :: aux_wood
+      real(kind=r4) :: aux_root
+      real(kind=r4) :: out_leaf
+      real(kind=r4) :: out_wood
+      real(kind=r4) :: out_root
+
+      real(kind=r4),dimension(npls) :: aleaf  !npp percentage alocated to leaf compartment
+      real(kind=r4),dimension(npls) :: aawood !npp percentage alocated to aboveground woody biomass compartment
+      real(kind=r4),dimension(npls) :: afroot !npp percentage alocated to fine roots compartmentc 
+      real(kind=r4),dimension(npls) :: tleaf  !turnover time of the leaf compartment (yr)
+      real(kind=r4),dimension(npls) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
+      real(kind=r4),dimension(npls) :: tfroot !turnover time of the fine roots compartment
+      logical(kind=l1) :: iswoody
+
+      ! catch 'C turnover' traits
+      tleaf  = dt(3,:)
+      tawood = dt(4,:)
+      tfroot = dt(5,:)
+      aleaf  = dt(6,:)
+      aawood = dt(7,:)
+      afroot = dt(8,:)
+
+      sensitivity = 1.0001
+      if(nppot .le. 0.0) goto 200
+      nppot2 = nppot !/real(npls,kind=r4)
+      do i6=1,npls
+         iswoody = ((aawood(i6) .gt. 0.0) .and. (tawood(i6) .gt. 0.0))
+         do k=1,ntl
+            if (k.eq.1) then
+               cleafi_aux (k) =  aleaf(i6) * nppot2
+               cawoodi_aux(k) = aawood(i6) * nppot2
+               cfrooti_aux(k) = afroot(i6) * nppot2
+
+            else
+               aux_leaf = cleafi_aux(k-1) + (aleaf(i6) * nppot2)
+               aux_wood = cawoodi_aux(k-1) + (aleaf(i6) * nppot2)
+               aux_root = cfrooti_aux(k-1) + (afroot(i6) * nppot2)
+
+               out_leaf = aux_leaf - (cleafi_aux(k-1) / tleaf(i6)) 
+               out_wood = aux_wood - (cawoodi_aux(k-1) / tawood(i6))
+               out_root = aux_root - (cfrooti_aux(k-1) / tfroot(i6))
+
+               if(iswoody) then
+                  cleafi_aux(k) = amax1(0.0, out_leaf)
+                  cawoodi_aux(k) = amax1(0.0, out_wood)
+                  cfrooti_aux(k) = amax1(0.0, out_root)
+               else
+                  cleafi_aux(k) = amax1(0.0, out_leaf)
+                  cawoodi_aux(k) = 0.0
+                  cfrooti_aux(k) = amax1(0.0, out_root)
+               endif
+
+               kk =  floor(k*0.66)
+               if(iswoody) then
+                  if((cfrooti_aux(k)/cfrooti_aux(kk).lt.sensitivity).and.&
+                       &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity).and.&
+                       &(cawoodi_aux(k)/cawoodi_aux(kk).lt.sensitivity)) then
+
+                     cleafini(i6) = cleafi_aux(k) ! carbon content (kg m-2)
+                     cfrootini(i6) = cfrooti_aux(k)
+                     cawoodini(i6) = cawoodi_aux(k)
+                     exit
+                  endif
+               else
+                  if((cfrooti_aux(k)&
+                       &/cfrooti_aux(kk).lt.sensitivity).and.&
+                       &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity)) then
+
+                     cleafini(i6) = cleafi_aux(k) ! carbon content (kg m-2)
+                     cfrootini(i6) = cfrooti_aux(k)
+                     cawoodini(i6) = 0.0
+                     exit
+                  endif
+               endif
+            endif
+         enddo                  !nt
+      enddo                     !npls
+200   continue
   end subroutine spinup
   
+
+   ! ===========================================================
+   ! ===========================================================
+
+   subroutine spinup3(nppot,dt,cleafini,cfrootini,cawoodini)
+      use types
+      use global_pars, only: ntraits,npls
+      implicit none
+
+      !parameters
+      integer(kind=i4),parameter :: ntl=36525
+
+      ! inputs
+      integer(kind=i4) :: kk, k
+
+      real(kind=r4),intent(in) :: nppot
+      real(kind=r4),dimension(6),intent(in) :: dt
+      ! intenal
+      real(kind=r4) :: sensitivity
+      real(kind=r4) :: nppot2
+      ! outputs
+      real(kind=r4),intent(out) :: cleafini
+      real(kind=r4),intent(out) :: cawoodini
+      real(kind=r4),intent(out) :: cfrootini
+
+      ! more internal
+      real(kind=r4),dimension(ntl) :: cleafi_aux
+      real(kind=r4),dimension(ntl) :: cfrooti_aux
+      real(kind=r4),dimension(ntl) :: cawoodi_aux
+
+      real(kind=r4) :: aux_leaf
+      real(kind=r4) :: aux_wood
+      real(kind=r4) :: aux_root
+      real(kind=r4) :: out_leaf
+      real(kind=r4) :: out_wood
+      real(kind=r4) :: out_root
+
+      real(kind=r4) :: aleaf  !npp percentage alocated to leaf compartment
+      real(kind=r4) :: aawood !npp percentage alocated to aboveground woody biomass compartment
+      real(kind=r4) :: afroot !npp percentage alocated to fine roots compartmentc 
+      real(kind=r4) :: tleaf  !turnover time of the leaf compartment (yr)
+      real(kind=r4) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
+      real(kind=r4) :: tfroot !turnover time of the fine roots compartment
+      logical(kind=l1) :: iswoody
+
+      ! catch 'C turnover' traits
+      tleaf  = dt(1)
+      tawood = dt(2)
+      tfroot = dt(3)
+      aleaf  = dt(4)
+      aawood = dt(5)
+      afroot = dt(6)
+
+      iswoody = ((aawood .gt. 0.0) .and. (tawood .gt. 0.0))
+
+      sensitivity = 1.001
+      if(nppot .le. 0.0) goto 200
+      nppot2 = nppot !/real(npls,kind=r4)
+      do k=1,ntl
+         if (k.eq.1) then
+            cleafi_aux (k) =  aleaf * nppot2
+            cawoodi_aux(k) = aawood * nppot2
+            cfrooti_aux(k) = afroot * nppot2
+         else
+            aux_leaf = cleafi_aux(k-1) + (aleaf * nppot2)
+            aux_wood = cawoodi_aux(k-1) + (aleaf * nppot2)
+            aux_root = cfrooti_aux(k-1) + (afroot * nppot2)
+
+            out_leaf = aux_leaf - (cleafi_aux(k-1) / tleaf) 
+            out_wood = aux_wood - (cawoodi_aux(k-1) / tawood)
+            out_root = aux_root - (cfrooti_aux(k-1) / tfroot)
+
+            if(iswoody) then
+               cleafi_aux(k) = amax1(0.0, out_leaf)
+               cawoodi_aux(k) = amax1(0.0, out_wood)
+               cfrooti_aux(k) = amax1(0.0, out_root)
+            else
+               cleafi_aux(k) = amax1(0.0, out_leaf)
+               cfrooti_aux(k) = amax1(0.0, out_root)
+               cawoodi_aux(k) = 0.0
+            endif
+
+            kk =  floor(k*0.66)
+            if(iswoody) then
+               if((cfrooti_aux(k)/cfrooti_aux(kk).lt.sensitivity).and.&
+                    &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity).and.&
+                    &(cawoodi_aux(k)/cawoodi_aux(kk).lt.sensitivity)) then
+
+                  cleafini = cleafi_aux(k) ! carbon content (kg m-2)
+                  cfrootini = cfrooti_aux(k)
+                  cawoodini = cawoodi_aux(k)
+                  !  print *, 'woody exitet in', k
+                  exit
+               endif
+            else
+               if((cfrooti_aux(k)&
+                    &/cfrooti_aux(kk).lt.sensitivity).and.&
+                    &(cleafi_aux(k)/cleafi_aux(kk).lt.sensitivity)) then
+
+                  cleafini = cleafi_aux(k) ! carbon content (kg m-2)
+                  cfrootini = cfrooti_aux(k)
+                  cawoodini = 0.0
+                  !  print *, 'grass exitet in', k
+                  exit
+               endif
+            endif
+         endif
+      enddo                  !nt
+200   continue
+   end subroutine spinup3
+
+
  !=================================================================
  !=================================================================
  

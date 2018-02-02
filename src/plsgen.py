@@ -14,141 +14,126 @@ Copyright 2017- LabTerra
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com> 
+contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
 """
 
-import os
-import random as rd
-import math
+from math import ceil
 import csv
 import numpy as np
-
-n = 10 # number of plant life strategies
-    
-def table_gen(N = n):    
-    # Random variables (beta distribution - normalized to min-max ranges of each variable)
-    g1 = np.random.uniform(1.01, 20.0, 10000)
-    #vcmax = np.random.uniform(3e-5, 25e-5, 10000)
-    vcmax = (np.random.beta(1.4, 6.24, 10000) * (150. - 10./1.) + 10) * 1e-6 # 10⁴ elementos
-    #jmax = np.linspace(1e-4,3e-4,10) # 10 elementos
-    jmax = (np.random.beta(1.4, 6.24, 10000) * (3. - 1./1.) + 1.) * 1e-4 # 10⁴ elementos
-    
-    tleaf = np.random.uniform(1./12., 8.3, 10000)
-    #tleaf = (np.random.beta(3, 6.24,10000) * (100. - 1./1.) + 1.) / 12 # 10⁴ elementos
-    twood = np.random.uniform(1., 80., 10000)
-    #twood = np.random.beta(6, 6.24,10000) * (80. - 1./1.) + 1. # 10⁴ elementos
-    troot = np.random.uniform(1./12, 8.3, 10000)
-    #troot = (np.random.beta(3, 6.24,10000) * (100. - 1./1.) + 1.) / 12 # 10⁴ elementos
-    
-    # constrained distributions (must sum up to 1.) 
-    aleaf = np.arange(5,91,1.25) #
-    aroot = np.arange(5,91,1.25) # 13
-    awood = np.arange(5,81,1.25) # 13
-    colnames_a = ['aleaf','awood','aroot']
-    plsa_grass = [[a/100,0.0,c/100] for a in aleaf for c in aroot if abs(a+0.0+c)==100.]
-    plsa_wood = [[a/100,b/100,c/100] for a in aleaf for b in awood for c in aroot if ((a+b+c)==100.) and (b>19)]
-    
-    # CREATING ALLOCATION COMBINATIONS
-    for i in range(len(plsa_grass)):
-        x = plsa_grass.pop()
-        if x in plsa_grass:
-            pass
-        else:
-            plsa_grass.insert(0,x)
-            
-    for i in range(len(plsa_wood)):
-        x = plsa_wood.pop()
-        if x in plsa_wood:
-            pass
-        else:
-            plsa_wood.insert(0,x)
-            
-    g2w_ratio = len(plsa_grass)/len(plsa_wood)
+from caete_module import photo as model
 
 
+def vec_ranging(vec, min1, max1):
+    """ range vec to min max"""
 
-    if (len(plsa_wood) + len(plsa_grass)) < N:
-        diffg = math.ceil(N * (g2w_ratio) - (len(plsa_grass)))
-        diffw = N - diffg
-        alloc_w = plsa_wood[:]
-        alloc_g = plsa_grass[:]
-        while len(alloc_w) <= diffw:
-            alloc_w.append(plsa_wood[np.random.randint(0,len(plsa_wood))]) # alterar aqui as distribuições para alloc and tau
-        while len(alloc_g) <= diffg:
-            alloc_g.append(plsa_grass[np.random.randint(0,len(plsa_grass))])
-        
-        plsa_wood = alloc_w 
-        plsa_grass = alloc_g
-        grassN = diffg
-        woodN = diffw
-
-    
-    else:
-        grassN = math.ceil(N * g2w_ratio)
-        woodN = N - grassN
-
-    grassN = int(grassN)
-    woodN = int(woodN)
-
-    plsa_wood = np.array(plsa_wood,np.float32)
-    plsa_grass = np.array(plsa_grass,np.float32)
-    np.random.shuffle(plsa_grass)
-    np.random.shuffle(plsa_wood)
+    return vec * ((max1 - min1) + min1)
 
 
-    alloc_wood = plsa_wood[np.random.randint(0,woodN,woodN)][:]
-    alloc_grass = plsa_grass[np.random.randint(0,grassN,grassN)][:]
-    alloc = list(np.vstack((alloc_grass, alloc_wood)))
-    # COMBINATIONS
-    # Random samples from beta distributions (g1, tleaf ...)
-    # The sampling is done via indexation of beta distributions
-    # with random integers from a  discrete uniform distribution
+def check_viability(trait_values):
+    """ check the viability of allocation(a) &  residence time(ŧ) combinations"""
 
-    
-    # ! ['g1','vcmax','tleaf','twood','troot','aleaf','awood','aroot']
+    rtur = np.array(model.spinup3(0.01, trait_values))
+    if rtur[0] <= 0.01 or rtur[1] <= 0.01:
+        return False
+    return True
 
-    colnames = ['g1','vcmax','tleaf','twood','troot'] + colnames_a
-    tau_leaf = list(tleaf[np.random.randint(0,9999,N)][:])
-    tau_root = list(troot[np.random.randint(0,9999,N)][:])
-    tau_wood = list(twood[np.random.randint(0,9999,N)][:])
-    g1_pls = list(g1[np.random.randint(0,9999,N)][:])
-    vcmax_pls = list(vcmax[np.random.randint(0,9999,N)][:])
-    jmax_pls = list(jmax[np.random.randint(0,9999,N)][:])
-    zero = np.zeros(1)
-    pls_table = []
-    for i in range(len(alloc)):
-        if i < grassN:
-            aux_arr = np.array([g1_pls[i],vcmax_pls[i],tau_leaf[i],list(zero)[0],tau_root[i]])
-            pls = np.hstack((aux_arr,alloc[i]))
-        else:
-            aux_arr = np.array([g1_pls[i],vcmax_pls[i],tau_leaf[i],tau_wood[i],tau_root[i]])
-            pls = np.hstack((aux_arr,alloc[i]))
 
-        pls_table.append(pls)
-        
-    #pls_table = np.array(pls_table,np.float32)
+def assertion_data_size(dsize):
+    """ Assertion of datasets sizes """
 
-    # ___side_effects
+    g2w_ratio = 0.07
+    diffg = ceil(dsize * g2w_ratio)
+    diffw = int(dsize - diffg)
+    assert diffg + diffw == dsize
+    return diffg, diffw
+
+def turnover_combinations(verbose=False):
+    """CREATE the residence time and allocation combinations"""
+
+    # constrained distributions (must sum up to 1.)
+    aleafw = np.arange(15., 86.0, 0.25)
+    aleafg = np.arange(15., 86.0, 0.25)
+    arootw = np.arange(15., 86.0, 0.25)
+    arootg = np.arange(15., 86.0, 0.25)
+    awood = np.arange(15., 86.0, 0.25)
+
+    plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
+                   if (a + c) == 100.0]
+    plsa_wood = [[a / 100.0, b / 100.0, c / 100.0] for a in aleafw for b in awood \
+                  for c in arootw if (a + b + c) == 100.]
+
+    if verbose:
+        print('Number of combinations = %d'%(len(plsa_grass) + len(plsa_wood)))
+
+    return np.array(plsa_wood), np.array(plsa_grass)
+
+def table_gen(NPLS):
+    """AKA main - generate a trait table for CAETÊ - save it to a .csv"""
+
+    diffg, diffw = assertion_data_size(NPLS)
+    plsa_wood, plsa_grass = turnover_combinations(True)
+
+    # Creating Grasses and others c3 and c4
+    alloc_w = []
+    alloc_g = []
+
+    index0 = 0
+    while index0 < diffg:
+        restime = np.zeros(shape=(3,), dtype=np.float32)
+        allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
+        restime[0] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
+        restime[1] = 0.0
+        restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
+        data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
+        if check_viability(data_to_test0):
+            alloc_g.append(data_to_test0)
+            index0 += 1
+
+    index1 = 0
+    while index1 < diffw:
+        restime = np.zeros(shape=(3,), dtype=np.float32)
+        allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
+        restime[0] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
+        restime[1] = vec_ranging(np.random.beta(1, 3), 1, 80.0)
+        restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
+        data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
+        if check_viability(data_to_test1):
+            alloc_w.append(data_to_test1)
+            index1 += 1
+
+    alloc_g = np.array(alloc_g)
+    alloc_w = np.array(alloc_w)
+
+    alloc = np.concatenate((alloc_g, alloc_w), axis=0,)
+
+    # # # COMBINATIONS
+    # # # Random samples from  distributions (g1, tleaf ...)
+    # # # Random variables
+    g1 = vec_ranging(np.random.beta(1.2, 2, NPLS), 1.0, 15.0) # dimensionles
+    # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
+    vcmax = vec_ranging(np.random.beta(1.2, 2, NPLS), 3e-5, 150e-5)
+
+    stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
+             alloc[:, 3], alloc[:, 4], alloc[:, 5])
+
+    head = ['g1', 'vcmax', 'tleaf', 'twood', 'troot', 'aleaf', 'awood', 'aroot']
+    # # for i,x in enumerate(head):
+    # #     print(i + 1, ': ',x)
+
+    pls_table = np.vstack(stack)
+    # # pls_table_F = np.empty(shape=(15,n),order='F')
+    # # pls_table_F = pls_table
+
+    # # ___side_effects
     with open('pls_attrs.csv', mode='w') as fh:
         writer = csv.writer(fh, delimiter=',')
-        writer.writerow(colnames)
-        writer.writerows(pls_table)
-        
-    out_arr = np.array(pls_table,np.float32)
-    np.savetxt('pls.txt', out_arr, fmt='%.9f')
+        writer.writerow(head)
+        for x in range(pls_table.shape[1]):
+            writer.writerow(list(pls_table[:, x]))
+        # writer.writerows(pls_table)
 
-#    print('0','g1')  #'g1','vcmax','tleaf','twood','troot'
-#    print('1','vcmax')
-#    print('2','tleaf')
-#    print('3','twood')
-#    print('4','troot')
-#    print('5','aleaf')
-#    print('6','awood')
-#    print('7','aroot')
-    # ___end___
+    out_arr = np.asfortranarray(pls_table, dtype=np.float32)
+    # np.savetxt('pls.txt', out_arr, fmt='%.12f')
 
-    
     return out_arr
-    
-

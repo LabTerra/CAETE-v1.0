@@ -26,7 +26,8 @@ def log_file(f_con):
         fh.write(descr)
         fh.write('------\n')
 
-def fprocess(npls, run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls = False):
+
+def fprocess(npls, run, res, out, pls):
     os.chdir(res)
     # COMPRESS FILES
     files = glob1(os.getcwd(),'*.nc')
@@ -50,6 +51,7 @@ def fprocess(npls, run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls = False):
         copyfile(ROOT_DIR + os.sep + 'pls_attrs.csv', outputs_folder + os.sep + 'pls_attrs.csv')
     os.system('rm -rf outputs_nc')
     os.chdir(ROOT_DIR)
+    os.system('rm -rf TMP_DIR')
     os.system('./clean_out.sh')
 
 
@@ -75,14 +77,12 @@ def model_driver():
     assert n_runs > 0
 
     log_file('exec.log')
-    for x in range(1,n_runs + 1):
+    for model_run in range(1,n_runs + 1):
         with open('exec.log', mode='a') as fh:
-            fh.write('\n\n\t---Rodada n° %d\n\n' % x )
+            fh.write('\n\n\t---Rodada n° %d\n\n' % model_run )
         os.system(comm)
-        if comm == 'ipython3 caete_pfts.py':
-            pass # fprocess(npls, x, res=None)
-        else:
-            fprocess(npls,x,pls=True)
+        if comm == 'ipython3 caete.py':
+            fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)            
         os.system('./clean_dir.sh')
 
 if __name__ == '__main__':
