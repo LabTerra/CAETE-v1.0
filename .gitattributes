@@ -7,7 +7,6 @@
 /src/*.f90 text
 /src/*.sh text
 /src/*.txt text
-/src/*.csv text
 /src/*.log text
 /src/*.hdr text
 /input/*.hdr binary
@@ -17,6 +16,7 @@
 
 # Denote all files that are truly binary and should not be modified.
 /src/*.png binary
+/src/pls_attrs.csv
 /src/*.jpg binary
 /src/*.bin binary
 /input/*.bin binary
