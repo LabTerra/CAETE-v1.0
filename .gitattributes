@@ -3,25 +3,25 @@
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
-src/*.py text
-src/*.f90 text
-src/*.sh text
-src/*.txt text
-src/*.csv text
-src/*.log text
-src/*.hdr text
-input/*.hdr binary
+/src/*.py text
+/src/*.f90 text
+/src/*.sh text
+/src/*.txt text
+/src/*.csv text
+/src/*.log text
+/src/*.hdr text
+/input/*.hdr binary
 
 # Declare files that will always have CRLF line endings on checkout.
 # *.sln text eol=crlf
 
 # Denote all files that are truly binary and should not be modified.
-src/*.png binary
-src/*.jpg binary
-src/*.bin binary
-input/*.bin binary
-src/*.so binary
-src/*.npy binary
+/src/*.png binary
+/src/*.jpg binary
+/src/*.bin binary
+/input/*.bin binary
+/src/*.so binary
+/src/*.npy binary
 ./*/.pdf binary
 
 # ./* binary
