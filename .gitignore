@@ -1,9 +1,10 @@
 .vscode
-##/src/homedir.py
+/src/homedir.py
 /src/UNKNOWN
-/src/*dll
+/src/*.dll
 /src/*.so
 /src/*.pyf
 /src/*.mod
 /src/*.log
-/src/
+/src/*.o
+/src/*.pyd

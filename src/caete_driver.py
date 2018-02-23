@@ -8,7 +8,7 @@ from caete import RESULTS_DIR
 from caete import TMP_DIR
 # from caete import make_dir_spe
 from caete_module import global_pars as gp
-
+from homedir import py_executable
 ROOT_DIR = os.getcwd()
 
 # make_dir_spe(OUTPUT_NC_DIR)
@@ -60,14 +60,14 @@ def model_driver():
     q = str(input('modo PFTs? (s or n): ')).lower()
     while True:
         if q == 's':
-            comm = 'ipython3 caete_pfts.py'
+            comm = '%s caete_pfts.py' % py_executable
             print('Número de Rodadas definido: 1')
             n_runs = 1
             assert npls == 12, 'O modo PFTS precisa ser compilado com npls=12, npls =  %d fornecido' %npls
             break
         elif q == 'n':
             n_runs = int(input('Número de Rodadas: '))
-            comm = "ipython3 caete.py"
+            comm = "%s caete.py" % py_executable
             break
         else:
             print('Por favor, digite s ou n')
@@ -81,7 +81,7 @@ def model_driver():
         with open('exec.log', mode='a') as fh:
             fh.write('\n\n\t---Rodada n° %d\n\n' % model_run )
         os.system(comm)
-        if comm == 'ipython3 caete.py':
+        if comm == '%s caete.py' % py_executable:
             fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)            
         os.system('./clean_dir.sh')
 
