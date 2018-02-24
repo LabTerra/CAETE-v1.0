@@ -3,15 +3,16 @@ import os
 import concurrent.futures as conc
 from glob import glob1
 from shutil import copyfile
-from caete import OUTPUT_NC_DIR
-from caete import RESULTS_DIR
-from caete import TMP_DIR
 # from caete import make_dir_spe
 from caete_module import global_pars as gp
 from homedir import py_executable
+from homedir import OUTPUT_NC_DIR
+from homedir import RESULTS_DIR
+from homedir import TMP_DIR
+
+
 ROOT_DIR = os.getcwd()
 
-# make_dir_spe(OUTPUT_NC_DIR)
 
 def sys_tar(duplet):
     os.system('tar -czf %s %s' % duplet)
@@ -83,7 +84,7 @@ def model_driver():
         os.system(comm)
         if comm == '%s caete.py' % py_executable:
             fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)            
-        os.system('./clean_dir.sh')
+        os.system('bash clean_dir.sh')
 
 if __name__ == '__main__':
     model_driver()

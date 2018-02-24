@@ -32,18 +32,19 @@ import multiprocessing as mp
 import concurrent.futures as conc
 import numpy as np
 
-import homedir
-import plsgen as pls
+from plsgen import attr_table
 import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
 
+import homedir
+from homedir import OUTPUT_NC_DIR
+from homedir import RESULTS_DIR
+from homedir import TMP_DIR
+
 
 #RUN IN SOMBRERO
 HOME_DIR = homedir.HOMEDIR
-RESULTS_DIR = os.sep.join([HOME_DIR, 'results'])
-TMP_DIR = os.sep.join([HOME_DIR, 'tmp'])
-OUTPUT_NC_DIR = os.sep.join([TMP_DIR, 'outputs_nc'])
 
 # RUN IN DESKTOP
 #RESULTS_DIR = '/home/jpdarela/Desktop/rtest_model'
@@ -107,14 +108,7 @@ def chunks(lst, chunck_size):
         yield lst[i:i + chunck_size]
 
 
-def pls_generator():
-    return pls.table_gen(npls)
-
-#(1)
-
-
 def init_caete(grd):
-
     grd.pr = global_pr[:, grd.y, grd.x]
     grd.ps = global_ps[:, grd.y, grd.x]
     grd.rsds = global_rsds[:, grd.y, grd.x]
@@ -124,7 +118,7 @@ def init_caete(grd):
     grd.filled = True
 
 
-def run_model(grd, at):
+def run_model(grd, at = attr_table):
 
     #print('running_model (inside)')
     if grd.filled and not grd.complete:
@@ -242,6 +236,18 @@ def model_flush(grd):
     grd.area0  = None
     grd.wue    = None
     grd.cue    = None
+
+
+def rm_apply(gridcell_obj):
+    # FLOW OF EXECUTION
+    # Run model
+    run_model(gridcell_obj)
+    # Generate outputs
+    grd_dict(gridcell_obj)
+    # Clean Memory
+    model_flush(gridcell_obj)
+    # Return the modeled input gridcell 
+    return(gridcell_obj)
 
 
 def catch_nt(input_file, nx, ny, pixel_depht):
@@ -428,58 +434,45 @@ class gridcell:
         self.area0   = None
 
 
+## GLOBAL VARS
+lr = catch_nt('../input/npp.bin', nx, ny, 32)
+npp_init = catch_data('../input/npp.bin', lr, nx, ny)
+npp_init = np.ma.masked_array(npp_init, mask12)
+npp_init = npp_init.mean(axis=0,)
+
+std_shape = (12, ny, nx)
+
+input_data = datasets('../input')
+assert input_data.check_dataset()
+
+global_pr = input_data.get_var('pr')
+assert global_pr.shape == std_shape
+assert input_data.check_dataset()
+
+global_ps = input_data.get_var('ps')
+assert global_ps.shape == std_shape
+assert input_data.check_dataset()
+
+global_rsds = input_data.get_var('rsds')
+assert global_rsds.shape == std_shape
+assert input_data.check_dataset()
+
+global_tas = input_data.get_var('tas')
+assert global_tas.shape == std_shape
+assert input_data.check_dataset()
+
+global_rhs = input_data.get_var('hurs')
+assert global_rhs.shape == std_shape
+assert input_data.check_dataset()
+
+# Creating directories structure
+make_dir_spe(RESULTS_DIR)
+make_dir_spe(TMP_DIR)
+make_dir_spe(OUTPUT_NC_DIR)
+
+
+
 if __name__ == "__main__":
-    
-    ## GLOBAL VARS
-    lr = catch_nt('../input/npp.bin', nx, ny, 32)
-    npp_init = catch_data('../input/npp.bin', lr, nx, ny)
-    npp_init = np.ma.masked_array(npp_init, mask12)
-    npp_init = npp_init.mean(axis=0,)
-
-    std_shape = (12, ny, nx)
-
-    input_data = datasets('../input')
-    assert input_data.check_dataset()
-
-    global_pr = input_data.get_var('pr')
-    assert global_pr.shape == std_shape
-    assert input_data.check_dataset()
-
-    global_ps = input_data.get_var('ps')
-    assert global_ps.shape == std_shape
-    assert input_data.check_dataset()
-
-    global_rsds = input_data.get_var('rsds')
-    assert global_rsds.shape == std_shape
-    assert input_data.check_dataset()
-
-    global_tas = input_data.get_var('tas')
-    assert global_tas.shape == std_shape
-    assert input_data.check_dataset()
-
-    global_rhs = input_data.get_var('hurs')
-    assert global_rhs.shape == std_shape
-    assert input_data.check_dataset()
-
-    attr_table = pls_generator()
-
-    def rm_apply(gridcell_obj):
-
-        # FLOW OF EXECUTION
-        # Run model
-        run_model(gridcell_obj, attr_table)
-        # Generate outputs
-        grd_dict(gridcell_obj)
-        # Clean Memory
-        model_flush(gridcell_obj)
-        # Return the modeled input gridcell 
-        return(gridcell_obj)
-
-
-    # Creating directories structure
-    make_dir_spe(RESULTS_DIR)
-    make_dir_spe(TMP_DIR)
-    make_dir_spe(OUTPUT_NC_DIR)
 
     t0 = time.time()
     log = open('exec.log', mode='a')
@@ -551,7 +544,7 @@ if __name__ == "__main__":
         adata = ld_dict()
         print_progress(0, n_chunks, prefix = 'Progress:', suffix = 'Complete')
         for lst in chunks(land_data, hi):
-            with mp.Pool(processes=n_process, maxtasksperchild=60) as p:
+            with mp.Pool(processes=n_process, maxtasksperchild=30) as p:
                 result = p.map(rm_apply, lst)
             print_progress(id, n_chunks, prefix = 'Progress:', suffix = 'Complete')
             t2 = time.time()
