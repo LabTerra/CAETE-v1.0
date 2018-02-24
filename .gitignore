@@ -1,5 +1,4 @@
 .vscode
-/src/homedir.py
 /src/UNKNOWN
 /src/*.dll
 /src/*.so
@@ -10,3 +9,4 @@
 /src/*.pyd
 /src/__pycache__
 /src/exemplo_plots_and_tests.py
+/src/homedir.py
