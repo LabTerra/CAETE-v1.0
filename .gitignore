@@ -8,3 +8,4 @@
 /src/*.log
 /src/*.o
 /src/*.pyd
+/src/__pycache__
