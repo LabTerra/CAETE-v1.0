@@ -146,5 +146,5 @@ def pls_generator():
 #(1)
 
 # Global variable! --------------------------------------------
-attr_table = pls_generator().copy()
+attr_table = pls_generator()
 # make_dir_spe(OUTPUT_NC_DIR)

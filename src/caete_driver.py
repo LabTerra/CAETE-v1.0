@@ -14,6 +14,23 @@ from homedir import TMP_DIR
 ROOT_DIR = os.getcwd()
 
 
+def make_dir_spe(folder_path):
+    try:
+        test = os.path.exists(folder_path)
+    except:
+        print('Error while checking %s' % folder_path)
+        #return False
+    if test:
+        pass
+    else:
+        os.mkdir(folder_path)
+        #return True
+
+make_dir_spe(TMP_DIR)
+make_dir_spe(OUTPUT_NC_DIR)
+make_dir_spe(RESULTS_DIR)
+
+
 def sys_tar(duplet):
     os.system('tar -czf %s %s' % duplet)
 
