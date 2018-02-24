@@ -9,3 +9,4 @@
 /src/*.o
 /src/*.pyd
 /src/__pycache__
+/src/exemplo_plots_and_tests.py

@@ -31,7 +31,6 @@ import multiprocessing as mp
 import numpy as np
 
 import homedir
-import plsgen as pls
 import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
@@ -52,11 +51,11 @@ varlist = wo.monthly_out + wo.npls_out
 # defining functions that (1)drive model throghout the grid data & (2) save outputs
 
 def pls_generator():
-    os.system('ipython3 pfts_bin.py' )
+    os.system('%s pfts_bin.py' % homedir.py_executable)
     C.photo.ascii2bin('pft.txt', 'pls.bin', npls, gp.ntraits)
-
+  
 #(1)
-
+  
 # A global var -- nplss-table
 pls_generator()
 attr_table = np.asfortranarray(C.photo.pft_par().T, dtype=np.float32)
