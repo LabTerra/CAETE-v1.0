@@ -2,11 +2,12 @@
 /src/UNKNOWN
 /src/*.dll
 /src/*.so
-/src/*.pyf
-/src/*.mod
-/src/*.log
-/src/*.o
 /src/*.pyd
+/src/*.mod
+/src/*.o
+/src/*.s
+/src/*.pyf
+/src/*.log
 /src/__pycache__
 /src/exemplo_plots_and_tests.py
 /src/homedir.py

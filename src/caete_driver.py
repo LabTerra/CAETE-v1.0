@@ -1,15 +1,11 @@
 #!/usr/local/bin/ipython3
-import os
 import concurrent.futures as conc
+import os
 from glob import glob1
 from shutil import copyfile
-# from caete import make_dir_spe
-from caete_module import global_pars as gp
-from homedir import py_executable
-from homedir import OUTPUT_NC_DIR
-from homedir import RESULTS_DIR
-from homedir import TMP_DIR
 
+from caete_module import global_pars as gp
+from homedir import OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
 
 ROOT_DIR = os.getcwd()
 
@@ -50,7 +46,7 @@ def fprocess(npls, run, res, out, pls):
     # COMPRESS FILES
     files = glob1(os.getcwd(),'*.nc')
     out1  = [n.split('.')[0] + '.tar.gz' for n in files]
-    with conc.ThreadPoolExecutor(max_workers=26) as executor:
+    with conc.ThreadPoolExecutor(max_workers=len(files)) as executor:
         for ft in list(zip(out1,files)):
             f = executor.submit(sys_tar,ft)
             #f.result() # uncomment to simulate a serial execution
@@ -60,7 +56,7 @@ def fprocess(npls, run, res, out, pls):
     if not os.path.exists(outputs_folder):
         os.mkdir(outputs_folder)
     outnames = [outputs_folder + os.sep + n for n in tars ]
-    with conc.ThreadPoolExecutor(max_workers=26) as executor:
+    with conc.ThreadPoolExecutor(max_workers=len(files)) as executor:
         for ft in list(zip(tars,outnames)):
             f = executor.submit(cpfile,ft)
             #f.result() # uncomment to simulate a serial execution
