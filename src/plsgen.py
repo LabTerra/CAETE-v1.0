@@ -22,7 +22,9 @@ from math import ceil
 import csv
 import numpy as np
 from caete_module import photo as model
+from caete_module import global_pars as gp
 
+npls = gp.npls
 
 def vec_ranging(vec, min1, max1):
     """ range vec to min max"""
@@ -137,3 +139,12 @@ def table_gen(NPLS):
     # np.savetxt('pls.txt', out_arr, fmt='%.12f')
 
     return out_arr
+
+def pls_generator():
+    print("running table gen from pls_generator")
+    return table_gen(npls)
+#(1)
+
+# Global variable! --------------------------------------------
+attr_table = pls_generator()
+# make_dir_spe(OUTPUT_NC_DIR)
