@@ -136,8 +136,8 @@ contains
     !     Leaf area index (m2/m2)
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
      sla = spec_leaf_area(tleaf)
-     laia = leaf_area_index(cl1*ocprod,sla)
-      
+    !  laia = leaf_area_index(cl1*ocprod,sla)
+     laia = leaf_area_index(cl1, sla)
 
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
