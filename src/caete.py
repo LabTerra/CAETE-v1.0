@@ -491,8 +491,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(130, 251):
-        for X in range(200, 280):
+    for Y in range(ny):             # 150, 230
+        for X in range(nx):           # 230, 260
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
@@ -533,7 +533,7 @@ if __name__ == "__main__":
     else:
         if npls <= 50:
             hi = 240
-            n_process = disp_processors * 2
+            n_process = disp_processors * 3
         else:
             hi = 360
             n_process = disp_processors * 3 
