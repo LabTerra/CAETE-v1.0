@@ -531,11 +531,11 @@ if __name__ == "__main__":
         log.write('end_run %s\n' % time.ctime())
 
     else:
-        if npls <= 50:
-            hi = 240
-            n_process = disp_processors * 3
+        if npls <= 200:
+            hi = 1040
+            n_process = disp_processors * 2
         else:
-            hi = 360
+            hi = 600
             n_process = disp_processors * 3 
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
@@ -568,3 +568,4 @@ if __name__ == "__main__":
         print(time.ctime())
         log.write('end_run %s\n' % time.ctime())
         log.close()
+

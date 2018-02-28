@@ -181,7 +181,7 @@ contains
     carbon_test =  c1232 + c1234 + c1342
 
 10  continue
-    n = n + 1  
+    n = n + 1
     k = mod(n,12)
     if (k.eq.0) k = 12
     mes = k
@@ -300,6 +300,7 @@ contains
              wg0(kk) = wsoilt(kk) + gsoilt(kk)
           enddo
        else
+!          print *, n, 'exiting'
           goto 100
        endif
     endif
