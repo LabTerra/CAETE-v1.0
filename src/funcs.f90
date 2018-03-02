@@ -87,7 +87,7 @@ contains
     real(kind=r4) :: lai
     
     
-    lai  = (cleaf * 1e3) * sla 
+    lai  = cleaf  * sla 
    
   end function leaf_area_index
   
