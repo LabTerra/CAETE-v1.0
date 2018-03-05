@@ -137,8 +137,8 @@ contains
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
      sla = spec_leaf_area(tleaf)
     !  laia = leaf_area_index(cl1*ocprod,sla)
-     laia = leaf_area_index(cl1, sla)
-
+     laia = f_four(1,cl1, sla) + f_four(2,cl1, sla)
+ 
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
     ph =  gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - proxy of gpp or gpp?
