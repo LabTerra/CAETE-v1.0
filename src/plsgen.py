@@ -96,7 +96,7 @@ def table_gen(NPLS):
     while index1 < diffw:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
-        restime[0] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
+        restime[0] = vec_ranging(np.random.beta(1.56, 10), 1 / 12, 8.3)
         restime[1] = vec_ranging(np.random.beta(1, 3), 1, 80.0)
         restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)

@@ -20,11 +20,11 @@ module types
   
   implicit none
 
-  integer,parameter :: l1 = 4
-  integer,parameter :: i1 = 2
-  integer,parameter :: i4 = 4
-  integer,parameter :: r4 = kind(0.0)
-  integer,parameter :: r8 = kind(0.0D0)
+  integer,parameter :: l_1 = 4
+  integer,parameter :: i_1 = 2
+  integer,parameter :: i_4 = 4
+  integer,parameter :: r_4 = kind(0.0)
+  integer,parameter :: r_8 = kind(0.0D0)
   integer,parameter :: rbig = selected_real_kind(26,302)
 
 end module types
@@ -35,39 +35,39 @@ module global_pars
   use types
   implicit none
 
-  real(kind=r4),parameter :: H = 1.0                         ! soil layer thickness (meters)
-  real(kind=r4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
-  real(kind=r4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
-  real(kind=r4),parameter :: rcmax = 450.0
-  real(kind=r4),parameter :: rcmin = 100.0
-  real(kind=r4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
-  real(kind=r4),parameter :: wmax = 500.0
-  real(kind=r4),parameter :: cmin = 5e-3
+  real(kind=r_4),parameter :: H = 1.0                         ! soil layer thickness (meters)
+  real(kind=r_4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
+  real(kind=r_4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
+  real(kind=r_4),parameter :: rcmax = 450.0
+  real(kind=r_4),parameter :: rcmin = 100.0
+  real(kind=r_4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
+  real(kind=r_4),parameter :: wmax = 500.0
+  real(kind=r_4),parameter :: cmin = 5e-3
   
-  real(kind=r8),parameter :: csru = 0.5
-  real(kind=r8),parameter :: alfm = 1.391
-  real(kind=r8),parameter :: gm = 3.26 * 86400  !(*86400 transform s/mm to dia/mm)
+  real(kind=r_8),parameter :: csru = 0.5
+  real(kind=r_8),parameter :: alfm = 1.391
+  real(kind=r_8),parameter :: gm = 3.26 * 86400  !(*86400 transform s/mm to dia/mm)
 
-  real(kind=r8),parameter :: ncl = (1.0/29.0)          !(gN/gC) from lpj3 
-  real(kind=r8),parameter :: ncf = (1.0/29.0)          !(gN/gC)
-  real(kind=r8),parameter :: ncs = (1.0/330.0)         !(gN/gC)
+  real(kind=r_8),parameter :: ncl = (1.0/29.0)          !(gN/gC) from lpj3 
+  real(kind=r_8),parameter :: ncf = (1.0/29.0)          !(gN/gC)
+  real(kind=r_8),parameter :: ncs = (1.0/330.0)         !(gN/gC)
 
-!  integer(kind=i4) :: ndmonth(12)       !Number of months
+!  integer(kind=i_4) :: ndmonth(12)       !Number of months
 !  data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
 
-  integer(kind=i4),parameter :: npls = 500
-  integer(kind=i4),parameter :: ntimes = 12
-  integer(kind=i4),parameter :: ntraits = 8
+  integer(kind=i_4),parameter :: npls = 500
+  integer(kind=i_4),parameter :: ntimes = 12
+  integer(kind=i_4),parameter :: ntraits = 8
 
-  integer(kind=i4),parameter :: nx = 720, ny = 360
+  integer(kind=i_4),parameter :: nx = 720, ny = 360
   
 end module global_pars
 
 module photo_par
-  use types, only : r8
+  use types, only : r_8
   implicit none
   ! setting some parameter values
-  real(kind=r8), parameter ::       &
+  real(kind=r_8), parameter ::       &
        a   = 0.8300       ,&          !Photosynthesis co-limitation coefficient
        a2  = 0.930        ,&          !Photosynthesis co-limitation coefficient
        p3  = 21200.0      ,&          !Atmospheric oxygen concentration (Pa)
