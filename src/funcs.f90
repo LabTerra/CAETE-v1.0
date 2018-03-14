@@ -41,7 +41,7 @@ module photo
        pft_area_frac          ,& ! area fraction by biomass
        pft_par                ,& ! aux subroutine to read pls data
        pft_par2               ,&
-       spinup3                 ,&
+       spinup3                ,& ! auxiliar spinup for cveg pools
        spinup                 ,&
        ascii2bin              ,&
        ascii2bin2             ,&
