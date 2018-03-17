@@ -105,7 +105,7 @@ contains
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
     
-    f1a = photosynthesis_rate(p21,temp,p0,ipar,light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.7, light_limit)
     
     ! VPD
     !========

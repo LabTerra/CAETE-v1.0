@@ -7,8 +7,6 @@ from shutil import copyfile
 from caete_module import global_pars as gp
 from homedir import OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
 
-ROOT_DIR = os.getcwd()
-
 
 def make_dir_spe(folder_path):
     try:
@@ -22,24 +20,27 @@ def make_dir_spe(folder_path):
         os.mkdir(folder_path)
         #return True
 
-make_dir_spe(TMP_DIR)
-make_dir_spe(OUTPUT_NC_DIR)
-make_dir_spe(RESULTS_DIR)
-
 
 def sys_tar(duplet):
     os.system('tar -czf %s %s' % duplet)
 
+
 def cpfile(duplet):
     copyfile(*duplet)
 
+
 def log_file(f_con):
     descr = input('Descrição: ')
-    with open(f_con,mode='a') as fh:
+    with open(f_con, mode='a') as fh:
         fh.write('\n\n\n------\n')
         fh.write(descr)
         fh.write('------\n')
 
+
+ROOT_DIR = os.getcwd()
+make_dir_spe(TMP_DIR)
+make_dir_spe(OUTPUT_NC_DIR)
+make_dir_spe(RESULTS_DIR)
 
 def fprocess(npls, run, res, out, pls):
     os.chdir(res)
@@ -63,10 +64,10 @@ def fprocess(npls, run, res, out, pls):
     os.chdir(TMP_DIR)
     if pls:
         copyfile(ROOT_DIR + os.sep + 'pls_attrs.csv', outputs_folder + os.sep + 'pls_attrs.csv')
-    os.system('rm -rf outputs_nc')
+    # os.system('rm -rf outputs_nc')
     os.chdir(ROOT_DIR)
     os.system('rm -rf TMP_DIR')
-    os.system('./clean_out.sh')
+    # os.system('./clean_out.sh')
 
 
 def model_driver():
