@@ -48,7 +48,7 @@ contains
     real(kind=r_4), intent(in) :: temp                 !Mean monthly temperature (oC)
     real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
-    real(kind=r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (w/m2)'
+    real(kind=r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (einstein m-2 s-1)'
     real(kind=r_4), intent(in) :: rh,emax              !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
     real(kind=r_4), intent(in) :: cl1, cf1, ca1        !Carbon in plant tissues (kg/m2)
     real(kind=r_4), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)

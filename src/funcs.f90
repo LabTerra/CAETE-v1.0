@@ -247,8 +247,8 @@ contains
 
     D1 = sqrt(vpd_in)
     gs = 0.001 + 1.6 * (1.0 + (g1/D1)) * ((f1_in * 1e6)/ca)
-    rc2_in = real(1./gs, r_4)
-    !rc2_in = real(1/(gs/41.0), r_4)  ! transform mmol m-2 s-1 to s m-1 
+    ! rc2_in = real(1./gs, r_4)
+    rc2_in = real(1.0 / (gs / 41.0), r_4)  ! transform mmol m-2 s-1 to s m-1 
   end function canopy_resistence
   
   !=================================================================
@@ -510,26 +510,11 @@ contains
 
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
-!<<<<<<< HEAD
-!<<<<<<< HEAD
-!    rml64 = ((ncl * cl1) * 27. * exp(0.07*temp))/1e3
-! 
-!    rmf64 = ((ncf * cf1) * 27. * exp(0.07*temp))/1e3
-!
-!    rms64 = ((ncs * csa) * 27. * exp(0.07*temp))/1e3
-!=======
-!=======
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
  
     rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp))
 
     rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
-!<<<<<<< HEAD
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-!=======
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -634,7 +619,7 @@ contains
     
     !     Litter decayment function                                             !Controlled by annual evapotranspiration
     !     -------------------------
-    f6 = 1.16*10.**(-1.4553+0.0014175*(evap*365.0))
+    f6 = 1.16 * 10.0**(-1.4553 + 0.0014175 * (evap * 365.0))
     
     !     Soil carbon storage function                                          !Controlled by temperature
     !     ----------------------------    

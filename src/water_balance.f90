@@ -45,10 +45,10 @@ contains
     
     !     --------------------------I N P U T S----------------------------
     real(kind=r_4),dimension(ntraits, q),intent(in) :: dt
-    real(kind=r_4),dimension(nt),intent(in) :: p0         !Atmospheric pressure (mb)
-    real(kind=r_4),dimension(nt),intent(in) :: prec       !Precipitation (mm/month)
+    real(kind=r_4),dimension(nt),intent(in) :: p0         !in Pa ->>>> transf Atmospheric pressure (mb)
+    real(kind=r_4),dimension(nt),intent(in) :: prec       !in kg m-2 s-1  ---> transform Precipitation (mm/month)
     real(kind=r_4),dimension(nt),intent(in) :: temp       !Temperature (oC)
-    real(kind=r_4),dimension(nt),intent(in) :: par        !IPAR (Ein/m2/s)
+    real(kind=r_4),dimension(nt),intent(in) :: par        !IPAR in W m-2 ->>> transform(Ein/m2/s)
     real(kind=r_4),dimension(nt),intent(in) :: rhs        !Relative humidity
     
     real(kind=r_4),dimension(q),intent(in) ::  cleaf_ini  ! Initial carbon content in leaves (kg m-2)
@@ -189,7 +189,7 @@ contains
     td = tsoil(k)
     ta = temp(k)
     pr = prec(k)
-    ipar = (par(k) * 0.7)/2.18e5
+    ipar = par(k) / 2.18e5
     ru = rhs(k) / 100.
 
     !     Monthly water budget

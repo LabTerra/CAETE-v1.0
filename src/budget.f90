@@ -56,7 +56,7 @@ contains
     real(kind=r_4),intent(in) :: temp                 !Surface air temperature (oC)
     real(kind=r_4),intent(in) :: prec                 !Precipitation (mm/day)
     real(kind=r_4),intent(in) :: p0                   !Surface pressure (mb)
-    real(kind=r_4),intent(in) :: ipar                 !Incident photosynthetic active radiation
+    real(kind=r_4),intent(in) :: ipar                 !Incident photosynthetic active radiation Einsten m-2 s-1 
     real(kind=r_4),intent(in) :: rh                   !Relative humidity
     
     !     ----------------------------OUTPUTS------------------------------
@@ -129,11 +129,12 @@ contains
     real(kind=r_4),dimension(npft) ::  wue, cue
     real(kind=r_4),dimension(npft) ::  cl1,cf1,ca1 ! carbon pre-allocation 
     real(kind=r_4),dimension(npft) ::  cl2,cf2,ca2 ! carbon pos-allocation
-    integer(kind=i_4),dimension(12) :: ndmonth       !Number of months
     logical(kind=l_1) :: end_pls = .false., no_cell = .false.
     real(kind=r_4) :: ocp = 0
-
-    data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
+    real(kind=r_4) :: ae
+  
+    !integer(kind=i_4),dimension(12) :: ndmonth       !Number of months
+    !data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
 
 
     do p = 1,npft
@@ -217,7 +218,8 @@ contains
        
        !     Maximum evapotranspiration   (emax)
        !     =================================
-       emax = evpot2(p0,temp,rh,available_energy(temp))
+       ae = ipar * 2.18e5 !W m-2 Can use available energy
+       emax = evpot2(p0, temp, rh, ae)
        
        !     Productivity (ph, aresp, vpd, rc2 & etc.) for each PFT
        !     =================================
@@ -293,7 +295,7 @@ contains
              
              roff(p) = runoff(w(p)/wmax)       !Soil moisture runoff (roff, mm/day)
              
-             evap(p) = penman(p0,temp,rh,available_energy(temp),rc2(p)) !Actual evapotranspiration (evap, mm/day)
+             evap(p) = penman(p0, temp, rh, ae, rc2(p)) !Actual evapotranspiration (evap, mm/day)
              dw(p) = prain + smelt(p) - evap(p) - roff(p)
              w(p) = w(p) + dw(p)
              if (w(p).gt.wmax) then
