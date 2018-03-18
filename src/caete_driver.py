@@ -4,8 +4,11 @@ import os
 from glob import glob1
 from shutil import copyfile
 
-from caete_module import global_pars as gp
 from homedir import OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
+
+os.system('./build.sh')
+
+from caete_module import global_pars as gp
 
 
 def make_dir_spe(folder_path):
@@ -97,7 +100,7 @@ def model_driver():
             fh.write('\n\n\t---Rodada n° %d\n\n' % model_run )
         os.system(comm)
         if comm == '%s caete.py' % py_executable:
-            fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)            
+            fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
         os.system('bash clean_dir.sh')
 
 if __name__ == '__main__':

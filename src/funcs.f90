@@ -83,11 +83,11 @@ contains
     implicit none
     
     real(kind=r_4),intent(in) :: cleaf !kgC m-2 
-    real(kind=r_4),intent(in) :: sla   !m2 kgC-1
+    real(kind=r_4),intent(in) :: sla   !m-2 gC-1
     real(kind=r_4) :: lai
     
     
-    lai  = 1e3 * cleaf  * sla 
+    lai  = cleaf  * (sla * 1000.0) ! Transform  m2 g-1 in m2 Kg-1   
    
   end function leaf_area_index
   
@@ -122,15 +122,9 @@ contains
         lai_ss = real(shadelai, kind=r_4)
         return
     endif
-    
+
     !Scaling-up to canopy level (dimensionless)
     !------------------------------------------
-    lai_ss = real(sunlai,r_4)  ! to be used for heterothrophic respiration
-    
-    if(fs .eq. 3) then 
-       return
-    endif
-   
     !Sun/Shade approach to canopy scaling !Based in de Pury & Farquhar (1997)
     !------------------------------------------------------------------------
     if(fs .eq. 1) then
@@ -138,7 +132,7 @@ contains
        lai_ss = real((1.0-(exp(-p26*sunlai)))/p26,r_4) !sun 90 degrees
        return
     endif
-    
+
     if(fs .eq. 2) then
        !f4shade
        lai_ss = real((1.0-(exp(-p27*shadelai)))/p27,r_4) !sun ~20 degrees
@@ -164,10 +158,10 @@ contains
     leaf_t_months = tau_leaf*12. ! turnover time in months
     leaf_t_coeff = leaf_t_months/100. !1 - 100 months == ~ 1/12 to 8.3 years (TRY-kattge et al. 2011; Jedi-Pavlick 2012) 
 !<<<<<<< HEAD
-!    leaf_turnover =  (365.0/12.0) * exp(1.8*leaf_t_coeff)
+    leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-    leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
+  !  leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
     sla = (3e-2 * (365.0/leaf_turnover)**(-0.46))     
     
   end function spec_leaf_area

@@ -503,8 +503,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(120, 280):             # 150, 230
-        for X in range(220,290):           # 230, 260
+    for Y in range(ny):             # 150, 230
+        for X in range(nx):           # 230, 260
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
@@ -547,8 +547,8 @@ if __name__ == "__main__":
             hi = 1040
             n_process = disp_processors * 2
         else:
-            hi = 600
-            n_process = disp_processors * 3 
+            hi = 375
+            n_process = disp_processors * 3
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
         id = 1
