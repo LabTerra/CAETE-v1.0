@@ -414,8 +414,8 @@ if __name__ == "__main__":
     print('init caete --- %d = npls' % npls, end='---> ')
     print(time.ctime())
     # loop que cria as instâncias de gridcell e atribui os seus valores de input
-    for Y in range(130, 250):         # <<--- mude aqui para diminuir o numero de celulas de grid
-        for X in range(200, 280):     # <<--- aqui tb. Para Amazônia (ragião de Manaus) ny(140-190), nx(230, 260)
+    for Y in range(ny):         # <<--- mude aqui para diminuir o numero de celulas de grid
+        for X in range(nx):     # <<--- aqui tb. Para Amazônia (ragião de Manaus) ny(140-190), nx(230, 260)
             if not mask[Y][X]:  # apenas na terra (mask is true for ocean, false for land)
                 id_n += 1
                 grd_cell = gridcell(X, Y)
