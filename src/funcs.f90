@@ -1336,7 +1336,7 @@ contains
     real(kind=r4) :: gama, gama2
     
     
-    ra = rcmin
+    ra = 100. !rcmin
     h5 = 0.0275               !mb-1
     
     !     Delta
