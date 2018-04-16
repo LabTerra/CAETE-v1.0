@@ -190,8 +190,8 @@ contains
     ta = temp(k)
     pr = prec(k)
     ipar = (par(k) * 0.7)/2.18e5
-!    ru = rhs(k) / 100. # J.P. Darela
-     ru = 0.685 !tentativa de deixar rh constante
+    ru = rhs(k) / 100. # J.P. Darela
+!     ru = 0.685 !tentativa de deixar rh constante
 
     !     Monthly water budget
     !     ====================
