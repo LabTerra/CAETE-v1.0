@@ -1363,7 +1363,7 @@ contains
        !     Real evapotranspiration
        !     -----------------------     
        evap = (delta* rn + (1.20*1004./ra)*delta_e)/(delta+gama2) !W/m2
-       evap = evap*(86400./2.45e6) !mm/day
+       evap = 3.0 !evap*(86400./2.45e6) !mm/day
        evap = amax1(evap,0.)  !Eliminates condensation
     endif
   end function penman
