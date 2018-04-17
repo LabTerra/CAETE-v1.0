@@ -70,9 +70,8 @@ contains
     f4sun = f_four(1,cleaf,sla)
     f4shade = f_four(2,cleaf,sla)
     ph = 0.012*31557600.0*f1*f4sun*f4shade
-     if (ph.lt.0.0) then
-      ph = 3.5
-     endif  
+     
+      
       
   end function gross_ph
   
@@ -1366,8 +1365,7 @@ contains
        !     Real evapotranspiration
        !     -----------------------     
        evap = (delta* rn + (1.20*1004./ra)*delta_e)/(delta+gama2) !W/m2
-!       evap = evap*(86400./2.45e6) !mm/day
-       evap = 3.0 !teste para células vazias
+       evap = evap*(86400./2.45e6) !mm/day
        evap = amax1(evap,0.)  !Eliminates condensation
     endif
   end function penman
