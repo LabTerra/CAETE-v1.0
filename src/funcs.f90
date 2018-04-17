@@ -70,7 +70,10 @@ contains
     f4sun = f_four(1,cleaf,sla)
     f4shade = f_four(2,cleaf,sla)
     ph = 0.012*31557600.0*f1*f4sun*f4shade
-
+     if (ph.lt.0.0) then
+      ph = 3.5
+     endif  
+      
   end function gross_ph
   
   !=================================================================
@@ -1208,13 +1211,9 @@ contains
    scl2 = real(scl2_128,r4)
    
    
- !  if(scl2_128 .lt. 1e-12) scl2 = 0.0
- !  if(scf2_128 .lt. 1e-12) scf2 = 0.0
- !  if(sca2_128 .lt. 1e-12) sca2 = 0.0
-
-   if(scl2_128 .lt. 1e-12) scl2 = 10.0 !testando as células vazias
-   if(scf2_128 .lt. 1e-12) scf2 = 10.0 !testando as células vazias
-   if(sca2_128 .lt. 1e-12) sca2 = 10.0 !testando as células vazias
+   if(scl2_128 .lt. 1e-12) scl2 = 0.0
+   if(scf2_128 .lt. 1e-12) scf2 = 0.0
+   if(sca2_128 .lt. 1e-12) sca2 = 0.0
 
    if(scl2 .le. 0.0 .and. scf2 .le. 0.0) endpls = .true.
    
