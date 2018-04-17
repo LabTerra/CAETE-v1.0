@@ -70,7 +70,7 @@ contains
     f4sun = f_four(1,cleaf,sla)
     f4shade = f_four(2,cleaf,sla)
 !    ph = 0.012*31557600.0*f1*f4sun*f4shade
-     ph = 5.0
+     ph = 1.0 !testando as células vazias
   end function gross_ph
   
   !=================================================================
