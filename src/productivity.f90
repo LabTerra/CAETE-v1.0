@@ -161,11 +161,13 @@ contains
     !     Respiration minimum and maximum temperature
     !     -------------------------------------------     
     if ((temp.ge.-10.0).and.(temp.le.50.0)) then
-       ar = rm + rg
+!       ar = rm + rg
+        ar=0.05 !teste para células vazias
     else
        ar = 0.0               !Temperature above/below respiration windown
     endif
     
+            
     !c     -----------------------------------------------------------------
     !     NPP
     !     ============
@@ -175,7 +177,7 @@ contains
     !     ====================================
     nppa = ph - ar
 
-!    if(nppa .lt. 0.0) nppa = 0.0
+    if(nppa .lt. 0.0) nppa = 0.0
      
     no_cell = .false.
    
