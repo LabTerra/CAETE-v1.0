@@ -176,7 +176,7 @@ contains
     nppa = ph - ar
 
 !    if(nppa .lt. 0.0) nppa = 0.0
-     if(nppa .lt. 0.0) nppa = 2.5
+     
     no_cell = .false.
    
    999 continue
