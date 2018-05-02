@@ -581,9 +581,12 @@ contains
 
     csai =  (beta_awood * 0.05)
    
-    rgl64 = 1.25 * beta_leaf  
-    rgf64 =  1.25 * beta_froot 
-    rgs64 =  1.25 * csai 
+  !  rgl64 = 1.25 * beta_leaf  
+  !  rgf64 =  1.25 * beta_froot 
+  !  rgs64 =  1.25 * csai 
+    rgl64 =  0.25 * beta_leaf  
+    rgf64 =  0.25 * beta_froot 
+    rgs64 =  0.25 * csai 
 !=======
     
     rg64 = (rgl64 + rgf64 + rgs64)/1e3
