@@ -41,7 +41,7 @@ module photo
        pft_area_frac          ,& ! area fraction by biomass
        pft_par                ,& ! aux subroutine to read pls data
        pft_par2               ,&
-       spinup3                ,& ! auxiliar spinup for cveg pools
+       spinup3                 ,&
        spinup                 ,&
        ascii2bin              ,&
        ascii2bin2             ,&
@@ -70,9 +70,7 @@ contains
     f4sun = f_four(1,cleaf,sla)
     f4shade = f_four(2,cleaf,sla)
     ph = 0.012*31557600.0*f1*f4sun*f4shade
-     
-      
-      
+    
   end function gross_ph
   
   !=================================================================
@@ -492,13 +490,12 @@ contains
   !====================================================================
 
   
-  function m_resp(ts,temp,cl1,cf1,ca1) result(rm)
+  function m_resp(temp,cl1,cf1,ca1) result(rm)
     use types, only: r4,r8
     use global_pars, only: ncl,ncf,ncs
     implicit none
 
     real(kind=r4), intent(in) :: temp
-    real(kind=r4), intent(in) :: ts
     real(kind=r4), intent(in) :: cl1
     real(kind=r4), intent(in) :: cf1
     real(kind=r4), intent(in) :: ca1
@@ -525,7 +522,7 @@ contains
 
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
  
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*ts))
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp))
 
     rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
 !<<<<<<< HEAD
@@ -584,9 +581,6 @@ contains
     rgl64 = 1.25 * beta_leaf  
     rgf64 =  1.25 * beta_froot 
     rgs64 =  1.25 * csai 
-      
-     
-     
 !=======
     
     rg64 = (rgl64 + rgf64 + rgs64)/1e3

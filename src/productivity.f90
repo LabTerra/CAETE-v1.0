@@ -26,7 +26,7 @@ module productivity
 
 contains
   
-  subroutine prod(dt,light_limit,ts,temp,p0,w,&
+  subroutine prod(dt,light_limit,temp,p0,w,&
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
        beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
        rm,rg,rc,wue) ! outputs
@@ -46,7 +46,6 @@ contains
     real(kind=r4),dimension(ntraits),intent(in) :: dt
 
     real(kind=r4), intent(in) :: temp                 !Mean monthly temperature (oC)
-    real(kind=r4), intent(in) :: ts                   !Mean monthly soil temperature (oC)
     real(kind=r4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r4), intent(in) :: w                    !Soil moisture (dimensionless)
     real(kind=r4), intent(in) :: ipar                 !Incident photosynthetic active radiation (w/m2)'
@@ -148,7 +147,7 @@ contains
     !     Autothrophic respiration
     !     ========================
     !     Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
-    rm = m_resp(ts,temp,cl1,cf1,ca1)
+    rm = m_resp(temp,cl1,cf1,ca1)
   
     ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
     ! c     2003; Levis et al. 2004)         
@@ -167,7 +166,6 @@ contains
        ar = 0.0               !Temperature above/below respiration windown
     endif
     
-            
     !c     -----------------------------------------------------------------
     !     NPP
     !     ============
@@ -178,7 +176,7 @@ contains
     nppa = ph - ar
 
     if(nppa .lt. 0.0) nppa = 0.0
-     
+
     no_cell = .false.
    
    999 continue
