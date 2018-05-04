@@ -521,11 +521,11 @@ contains
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
+    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.03*temp))
  
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*ts))
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.03*ts))
 
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.03*temp))
 !<<<<<<< HEAD
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
 !=======
