@@ -189,7 +189,7 @@ contains
     td = tsoil(k)
     ta = temp(k)
     pr = prec(k)
-    ipar = (par(k) * 0.7)/2.18e5
+    ipar = (par(k) * 0.5)/2.18e5
     ru = rhs(k) / 100.
 
     !     Monthly water budget

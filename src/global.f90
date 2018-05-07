@@ -48,9 +48,9 @@ module global_pars
   real(kind=r8),parameter :: alfm = 1.391
   real(kind=r8),parameter :: gm = 3.26 * 86400  !(*86400 transform s/mm to dia/mm)
 
-  real(kind=r8),parameter :: ncl = 0.008 !(1.0/29.0)          !(gN/gC) from lpj3 
-  real(kind=r8),parameter :: ncf = 0.008 !(1.0/29.0)          !(gN/gC)
-  real(kind=r8),parameter :: ncs = 0.002!(1.0/330.0)         !(gN/gC)
+  real(kind=r8),parameter :: ncl = (1.0/29.0)          !(gN/gC) from lpj3 
+  real(kind=r8),parameter :: ncf = (1.0/29.0)          !(gN/gC)
+  real(kind=r8),parameter :: ncs = (1.0/330.0)         !(gN/gC)
 
 !  integer(kind=i4) :: ndmonth(12)       !Number of months
 !  data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
