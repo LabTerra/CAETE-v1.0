@@ -283,10 +283,10 @@ contains
        do kk=1,nt
           wsaux1 = wsoilt(kk) + gsoilt(kk)   
           dwww = (wsaux1 - wg0(kk)) / wmax
-          if (abs(dwww).gt. 1e-3) nerro = nerro + 1
+          if (abs(dwww).gt. 1e-2) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
-       if(c_change .gt. 0.05) then
+       if(c_change .gt. 0.03) then
           nerro = 1
           carbon_test = land_c
        endif

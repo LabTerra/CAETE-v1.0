@@ -228,7 +228,7 @@ contains
           dt1 = dt(:,p)
           ocp = ocp_coeffs(p)
           
-          call prod(dt1,OCP_WOOD(P),temp,p0,w(p)&
+          call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
                &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ocp,ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))

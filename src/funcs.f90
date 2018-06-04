@@ -485,12 +485,12 @@ contains
   !====================================================================
 
   
-  function m_resp(temp,cl1,cf1,ca1) result(rm)
+  function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
     use types, only: r_4,r_8
     use global_pars, only: ncl,ncf,ncs
     implicit none
 
-    real(kind=r_4), intent(in) :: temp
+    real(kind=r_4), intent(in) :: temp, tsoil
     real(kind=r_4), intent(in) :: cl1
     real(kind=r_4), intent(in) :: cf1
     real(kind=r_4), intent(in) :: ca1
@@ -508,7 +508,7 @@ contains
  
     rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp))
 
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
