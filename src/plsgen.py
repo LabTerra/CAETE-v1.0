@@ -26,7 +26,7 @@ from caete_module import global_pars as gp
 
 npls = gp.npls
 
-def vec_ranging(vec, min1, max1):
+def vec_ranging(vec, min1, max1): #def informs Python that you're defining a function
     """ range vec to min max"""
 
     return vec * ((max1 - min1) + min1)

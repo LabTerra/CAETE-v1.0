@@ -48,9 +48,9 @@ contains
     real(kind=r4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
     real(kind=r4),dimension(npft),intent(in) :: g1 !Initial soil ice storage (mm)
     real(kind=r4),dimension(npft),intent(in) :: s1 !Initial overland snow storage (mm)
-    real(kind=r4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS cleaf compartment
-    real(kind=r4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
-    real(kind=r4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
+    real(kind=r4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS leaf compartment
+    real(kind=r4),dimension(npft),intent(inout) :: cf1_pft  !                 fine roots
+    real(kind=r4),dimension(npft),intent(inout) :: ca1_pft  !                 aboveground wood
     
     real(kind=r4),intent(in) :: ts                   !Soil temperature (oC)
     real(kind=r4),intent(in) :: temp                 !Surface air temperature (oC)
