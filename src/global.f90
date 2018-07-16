@@ -59,7 +59,7 @@ module global_pars
   integer(kind=i4),parameter :: ntimes = 12
   integer(kind=i4),parameter :: ntraits = 8
 
-  integer(kind=i4),parameter :: nx = 720, ny = 360
+  integer(kind=i4),parameter :: nx = 239, ny = 183 !original: nx=720, ny=360
   
 end module global_pars
 
