@@ -1,4 +1,4 @@
-./build.sh
+
 from caete import *
 import matplotlib.pyplot as plt
 
@@ -9,8 +9,12 @@ grd1=gridcell(239,183)
 init_caete(grd1)
 run_model(grd1)
 
-input('which variable do you want to see? ')
+print('vocẽ esta vendo photo, aresp e npp ')
 plt.plot(grd1.photo.sum(0,))
+plt.plot(grd1.aresp.sum(0,))
+plt.plot(grd1.npp.sum(0,))
+
+plt.show()
 
 
 

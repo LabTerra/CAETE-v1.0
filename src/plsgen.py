@@ -54,11 +54,11 @@ def turnover_combinations(verbose=False):
     """CREATE the residence time and allocation combinations"""
 
     # constrained distributions (must sum up to 1.)
-    aleafw = np.arange(15., 86.0, 0.25)
-    aleafg = np.arange(15., 86.0, 0.25)
-    arootw = np.arange(15., 86.0, 0.25)
-    arootg = np.arange(15., 86.0, 0.25)
-    awood = np.arange(15., 86.0, 0.25)
+    aleafw = np.arange(5., 91.0, 1.25)
+    aleafg = np.arange(5., 91.0, 1.25)
+    arootw = np.arange(5., 91.0, 1.25)
+    arootg = np.arange(5., 91.0, 1.25)
+    awood = np.arange(5., 91.0, 1.25)
 
     plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
                    if (a + c) == 100.0]
