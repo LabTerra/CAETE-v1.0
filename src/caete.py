@@ -256,7 +256,7 @@ def catch_nt(input_file, nx, ny, pixel_depht):
     input_file = flat binary (from fortran unfformated output)filename
     nx = (int) number of columns
     ny = (int) number of rows
-    pixel_depth = (int) stride length in bits
+    pixel_depth = (int) stride length in bitsGridcell
     returns nt = number of layers(records) stored in input_file"""
 
     image_size = (nx * ny * (pixel_depht / 8)) / 1024 # in bytes
@@ -491,8 +491,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(ny):             # 150, 230
-        for X in range(nx):           # 230, 260
+    for Y in range(140,190):             # 150, 230
+        for X in range(230,260):           # 230, 260
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
