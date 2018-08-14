@@ -169,6 +169,7 @@ contains
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
     leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
     sla = (3e-2 * (365.0/leaf_turnover)**(-0.46))     
+
     
   end function spec_leaf_area
   
@@ -951,7 +952,7 @@ contains
    ! ===========================================================
    ! ===========================================================
 
-   subroutine spinup3(nppot,dt,cleafini,cfrootini,cawoodini)
+   subroutine spinup3(nppot,dt,cleafini,cfrootini,cawoodini) !testa se a combinação de alocação e turnover é viavel
       use types
       use global_pars, only: ntraits,npls
       implicit none
@@ -1164,8 +1165,8 @@ contains
     real(kind=rbig) :: scf2_128 = 0.0, sca2_128 = 0.0, scl2_128 = 0.0
     
     real(kind=r4) :: aleaf             !npp percentage allocated compartment
-    real(kind=r4) :: aawood
-    real(kind=r4) :: afroot
+    real(kind=r4) :: aawood 
+    real(kind=r4) :: afroot 
     real(kind=r4) :: tleaf             !turnover time (yr)
     real(kind=r4) :: tawood
     real(kind=r4) :: tfroot            

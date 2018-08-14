@@ -175,6 +175,7 @@ contains
     !     Net primary productivity(kgC/m2/yr)
     !     ====================================
     nppa = ph - ar
+  
 
     if(nppa .lt. 0.0) nppa = 0.0
 

@@ -36,7 +36,7 @@ def check_viability(trait_values):
     """ check the viability of allocation(a) &  residence time(ŧ) combinations"""
 
     rtur = np.array(model.spinup3(0.01, trait_values))
-    if rtur[0] <= 0.01 or rtur[1] <= 0.01:
+    if rtur[0] <= 0.01 or rtur[1] <= 0.01: #rtur recebe o carbono nas folhas, raízes e troncos
         return False
     return True
 
@@ -58,7 +58,7 @@ def turnover_combinations(verbose=False):
     aleafg = np.arange(5., 91.0, 1.25)
     arootw = np.arange(5., 91.0, 1.25)
     arootg = np.arange(5., 91.0, 1.25)
-    awood = np.arange(5., 91.0, 1.25)
+    awood = np.arange(5., 81.0, 1.25)
 
     plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
                    if (a + c) == 100.0]
@@ -88,9 +88,9 @@ def table_gen(NPLS):
         restime[1] = 0.0
         restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
-        if check_viability(data_to_test0):
-            alloc_g.append(data_to_test0)
-            index0 += 1
+        #if check_viability(data_to_test0):
+        alloc_g.append(data_to_test0)
+        index0 += 1
 
     index1 = 0
     while index1 < diffw:
@@ -100,9 +100,9 @@ def table_gen(NPLS):
         restime[1] = vec_ranging(np.random.beta(1, 3), 1, 80.0)
         restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
-        if check_viability(data_to_test1):
-            alloc_w.append(data_to_test1)
-            index1 += 1
+       # if check_viability(data_to_test1):
+        alloc_w.append(data_to_test1)
+        index1 += 1
 
     alloc_g = np.array(alloc_g)
     alloc_w = np.array(alloc_w)

@@ -35,14 +35,14 @@ module global_pars
   use types
   implicit none
 
-  real(kind=r4),parameter :: H = 1.0                         ! soil layer thickness (meters)
+  real(kind=r4),parameter :: H = 1.0             ! soil layer thickness (meters)
   real(kind=r4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
   real(kind=r4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
   real(kind=r4),parameter :: rcmax = 450.0
   real(kind=r4),parameter :: rcmin = 100.0
   real(kind=r4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r4),parameter :: wmax = 500.0
-  real(kind=r4),parameter :: cmin = 5e-3
+  real(kind=r4),parameter :: cmin = 5e-4 !minimum of carbon to a trait combination be valid
   
   real(kind=r8),parameter :: csru = 0.5
   real(kind=r8),parameter :: alfm = 1.391
