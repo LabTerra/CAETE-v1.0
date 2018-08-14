@@ -36,6 +36,7 @@ module global_pars
   implicit none
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   real(kind=r4),parameter :: H = 1.0             ! soil layer thickness (meters)
   real(kind=r4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
   real(kind=r4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
@@ -45,6 +46,8 @@ module global_pars
   real(kind=r4),parameter :: wmax = 500.0
   real(kind=r4),parameter :: cmin = 5e-3 !minimum of carbon to a trait combination be valid
 =======
+=======
+>>>>>>> uppstream/master
   real(kind=r_4),parameter :: H = 1.0                         ! soil layer thickness (meters)
   real(kind=r_4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
   real(kind=r_4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
@@ -53,6 +56,9 @@ module global_pars
   real(kind=r_4),parameter :: ca = 550.0 ! ppmv - atm[CO2]
   real(kind=r_4),parameter :: wmax = 500.0
   real(kind=r_4),parameter :: cmin = 5e-3
+<<<<<<< HEAD
+>>>>>>> uppstream/master
+=======
 >>>>>>> uppstream/master
   
   real(kind=r_8),parameter :: csru = 0.5
@@ -67,11 +73,19 @@ module global_pars
   data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   integer(kind=i4),parameter :: npls = 1000 
   integer(kind=i4),parameter :: ntimes = 12
   integer(kind=i4),parameter :: ntraits = 8
 
   integer(kind=i4),parameter :: nx = 720, ny = 360 ! original: nx=720, ny=360 
+=======
+  integer(kind=i_4),parameter :: npls = 1000
+  integer(kind=i_4),parameter :: ntimes = 12
+  integer(kind=i_4),parameter :: ntraits = 8
+
+  integer(kind=i_4),parameter :: nx = 720, ny = 360
+>>>>>>> uppstream/master
 =======
   integer(kind=i_4),parameter :: npls = 1000
   integer(kind=i_4),parameter :: ntimes = 12

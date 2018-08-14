@@ -36,8 +36,13 @@ def check_viability(trait_values):
     """ check the viability of allocation(a) &  residence time(ŧ) combinations"""
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     rtur = np.array(model.spinup3(0.01, trait_values))
     if rtur[0] <= 0.01 or rtur[1] <= 0.01: #rtur recebe o carbono nas folhas, raízes e troncos
+=======
+    rtur = np.array(model.spinup3(0.1, trait_values))
+    if rtur[0] <= 0.001 or rtur[1] <= 0.001:
+>>>>>>> uppstream/master
 =======
     rtur = np.array(model.spinup3(0.1, trait_values))
     if rtur[0] <= 0.001 or rtur[1] <= 0.001:

@@ -27,7 +27,11 @@ module productivity
 contains
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   subroutine prod(dt,light_limit,ts,temp,p0,w,&
+=======
+  subroutine prod(dt,light_limit,temp,ts,p0,w,&
+>>>>>>> uppstream/master
 =======
   subroutine prod(dt,light_limit,temp,ts,p0,w,&
 >>>>>>> uppstream/master
@@ -50,6 +54,7 @@ contains
     real(kind=r_4),dimension(ntraits),intent(in) :: dt
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     real(kind=r4), intent(in) :: temp                 !Mean monthly temperature (oC)
     real(kind=r4), intent(in) :: ts                   !Mean monthly soil temperature (oC)
     real(kind=r4), intent(in) :: p0                   !Mean surface pressure (hPa)
@@ -63,6 +68,8 @@ contains
     real(kind=r4), intent(in) :: ocprod
     logical, intent(in) :: light_limit                !True for no ligth limitation
 =======
+=======
+>>>>>>> uppstream/master
     real(kind=r_4), intent(in) :: temp,ts                 !Mean monthly temperature (oC)
     real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
@@ -74,6 +81,9 @@ contains
     real(kind=r_4), intent(in) :: beta_froot
     real(kind=r_4), intent(in) :: ocprod
     logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
+<<<<<<< HEAD
+>>>>>>> uppstream/master
+=======
 >>>>>>> uppstream/master
     
     !     Output
