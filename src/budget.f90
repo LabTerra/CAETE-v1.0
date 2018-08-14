@@ -37,103 +37,104 @@ contains
     use productivity
     
     implicit none
-    integer(kind=i4),parameter :: npft = npls
+    integer(kind=i_4),parameter :: npft = npls
     
     
     !     ----------------------------INPUTS-------------------------------
     !
     
-    integer(kind=i4),intent(in) :: month             !Actual month (1-12)
-    real(kind=r4),dimension(ntraits,npft),intent(in) :: dt
-    real(kind=r4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
-    real(kind=r4),dimension(npft),intent(in) :: g1 !Initial soil ice storage (mm)
-    real(kind=r4),dimension(npft),intent(in) :: s1 !Initial overland snow storage (mm)
-    real(kind=r4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS cleaf compartment
-    real(kind=r4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
-    real(kind=r4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
+    integer(kind=i_4),intent(in) :: month             !Actual month (1-12)
+    real(kind=r_4),dimension(ntraits,npft),intent(in) :: dt
+    real(kind=r_4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
+    real(kind=r_4),dimension(npft),intent(in) :: g1 !Initial soil ice storage (mm)
+    real(kind=r_4),dimension(npft),intent(in) :: s1 !Initial overland snow storage (mm)
+    real(kind=r_4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS cleaf compartment
+    real(kind=r_4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
+    real(kind=r_4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
     
-    real(kind=r4),intent(in) :: ts                   !Soil temperature (oC)
-    real(kind=r4),intent(in) :: temp                 !Surface air temperature (oC)
-    real(kind=r4),intent(in) :: prec                 !Precipitation (mm/day)
-    real(kind=r4),intent(in) :: p0                   !Surface pressure (mb)
-    real(kind=r4),intent(in) :: ipar                 !Incident photosynthetic active radiation
-    real(kind=r4),intent(in) :: rh                   !Relative humidity
+    real(kind=r_4),intent(in) :: ts                   !Soil temperature (oC)
+    real(kind=r_4),intent(in) :: temp                 !Surface air temperature (oC)
+    real(kind=r_4),intent(in) :: prec                 !Precipitation (mm/day)
+    real(kind=r_4),intent(in) :: p0                   !Surface pressure (mb)
+    real(kind=r_4),intent(in) :: ipar                 !Incident photosynthetic active radiation Einsten m-2 s-1 
+    real(kind=r_4),intent(in) :: rh                   !Relative humidity
     
     !     ----------------------------OUTPUTS------------------------------
-    real(kind=r4),intent(out) :: epavg                          !Maximum evapotranspiration monthly average (mm/day)
-    real(kind=r4),intent(out),dimension(npft) :: w2             !Final (last day) soil moisture storage (mm)
-    real(kind=r4),intent(out),dimension(npft) :: g2             !Final soil ice storage (mm)
-    real(kind=r4),intent(out),dimension(npft) :: s2             !Final overland snow storage (mm)
-    real(kind=r4),intent(out),dimension(npft) :: smavg          !Snowmelt monthly average (mm/day)
-    real(kind=r4),intent(out),dimension(npft) :: ruavg          !Runoff monthly average (mm/day)
-    real(kind=r4),intent(out),dimension(npft) :: evavg          !Actual evapotranspiration monthly average (mm/day)
-    real(kind=r4),intent(out),dimension(npft) :: phavg          !Monthly photosynthesis
-    real(kind=r4),intent(out),dimension(npft) :: aravg          !Monthly autotrophic respiration
-    real(kind=r4),intent(out),dimension(npft) :: nppavg         !Monthly NPP (average between PFTs)
-    real(kind=r4),intent(out),dimension(npft) :: laiavg         !Monthly leaf area Index
-    real(kind=r4),intent(out),dimension(npft) :: clavg          !Monthly carbon litter
-    real(kind=r4),intent(out),dimension(npft) :: csavg          !Monthly carbon soil
-    real(kind=r4),intent(out),dimension(npft) :: hravg          !Monthly heterotrophic respiration
-    real(kind=r4),intent(out),dimension(npft) :: rcavg          !Monthly canopy resistence
-    real(kind=r4),intent(out),dimension(npft) :: rmavg,rgavg    !maintenance/growth respiration
-    real(kind=r4),intent(out),dimension(npft) :: cleafavg_pft   !Carbon in plant tissues
-    real(kind=r4),intent(out),dimension(npft) :: cawoodavg_pft 
-    real(kind=r4),intent(out),dimension(npft) :: cfrootavg_pft
-    real(kind=r4),intent(out),dimension(npft) :: ocpavg
-    real(kind=r4),intent(out),dimension(npft) :: wueavg,cueavg
+    real(kind=r_4),intent(out) :: epavg                          !Maximum evapotranspiration monthly average (mm/day)
+    real(kind=r_4),intent(out),dimension(npft) :: w2             !Final (last day) soil moisture storage (mm)
+    real(kind=r_4),intent(out),dimension(npft) :: g2             !Final soil ice storage (mm)
+    real(kind=r_4),intent(out),dimension(npft) :: s2             !Final overland snow storage (mm)
+    real(kind=r_4),intent(out),dimension(npft) :: smavg          !Snowmelt monthly average (mm/day)
+    real(kind=r_4),intent(out),dimension(npft) :: ruavg          !Runoff monthly average (mm/day)
+    real(kind=r_4),intent(out),dimension(npft) :: evavg          !Actual evapotranspiration monthly average (mm/day)
+    real(kind=r_4),intent(out),dimension(npft) :: phavg          !Monthly photosynthesis
+    real(kind=r_4),intent(out),dimension(npft) :: aravg          !Monthly autotrophic respiration
+    real(kind=r_4),intent(out),dimension(npft) :: nppavg         !Monthly NPP (average between PFTs)
+    real(kind=r_4),intent(out),dimension(npft) :: laiavg         !Monthly leaf area Index
+    real(kind=r_4),intent(out),dimension(npft) :: clavg          !Monthly carbon litter
+    real(kind=r_4),intent(out),dimension(npft) :: csavg          !Monthly carbon soil
+    real(kind=r_4),intent(out),dimension(npft) :: hravg          !Monthly heterotrophic respiration
+    real(kind=r_4),intent(out),dimension(npft) :: rcavg          !Monthly canopy resistence
+    real(kind=r_4),intent(out),dimension(npft) :: rmavg,rgavg    !maintenance/growth respiration
+    real(kind=r_4),intent(out),dimension(npft) :: cleafavg_pft   !Carbon in plant tissues
+    real(kind=r_4),intent(out),dimension(npft) :: cawoodavg_pft 
+    real(kind=r_4),intent(out),dimension(npft) :: cfrootavg_pft
+    real(kind=r_4),intent(out),dimension(npft) :: ocpavg
+    real(kind=r_4),intent(out),dimension(npft) :: wueavg,cueavg
     !     -----------------------Internal Variables------------------------
-    integer(kind=i4) :: p ,i
+    integer(kind=i_4) :: p ,i
     
-    real(kind=r4),dimension(npft) :: alfa_leaf, alfa_awood, alfa_froot
-    real(kind=r4),dimension(npft) :: beta_leaf, beta_awood, beta_froot
+    real(kind=r_4),dimension(npft) :: alfa_leaf, alfa_awood, alfa_froot
+    real(kind=r_4),dimension(npft) :: beta_leaf, beta_awood, beta_froot
 
-    real(kind=r4),dimension(ntraits) :: dt1
+    real(kind=r_4),dimension(ntraits) :: dt1
     
     !     RELATED WITH GRIDCELL OCUPATION
     
-    real(kind=r4),dimension(npft) :: ocp_coeffs,ocp_mm
-    logical(kind=l1),dimension(npft) :: ocp_wood
+    real(kind=r_4),dimension(npft) :: ocp_coeffs,ocp_mm
+    logical(kind=l_1),dimension(npft) :: ocp_wood
 
     !     WBM COMMUNICATION (water balance)
-    real(kind=r4) :: tsnow                !Temperature threshold for snowfall (oC)
-    real(kind=r4) :: tice                 !Temperature threshold for soil freezing (oC)
-    real(kind=r4) :: psnow                !Snowfall (mm/day)
-    real(kind=r4) :: prain                !Rainfall (mm/day)
-    real(kind=r4) :: emax
+    real(kind=r_4) :: tsnow                !Temperature threshold for snowfall (oC)
+    real(kind=r_4) :: tice                 !Temperature threshold for soil freezing (oC)
+    real(kind=r_4) :: psnow                !Snowfall (mm/day)
+    real(kind=r_4) :: prain                !Rainfall (mm/day)
+    real(kind=r_4) :: emax
     
-    real(kind=r4),dimension(npft) :: rimelt               !Runoff due to soil ice melting
-    real(kind=r4),dimension(npft) :: smelt                !Snowmelt (mm/day)
-    real(kind=r4),dimension(npft) :: w                    !Daily soil moisture storage (mm)
-    real(kind=r4),dimension(npft) :: g                    !Daily soil ice storage (mm)
-    real(kind=r4),dimension(npft) :: s                    !Daily overland snow storage (mm)
-    real(kind=r4),dimension(npft) :: ds  
-    real(kind=r4),dimension(npft) :: dw  
-    real(kind=r4),dimension(npft) :: roff                 !Total runoff
-    real(kind=r4),dimension(npft) :: evap                !Actual evapotranspiration (mm/day)
+    real(kind=r_4),dimension(npft) :: rimelt               !Runoff due to soil ice melting
+    real(kind=r_4),dimension(npft) :: smelt                !Snowmelt (mm/day)
+    real(kind=r_4),dimension(npft) :: w                    !Daily soil moisture storage (mm)
+    real(kind=r_4),dimension(npft) :: g                    !Daily soil ice storage (mm)
+    real(kind=r_4),dimension(npft) :: s                    !Daily overland snow storage (mm)
+    real(kind=r_4),dimension(npft) :: ds  
+    real(kind=r_4),dimension(npft) :: dw  
+    real(kind=r_4),dimension(npft) :: roff                 !Total runoff
+    real(kind=r_4),dimension(npft) :: evap                !Actual evapotranspiration (mm/day)
 
         
     !c     Carbon Cycle
-    real(kind=r4),dimension(npft) ::  ph             !Canopy gross photosynthesis (kgC/m2/yr)
-    real(kind=r4),dimension(npft) ::  ar             !Autotrophic respiration (kgC/m2/yr)
-    real(kind=r4),dimension(npft) ::  nppa           !Net primary productivity / auxiliar
-    real(kind=r4),dimension(npft) ::  laia           !Leaf area index (m2 leaf/m2 area)
-    real(kind=r4),dimension(npft) ::  cl             !Litter carbon (kgC/m2)
-    real(kind=r4),dimension(npft) ::  cs             !Soil carbon (kgC/m2) 
-    real(kind=r4),dimension(npft) ::  hr             !Heterotrophic (microbial) respiration (kgC/m2/yr)
-    real(kind=r4),dimension(npft) ::  rc2            !Canopy resistence (s/m)
-    real(kind=r4),dimension(npft) ::  f1             !
-    real(kind=r4),dimension(npft) ::  f5             !Photosynthesis (mol/m2/s)
-    real(kind=r4),dimension(npft) ::  vpd            !Vapor Pressure deficit
-    real(kind=r4),dimension(npft) ::  rm             ! maintenance & growth a.resp
-    real(kind=r4),dimension(npft) ::  rg
-    real(kind=r4),dimension(npft) ::  wue, cue
-    real(kind=r4),dimension(npft) ::  cl1,cf1,ca1 ! carbon pre-allocation 
-    real(kind=r4),dimension(npft) ::  cl2,cf2,ca2 ! carbon pos-allocation
-    integer(kind=i4),dimension(12) :: ndmonth       !Number of months
-    logical(kind=l1) :: end_pls = .false., no_cell = .false.
-    real(kind=r4) :: ocp = 0
-
-    data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
+    real(kind=r_4),dimension(npft) ::  ph             !Canopy gross photosynthesis (kgC/m2/yr)
+    real(kind=r_4),dimension(npft) ::  ar             !Autotrophic respiration (kgC/m2/yr)
+    real(kind=r_4),dimension(npft) ::  nppa           !Net primary productivity / auxiliar
+    real(kind=r_4),dimension(npft) ::  laia           !Leaf area index (m2 leaf/m2 area)
+    real(kind=r_4),dimension(npft) ::  cl             !Litter carbon (kgC/m2)
+    real(kind=r_4),dimension(npft) ::  cs             !Soil carbon (kgC/m2) 
+    real(kind=r_4),dimension(npft) ::  hr             !Heterotrophic (microbial) respiration (kgC/m2/yr)
+    real(kind=r_4),dimension(npft) ::  rc2            !Canopy resistence (s/m)
+    real(kind=r_4),dimension(npft) ::  f1             !
+    real(kind=r_4),dimension(npft) ::  f5             !Photosynthesis (mol/m2/s)
+    real(kind=r_4),dimension(npft) ::  vpd            !Vapor Pressure deficit
+    real(kind=r_4),dimension(npft) ::  rm             ! maintenance & growth a.resp
+    real(kind=r_4),dimension(npft) ::  rg
+    real(kind=r_4),dimension(npft) ::  wue, cue
+    real(kind=r_4),dimension(npft) ::  cl1,cf1,ca1 ! carbon pre-allocation 
+    real(kind=r_4),dimension(npft) ::  cl2,cf2,ca2 ! carbon pos-allocation
+    logical(kind=l_1) :: end_pls = .false., no_cell = .false.
+    real(kind=r_4) :: ocp = 0
+    real(kind=r_4) :: ae
+  
+    !integer(kind=i_4),dimension(12) :: ndmonth       !Number of months
+    !data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
 
 
     do p = 1,npft
@@ -217,7 +218,8 @@ contains
        
        !     Maximum evapotranspiration   (emax)
        !     =================================
-       emax = evpot2(p0,temp,rh,available_energy(temp))
+       ae = ipar * 2.18e5 !W m-2 Can use available energy
+       emax = evpot2(p0, temp, rh, ae)
        
        !     Productivity (ph, aresp, vpd, rc2 & etc.) for each PFT
        !     =================================
@@ -226,7 +228,7 @@ contains
           dt1 = dt(:,p)
           ocp = ocp_coeffs(p)
           
-          call prod(dt1,OCP_WOOD(P),temp,p0,w(p)&
+          call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
                &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ocp,ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))
@@ -293,7 +295,7 @@ contains
              
              roff(p) = runoff(w(p)/wmax)       !Soil moisture runoff (roff, mm/day)
              
-             evap(p) = penman(p0,temp,rh,available_energy(temp),rc2(p)) !Actual evapotranspiration (evap, mm/day)
+             evap(p) = penman(p0, temp, rh, ae, rc2(p)) !Actual evapotranspiration (evap, mm/day)
              dw(p) = prain + smelt(p) - evap(p) - roff(p)
              w(p) = w(p) + dw(p)
              if (w(p).gt.wmax) then
