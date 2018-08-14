@@ -189,19 +189,7 @@ contains
     td = tsoil(k)
     ta = temp(k)
     pr = prec(k)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    ipar = (par(k) * 0.5)/2.18e5 !modificado de 0.7 para 0.5
-=======
     ipar = par(k) / 2.18e5
->>>>>>> uppstream/master
-=======
-    ipar = par(k) / 2.18e5
->>>>>>> uppstream/master
-=======
-    ipar = par(k) / 2.18e5
->>>>>>> origrepo/master
     ru = rhs(k) / 100.
 
     !     Monthly water budget

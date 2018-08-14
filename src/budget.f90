@@ -43,19 +43,7 @@ contains
     !     ----------------------------INPUTS-------------------------------
     !
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-    integer(kind=i4),intent(in) :: month             !Actual month (1-12)
-    real(kind=r4),dimension(ntraits,npft),intent(in) :: dt
-    real(kind=r4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
-    real(kind=r4),dimension(npft),intent(in) :: g1 !Initial soil ice storage (mm)
-    real(kind=r4),dimension(npft),intent(in) :: s1 !Initial overland snow storage (mm)
-    real(kind=r4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS leaf compartment
-    real(kind=r4),dimension(npft),intent(inout) :: cf1_pft  !                 fine roots
-    real(kind=r4),dimension(npft),intent(inout) :: ca1_pft  !                 aboveground wood
-=======
-=======
->>>>>>> origrepo/master
+
     integer(kind=i_4),intent(in) :: month             !Actual month (1-12)
     real(kind=r_4),dimension(ntraits,npft),intent(in) :: dt
     real(kind=r_4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
@@ -64,10 +52,7 @@ contains
     real(kind=r_4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS cleaf compartment
     real(kind=r_4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
     real(kind=r_4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
-<<<<<<< HEAD
->>>>>>> uppstream/master
-=======
->>>>>>> origrepo/master
+
     
     real(kind=r_4),intent(in) :: ts                   !Soil temperature (oC)
     real(kind=r_4),intent(in) :: temp                 !Surface air temperature (oC)
@@ -245,15 +230,8 @@ contains
           dt1 = dt(:,p)
           ocp = ocp_coeffs(p)
           
-<<<<<<< HEAD
-<<<<<<< HEAD
-          call prod(dt1,OCP_WOOD(P),ts,temp,p0,w(p)&
-=======
+
           call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
->>>>>>> uppstream/master
-=======
-          call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
->>>>>>> origrepo/master
                &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ocp,ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))

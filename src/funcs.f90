@@ -486,41 +486,17 @@ contains
   !====================================================================
 
   
-<<<<<<< HEAD
-<<<<<<< HEAD
-  function m_resp(ts,temp,cl1,cf1,ca1) result(rm)
-    use types, only: r4,r8
-    use global_pars, only: ncl,ncf,ncs
-    implicit none
 
-    real(kind=r4), intent(in) :: temp
-    real(kind=r4), intent(in) :: ts
-    real(kind=r4), intent(in) :: cl1
-    real(kind=r4), intent(in) :: cf1
-    real(kind=r4), intent(in) :: ca1
-    real(kind=r4) :: rm
-=======
   function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
     use types, only: r_4,r_8
     use global_pars, only: ncl,ncf,ncs
     implicit none
 
-=======
-  function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
-    use types, only: r_4,r_8
-    use global_pars, only: ncl,ncf,ncs
-    implicit none
-
->>>>>>> origrepo/master
     real(kind=r_4), intent(in) :: temp, tsoil
     real(kind=r_4), intent(in) :: cl1
     real(kind=r_4), intent(in) :: cf1
     real(kind=r_4), intent(in) :: ca1
     real(kind=r_4) :: rm
-<<<<<<< HEAD
->>>>>>> uppstream/master
-=======
->>>>>>> origrepo/master
     
     real(kind=r_8) :: csa, rm64, rml64, rmf64, rms64
     
@@ -530,44 +506,11 @@ contains
 
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-!<<<<<<< HEAD
-!<<<<<<< HEAD
-!    rml64 = ((ncl * cl1) * 27. * exp(0.07*temp))/1e3
-! 
-!    rmf64 = ((ncf * cf1) * 27. * exp(0.07*temp))/1e3
-!
-!    rms64 = ((ncs * csa) * 27. * exp(0.07*temp))/1e3
-!=======
-!=======
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
-    !decrease the temperature's sensibility
-=======
-=======
->>>>>>> origrepo/master
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
->>>>>>> uppstream/master
- 
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.03*ts)) !the value 0.03 is originally 0.07, but I used 0.03 to
-    !decrease the temperature's sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp)) 
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
-    !decrease the temperature's sensibility
-!<<<<<<< HEAD
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-!=======
-!>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-=======
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
->>>>>>> uppstream/master
-=======
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
->>>>>>> origrepo/master
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -1198,27 +1141,14 @@ contains
     !real(kind=r_4),intent(out) :: bio_litter
     real(kind=rbig) :: scf2_128 = 0.0, sca2_128 = 0.0, scl2_128 = 0.0
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-    real(kind=r4) :: aleaf             !npp percentage allocated compartment
-    real(kind=r4) :: aawood 
-    real(kind=r4) :: afroot 
-    real(kind=r4) :: tleaf             !turnover time (yr)
-    real(kind=r4) :: tawood
-    real(kind=r4) :: tfroot            
-=======
-=======
->>>>>>> origrepo/master
+
     real(kind=r_4) :: aleaf             !npp percentage allocated compartment
     real(kind=r_4) :: aawood
     real(kind=r_4) :: afroot
     real(kind=r_4) :: tleaf             !turnover time (yr)
     real(kind=r_4) :: tawood
     real(kind=r_4) :: tfroot            
-<<<<<<< HEAD
->>>>>>> uppstream/master
-=======
->>>>>>> origrepo/master
+
     
     tleaf  = dt(3)
     tawood = dt(4)

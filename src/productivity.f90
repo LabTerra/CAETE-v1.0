@@ -26,19 +26,8 @@ module productivity
 
 contains
   
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  subroutine prod(dt,light_limit,ts,temp,p0,w,&
-=======
+
   subroutine prod(dt,light_limit,temp,ts,p0,w,&
->>>>>>> uppstream/master
-=======
-  subroutine prod(dt,light_limit,temp,ts,p0,w,&
->>>>>>> uppstream/master
-=======
-  subroutine prod(dt,light_limit,temp,ts,p0,w,&
->>>>>>> origrepo/master
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
        beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
        rm,rg,rc,wue) ! outputs
@@ -57,26 +46,6 @@ contains
 
     real(kind=r_4),dimension(ntraits),intent(in) :: dt
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    real(kind=r4), intent(in) :: temp                 !Mean monthly temperature (oC)
-    real(kind=r4), intent(in) :: ts                   !Mean monthly soil temperature (oC)
-    real(kind=r4), intent(in) :: p0                   !Mean surface pressure (hPa)
-    real(kind=r4), intent(in) :: w                    !Soil moisture (dimensionless)
-    real(kind=r4), intent(in) :: ipar                 !Incident photosynthetic active radiation (w/m2)'
-    real(kind=r4), intent(in) :: rh,emax              !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
-    real(kind=r4), intent(in) :: cl1, cf1, ca1        !Carbon in plant tissues (kg/m2)
-    real(kind=r4), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)
-    real(kind=r4), intent(in) :: beta_awood
-    real(kind=r4), intent(in) :: beta_froot
-    real(kind=r4), intent(in) :: ocprod
-    logical, intent(in) :: light_limit                !True for no ligth limitation
-=======
-=======
->>>>>>> uppstream/master
-=======
->>>>>>> origrepo/master
     real(kind=r_4), intent(in) :: temp,ts                 !Mean monthly temperature (oC)
     real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
@@ -88,14 +57,7 @@ contains
     real(kind=r_4), intent(in) :: beta_froot
     real(kind=r_4), intent(in) :: ocprod
     logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> uppstream/master
-=======
->>>>>>> uppstream/master
-=======
->>>>>>> origrepo/master
-    
+
     !     Output
     !     ------
     real(kind=r_4), intent(out) :: ph                   !Canopy gross photosynthesis (kgC/m2/yr)
