@@ -56,16 +56,16 @@ contains
 
   function gross_ph(f1,cleaf,sla) result(ph)
     ! Returns gross photosynthesis rate (kgC m-2 y-1) 
-    use types, only: r4
+    use types, only: r_4
     implicit none
 
-    real(kind=r4),intent(in) :: f1    !mol(CO2) m-2 s-1 ≃ 1 cm s-1 == 100 mm s-1    
-    real(kind=r4),intent(in) :: cleaf !kgC m-2 
-    real(kind=r4),intent(in) :: sla   !m2 kgC-1
-    real(kind=r4) :: ph
+    real(kind=r_4),intent(in) :: f1    !mol(CO2) m-2 s-1 ≃ 1 cm s-1 == 100 mm s-1    
+    real(kind=r_4),intent(in) :: cleaf !kgC m-2 
+    real(kind=r_4),intent(in) :: sla   !m2 kgC-1
+    real(kind=r_4) :: ph
     
-    real(kind=r4) :: f4sun
-    real(kind=r4) :: f4shade
+    real(kind=r_4) :: f4sun
+    real(kind=r_4) :: f4shade
     
     f4sun = f_four(1,cleaf,sla)
     f4shade = f_four(2,cleaf,sla)
@@ -79,15 +79,15 @@ contains
   function leaf_area_index(cleaf,sla) result(lai)
     ! Returns Leaf Area Index m2 m-2
     
-    use types, only: r4
+    use types, only: r_4
     implicit none
     
-    real(kind=r4),intent(in) :: cleaf !kgC m-2 
-    real(kind=r4),intent(in) :: sla   !m2 kgC-1
-    real(kind=r4) :: lai
+    real(kind=r_4),intent(in) :: cleaf !kgC m-2 
+    real(kind=r_4),intent(in) :: sla   !m-2 gC-1
+    real(kind=r_4) :: lai
     
     
-    lai  = (cleaf * 1e3) * sla 
+    lai  = cleaf  * (sla * 1000.0) ! Transform  m2 g-1 in m2 Kg-1   
    
   end function leaf_area_index
   
@@ -95,53 +95,47 @@ contains
   !=================================================================
   
   function f_four(fs,cleaf,sla) result(lai_ss)
-    use types, only: i4, r4, r8
+    use types, only: i_4, r_4, r_8
     use photo_par, only: p26, p27
     implicit none
     
-    integer(kind=i4),intent(in) :: fs !function mode 1 == f4sun; 2 == f4shade; >2 == f4
+    integer(kind=i_4),intent(in) :: fs !function mode 1 == f4sun; 2 == f4shade; >2 == f4
     
-    real(kind=r4),intent(in) :: cleaf ! carbon in leaf (kg m-2)
-    real(kind=r4),intent(in) :: sla   ! specific leaf area (m2 kgC-1)
-    real(kind=r4) :: lai_ss           ! leaf area index (m2 m-2)
+    real(kind=r_4),intent(in) :: cleaf ! carbon in leaf (kg m-2)
+    real(kind=r_4),intent(in) :: sla   ! specific leaf area (m2 kgC-1)
+    real(kind=r_4) :: lai_ss           ! leaf area index (m2 m-2)
     
-    real(kind=r4) :: lai
-    real(kind=r8) :: sunlai
-    real(kind=r8) :: shadelai
+    real(kind=r_4) :: lai
+    real(kind=r_8) :: sunlai
+    real(kind=r_8) :: shadelai
     
     lai = leaf_area_index(cleaf,sla)
     
     sunlai = (1.0-(exp(-p26*lai)))/p26
-    lai_ss = real(sunlai,r4)
+    lai_ss = real(sunlai,r_4)
     if (fs .eq. 90) then
         return
     endif
 
     shadelai = lai - sunlai
     if (fs .eq. 20) then
-        lai_ss = real(shadelai, kind=r4)
+        lai_ss = real(shadelai, kind=r_4)
         return
     endif
-    
+
     !Scaling-up to canopy level (dimensionless)
     !------------------------------------------
-    lai_ss = real(sunlai,r4)  ! to be used for heterothrophic respiration
-    
-    if(fs .eq. 3) then 
-       return
-    endif
-   
     !Sun/Shade approach to canopy scaling !Based in de Pury & Farquhar (1997)
     !------------------------------------------------------------------------
     if(fs .eq. 1) then
        ! f4sun
-       lai_ss = real((1.0-(exp(-p26*sunlai)))/p26,r4) !sun 90 degrees
+       lai_ss = real((1.0-(exp(-p26*sunlai)))/p26,r_4) !sun 90 degrees
        return
     endif
-    
+
     if(fs .eq. 2) then
        !f4shade
-       lai_ss = real((1.0-(exp(-p27*shadelai)))/p27,r4) !sun ~20 degrees
+       lai_ss = real((1.0-(exp(-p27*shadelai)))/p27,r_4) !sun ~20 degrees
        return
     endif
   end function f_four
@@ -151,23 +145,23 @@ contains
   
   function spec_leaf_area(tau_leaf) result(sla)
     ! based on JeDi DGVM 
-    use types, only : r4
+    use types, only : r_4
     implicit none
     
-    real(kind=r4),intent(in) :: tau_leaf  !KgC m-2 y-1
-    real(kind=r4) :: sla   !m2 kgC-1
+    real(kind=r_4),intent(in) :: tau_leaf  !KgC m-2 y-1
+    real(kind=r_4) :: sla   !m2 kgC-1
     
-    real(kind=r4) :: leaf_t_months
-    real(kind=r4) :: leaf_t_coeff
-    real(kind=r4) :: leaf_turnover
+    real(kind=r_4) :: leaf_t_months
+    real(kind=r_4) :: leaf_t_coeff
+    real(kind=r_4) :: leaf_turnover
     
     leaf_t_months = tau_leaf*12. ! turnover time in months
     leaf_t_coeff = leaf_t_months/100. !1 - 100 months == ~ 1/12 to 8.3 years (TRY-kattge et al. 2011; Jedi-Pavlick 2012) 
 !<<<<<<< HEAD
-!    leaf_turnover =  (365.0/12.0) * exp(1.8*leaf_t_coeff)
+    leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-    leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
+  !  leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
     sla = (3e-2 * (365.0/leaf_turnover)**(-0.46))     
 
     
@@ -177,22 +171,22 @@ contains
   !=================================================================
   
   function water_stress_modifier(w, cfroot, rc, ep) result(f5)
-    use types, only: r4, r8
+    use types, only: r_4, r_8
     use global_pars, only: csru, wmax, alfm, gm, rcmin
     implicit none
     
-    real(kind=r4),intent(in) :: w      !soil water mm
-    real(kind=r4),intent(in) :: cfroot !carbon in fine roots kg m-2
-    real(kind=r4),intent(in) :: rc     !Canopy resistence 1/(micromol(CO2) m-2 s-1)
-    real(kind=r4),intent(in) :: ep     !potential evapotranspiration
-    real(kind=r4) :: f5
+    real(kind=r_4),intent(in) :: w      !soil water mm
+    real(kind=r_4),intent(in) :: cfroot !carbon in fine roots kg m-2
+    real(kind=r_4),intent(in) :: rc     !Canopy resistence 1/(micromol(CO2) m-2 s-1)
+    real(kind=r_4),intent(in) :: ep     !potential evapotranspiration
+    real(kind=r_4) :: f5
     
     
-    real(kind=r8) :: pt
-    real(kind=r8) :: gc
-    real(kind=r8) :: wa
-    real(kind=r8) :: d
-    real(kind=r8) :: f5_64
+    real(kind=r_8) :: pt
+    real(kind=r_8) :: gc
+    real(kind=r_8) :: wa
+    real(kind=r_8) :: d
+    real(kind=r_8) :: f5_64
     
     wa = w/wmax
     
@@ -224,21 +218,21 @@ contains
     ! return stomatal resistence based on Medlyn et al. 2011a
     ! Coded by Helena Alves do Prado & João Paulo Darela Filho
 
-    use types, only: r4 ,r8
+    use types, only: r_4 ,r_8
     use global_pars, only: ca
 
 
     !implicit none
 
-    real(r4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
-    real(r4),intent(in) :: vpd_in   !hPa
-    real(r4),intent(in) :: g1       ! model m (slope) (sqrt(kPa))
-    real(r4) :: rc2_in              !Canopy resistence (sm-1)
+    real(r_4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
+    real(r_4),intent(in) :: vpd_in   !hPa
+    real(r_4),intent(in) :: g1       ! model m (slope) (sqrt(kPa))
+    real(r_4) :: rc2_in              !Canopy resistence (sm-1)
 
     !     Internal
     !     --------
-    real(r8) :: gs       !Canopy conductance (molCO2 m-2 s-1)
-    real(r8) :: D1       !sqrt(kPA)
+    real(r_8) :: gs       !Canopy conductance (molCO2 m-2 s-1)
+    real(r_8) :: D1       !sqrt(kPA)
 
     ! Assertion
     if(vpd_in .le. 0.0) then
@@ -248,7 +242,8 @@ contains
 
     D1 = sqrt(vpd_in)
     gs = 0.001 + 1.6 * (1.0 + (g1/D1)) * ((f1_in * 1e6)/ca)
-    rc2_in = real(1/(gs/41.0), r4)  ! transform µmol m-2 s-1 to s m-1 
+    ! rc2_in = real(1./gs, r_4)
+    rc2_in = real(1.0 / (gs / 41.0), r_4)  ! transform mmol m-2 s-1 to s m-1 
   end function canopy_resistence
   
   !=================================================================
@@ -256,24 +251,24 @@ contains
   
 !   function canopy_resistence(vpd_in,f1_in,g1) result(rc2_in)
 !     ! return stomatal resistence based on Medlyn et al. 2011a
-!     use types, only: r4 ,r8
+!     use types, only: r_4 ,r_8
 !     use global_pars, only: ca, rcmax, rcmin
     
 !     implicit none
     
-!     real(kind=r4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
-!     real(kind=r4),intent(in) :: vpd_in   !hPa
-!     real(kind=r4),intent(in) :: g1      
-!     real(kind=r4) :: rc2_in              !Canopy resistence (s/m)
+!     real(kind=r_4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
+!     real(kind=r_4),intent(in) :: vpd_in   !hPa
+!     real(kind=r_4),intent(in) :: g1      
+!     real(kind=r_4) :: rc2_in              !Canopy resistence (s/m)
     
 !     !     Internal
 !     !     --------
-!     real(kind=r8) :: f1b      !Photosynthesis (µmolCO2/m2/s)
-!     real(kind=r8) :: gs2      !Canopy conductance (s/m)
-!     real(kind=r8) :: gs       !Canopy RESISTENCE (molCO2/m2/s)
-!     real(kind=r8) :: g0       !MINIMUM stomatal conductance FITTED PARAMETER (DIMENSIONLESS)
-!     real(kind=r8) :: D1       !kPA
-!     real(kind=r8) :: aa
+!     real(kind=r_8) :: f1b      !Photosynthesis (µmolCO2/m2/s)
+!     real(kind=r_8) :: gs2      !Canopy conductance (s/m)
+!     real(kind=r_8) :: gs       !Canopy RESISTENCE (molCO2/m2/s)
+!     real(kind=r_8) :: g0       !MINIMUM stomatal conductance FITTED PARAMETER (DIMENSIONLESS)
+!     real(kind=r_8) :: D1       !kPA
+!     real(kind=r_8) :: aa
     
 !     f1b = f1_in * 1e6        ! mol 2 µmol : conversion factor = 1e6
 !     aa = f1b / ca              
@@ -312,14 +307,14 @@ contains
   !=================================================================
 
   function water_ue(a, g, p0, vpd) result(wue)
-    use types, only: r4
+    use types, only: r_4
     implicit none
 
-    real(kind=r4),intent(in) :: a, g, p0, vpd
+    real(kind=r_4),intent(in) :: a, g, p0, vpd
     ! a = assimilacao; g = condutancia; p0 = pressao atm; vpd = vpd
-    real(kind=r4) :: wue
+    real(kind=r_4) :: wue
 
-    real(kind=r4) :: g_in, p0_in, e_in
+    real(kind=r_4) :: g_in, p0_in, e_in
     
     g_in = (1./g) * 41. ! convertendo a resistencia em condutancia mol m-2 s-1
     p0_in = p0 /10. ! convertendo pressao atm (mbar/hPa) em kPa
@@ -332,18 +327,18 @@ contains
   !=================================================================
 
   function vapor_p_defcit(t,rh) result(vpd_0)
-    use types, only: r4
+    use types, only: r_4
     implicit none
     
-    real(kind=r4),intent(in) :: t
-    real(kind=r4),intent(in) :: rh
+    real(kind=r_4),intent(in) :: t
+    real(kind=r_4),intent(in) :: rh
     
-    real(kind=r4) :: es
-    real(kind=r4) :: vpd_ac
-    real(kind=r4) :: vpd_0
+    real(kind=r_4) :: es
+    real(kind=r_4) :: vpd_ac
+    real(kind=r_4) :: vpd_0
     
     ! ext func
-    !real(kind=r4) :: tetens
+    !real(kind=r_4) :: tetens
     
     es = tetens(t)  
     !VPD-REAL = Actual vapor pressure
@@ -362,27 +357,27 @@ contains
     use photo_par
     implicit none
     
-    real(kind=r4),intent(in) :: vm
-    real(kind=r4),intent(in) :: temp
-    real(kind=r4),intent(in) :: p0
-    real(kind=r4),intent(in) :: ipar
-    logical(kind=l1),intent(in) :: ll
-    real(kind=r4) :: f1ab
+    real(kind=r_4),intent(in) :: vm
+    real(kind=r_4),intent(in) :: temp
+    real(kind=r_4),intent(in) :: p0
+    real(kind=r_4),intent(in) :: ipar
+    logical(kind=l_1),intent(in) :: ll
+    real(kind=r_4) :: f1ab
         
 
-    real(kind=r8) :: f2,f3            !Michaelis-Menten CO2/O2 constant (Pa)
-    real(kind=r8) :: mgama,vm_in           !Photo-respiration compensation point (Pa)
-    real(kind=r8) :: rmax, r
-    real(kind=r8) :: ci
-    real(kind=r8) :: jp1
-    real(kind=r8) :: jp2
-    real(kind=r8) :: jp
-    real(kind=r8) :: jc
-    real(kind=r8) :: jl
-    real(kind=r8) :: je
-    real(kind=r8) :: b,c,c2,b2,es,j1,j2
-    real(kind=r8) :: delta, delta2,aux_ipar
-    real(kind=r8) :: f1a
+    real(kind=r_8) :: f2,f3            !Michaelis-Menten CO2/O2 constant (Pa)
+    real(kind=r_8) :: mgama,vm_in           !Photo-respiration compensation point (Pa)
+    real(kind=r_8) :: rmax, r
+    real(kind=r_8) :: ci
+    real(kind=r_8) :: jp1
+    real(kind=r_8) :: jp2
+    real(kind=r_8) :: jp
+    real(kind=r_8) :: jc
+    real(kind=r_8) :: jl
+    real(kind=r_8) :: je
+    real(kind=r_8) :: b,c,c2,b2,es,j1,j2
+    real(kind=r_8) :: delta, delta2,aux_ipar
+    real(kind=r_8) :: f1a
     
     !============================================================
     vm_in = (vm*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0))) 
@@ -397,7 +392,7 @@ contains
     f3 = p14*(p15**(p10*(temp-p11)))
 
     !Saturation vapour pressure (hPa)
-    es = real(tetens(temp), kind=r8)
+    es = real(tetens(temp), kind=r_8)
     
     !Saturated mixing ratio (kg/kg)     
     rmax = 0.622*(es/(p0-es))
@@ -455,7 +450,7 @@ contains
        f1a = 0.0
     endif
 
-   f1ab = real(f1a,kind=r4)
+   f1ab = real(f1a,kind=r_4)
     
   end function photosynthesis_rate
 
@@ -470,11 +465,11 @@ contains
     ! Hartmann 1994 - Global Physical Climatology p.351
     ! https://en.wikipedia.org/wiki/Arden_Buck_equation#CITEREFBuck1996
     
-    use types, only: r4
+    use types, only: r_4
     implicit none
     
-    real(kind=r4),intent( in) :: t
-    real(kind=r4) :: es
+    real(kind=r_4),intent( in) :: t
+    real(kind=r_4) :: es
     
     if (t .ge. 0.) then
        es = 6.1121 * exp((18.678-(t/234.5))*(t/(257.14+t))) ! mbar == hPa
@@ -491,6 +486,7 @@ contains
   !====================================================================
 
   
+<<<<<<< HEAD
   function m_resp(ts,temp,cl1,cf1,ca1) result(rm)
     use types, only: r4,r8
     use global_pars, only: ncl,ncf,ncs
@@ -502,8 +498,20 @@ contains
     real(kind=r4), intent(in) :: cf1
     real(kind=r4), intent(in) :: ca1
     real(kind=r4) :: rm
+=======
+  function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
+    use types, only: r_4,r_8
+    use global_pars, only: ncl,ncf,ncs
+    implicit none
+
+    real(kind=r_4), intent(in) :: temp, tsoil
+    real(kind=r_4), intent(in) :: cl1
+    real(kind=r_4), intent(in) :: cf1
+    real(kind=r_4), intent(in) :: ca1
+    real(kind=r_4) :: rm
+>>>>>>> uppstream/master
     
-    real(kind=r8) :: csa, rm64, rml64, rmf64, rms64
+    real(kind=r_8) :: csa, rm64, rml64, rmf64, rms64
     
     !   Autothrophic respiration
     !   ========================
@@ -511,6 +519,7 @@ contains
 
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
+<<<<<<< HEAD
 !<<<<<<< HEAD
 !<<<<<<< HEAD
 !    rml64 = ((ncl * cl1) * 27. * exp(0.07*temp))/1e3
@@ -524,20 +533,27 @@ contains
 
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
+=======
+    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
+>>>>>>> uppstream/master
  
     rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.03*ts)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
 
+<<<<<<< HEAD
     rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
 !<<<<<<< HEAD
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
+=======
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
+>>>>>>> uppstream/master
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
-    rm = real(rm64,kind=r4)
+    rm = real(rm64,kind=r_4)
 
     if (rm.lt.0) then
        rm = 0.0
@@ -549,16 +565,16 @@ contains
   !====================================================================
   
   function g_resp(beta_leaf1,beta_awood1, beta_froot1) result(rg)
-    use types, only: r4,r8
+    use types, only: r_4,r_8
     implicit none
 
-    real(kind=r4), intent(in) :: beta_leaf1
-    real(kind=r4), intent(in) :: beta_froot1
-    real(kind=r4), intent(in) :: beta_awood1
-    real(kind=r4) :: rg
+    real(kind=r_4), intent(in) :: beta_leaf1
+    real(kind=r_4), intent(in) :: beta_froot1
+    real(kind=r_4), intent(in) :: beta_awood1
+    real(kind=r_4) :: rg
     
-    real(kind=r8) :: csai, rg64, rgl64, rgf64, rgs64
-    real(kind=r4) :: beta_leaf, beta_awood, beta_froot
+    real(kind=r_8) :: csai, rg64, rgl64, rgf64, rgs64
+    real(kind=r_4) :: beta_leaf, beta_awood, beta_froot
     
     !     Autothrophic respiration
     !     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
@@ -590,7 +606,7 @@ contains
     
     rg64 = (rgl64 + rgf64 + rgs64)/1e3
 
-    rg = real(rg64,kind=r4)
+    rg = real(rg64,kind=r_4)
     
     if (rg.lt.0) then
        rg = 0.0
@@ -610,22 +626,22 @@ contains
     !     =========
     !     Inputs
     !     ------
-    real(kind=r4),intent(in) :: tsoil                !Mean monthly soil temperature (oC)
-    real(kind=r4),intent(in) :: f5c                  !Stress response to soil moisture (dimensionless)
-    real(kind=r4),intent(in) :: evap                 !Actual evapotranspiration (mm/day)
-    real(kind=r4),intent(in) :: laia
-    !real(kind=r4),intent(in) :: d_litter
+    real(kind=r_4),intent(in) :: tsoil                !Mean monthly soil temperature (oC)
+    real(kind=r_4),intent(in) :: f5c                  !Stress response to soil moisture (dimensionless)
+    real(kind=r_4),intent(in) :: evap                 !Actual evapotranspiration (mm/day)
+    real(kind=r_4),intent(in) :: laia
+    !real(kind=r_4),intent(in) :: d_litter
     !     Outputs 
     !     -------
-    real(kind=r4),intent(out) :: cl                   !Litter carbon (kgC/m2)
-    real(kind=r4),intent(out) :: cs                   !Soil carbon (kgC/m2)
-    real(kind=r4),intent(out) :: hr                   !Heterotrophic (microbial) respiration (kgC/m2)
+    real(kind=r_4),intent(out) :: cl                   !Litter carbon (kgC/m2)
+    real(kind=r_4),intent(out) :: cs                   !Soil carbon (kgC/m2)
+    real(kind=r_4),intent(out) :: hr                   !Heterotrophic (microbial) respiration (kgC/m2)
     
     !     Internal
     !     --------
-    real(kind=r8) :: lf                   !Litterfall (kgC/m2)
-    real(kind=r8) :: f6                   !Litter decayment function
-    real(kind=r8) :: f7                   !Soil carbon storage function
+    real(kind=r_8) :: lf                   !Litterfall (kgC/m2)
+    real(kind=r_8) :: f6                   !Litter decayment function
+    real(kind=r_8) :: f7                   !Soil carbon storage function
     !     
     !     Initialize
     !     ----------
@@ -638,7 +654,7 @@ contains
     
     !     Litter decayment function                                             !Controlled by annual evapotranspiration
     !     -------------------------
-    f6 = 1.16*10.**(-1.4553+0.0014175*(evap*365.0))
+    f6 = 1.16 * 10.0**(-1.4553 + 0.0014175 * (evap * 365.0))
     
     !     Soil carbon storage function                                          !Controlled by temperature
     !     ----------------------------    
@@ -650,17 +666,17 @@ contains
     
     !     Litter carbon (kgC/m2)
     !     ----------------------  
-    cl = real(lf/f6, kind=r4)
+    cl = real(lf/f6, kind=r_4)
     
     !     Soil carbon(kgC/m2)
     !     -------------------
-    cs = real(((p34*cl)/(p35*f7))*f5c, kind=r4)
+    cs = real(((p34*cl)/(p35*f7))*f5c, kind=r_4)
     
     !     Respiration minimum and maximum temperature
     !     -------------------------------------------
     !     
     if ((tsoil.ge.-10.0).and.(tsoil.le.50.0)) then
-       hr = real(p36*(cl*(f6**2)+(cs*f5c*evap*(f7**2))),kind=r4) !Litter and Soil!respectively
+       hr = real(p36*(cl*(f6**2)+(cs*f5c*evap*(f7**2))),kind=r_4) !Litter and Soil!respectively
     else
        hr = 0.0               !Temperature above/below respiration windown
     endif
@@ -671,21 +687,21 @@ contains
   !====================================================================
   
   subroutine pft_area_frac(cleaf1, cfroot1, cawood1, ocp_coeffs, ocp_wood)
-    use types, only: l1, i4, r4
+    use types, only: l_1, i_4, r_4
     use global_pars, only: npls,cmin
     implicit none
     
-    integer(kind=i4),parameter :: npft = npls ! plss futuramente serao
+    integer(kind=i_4),parameter :: npft = npls ! plss futuramente serao
     
-    real(kind=r4),dimension(npft),intent( in) :: cleaf1, cfroot1, cawood1
-    real(kind=r4),dimension(npft),intent(out) :: ocp_coeffs
-    logical(kind=l1),dimension(npft),intent(out) :: ocp_wood
-    real(kind=r4),dimension(npft) :: total_biomass_pft,total_w_pft
-    integer(kind=i4) :: p,i
-    integer(kind=i4),dimension(1) :: max_index
-    real(kind=r4) :: total_biomass, total_wood
-    integer(kind=i4) :: five_percent
-    real(r4),dimension(npft) :: cleaf, cawood, cfroot
+    real(kind=r_4),dimension(npft),intent( in) :: cleaf1, cfroot1, cawood1
+    real(kind=r_4),dimension(npft),intent(out) :: ocp_coeffs
+    logical(kind=l_1),dimension(npft),intent(out) :: ocp_wood
+    real(kind=r_4),dimension(npft) :: total_biomass_pft,total_w_pft
+    integer(kind=i_4) :: p,i
+    integer(kind=i_4),dimension(1) :: max_index
+    real(kind=r_4) :: total_biomass, total_wood
+    integer(kind=i_4) :: five_percent
+    real(r_4),dimension(npft) :: cleaf, cawood, cfroot
 
     cleaf = cleaf1
     cfroot = cfroot1
@@ -768,12 +784,12 @@ contains
 
   subroutine pft_par(dt)
     ! pft_par agora retorna um array-shape(npls,ntraits)
-    use types, only: r4
+    use types, only: r_4
     use global_pars, only: ntraits, npls
     implicit none
 
     
-    real(kind=r4), dimension(npls,ntraits),intent(out) :: dt
+    real(kind=r_4), dimension(npls,ntraits),intent(out) :: dt
     
     ! ['g1','vcmax','tleaf','twood','troot','aleaf','awood','aroot']
     !     dt1 = g1
@@ -798,12 +814,12 @@ contains
 
     function pft_par2() result(dt)
     ! pft_par agora retorna um array-shape(par,npls)
-    use types, only: r4
+    use types, only: r_4
     use global_pars, only: ntraits, npls
     implicit none
 
 
-    real(kind=r4), dimension(ntraits,npls) :: dt
+    real(kind=r_4), dimension(ntraits,npls) :: dt
 
     ! ['g1','vcmax','tleaf','twood','troot','aleaf','awood','aroot']
     !     dt1 = g1
@@ -827,12 +843,12 @@ contains
   !====================================================================
 
    function test_dt(dt, i) result(dt1)
-   use types, only: i4, r4
+   use types, only: i_4, r_4
    use global_pars, only: npls, ntraits
    implicit none
-   integer(kind=i4),intent(in) ::  i
-   real(kind=r4),dimension(ntraits,npls),intent(in) :: dt
-   real(kind=r4),dimension(npls) :: dt1
+   integer(kind=i_4),intent(in) ::  i
+   real(kind=r_4),dimension(ntraits,npls),intent(in) :: dt
+   real(kind=r_4),dimension(npls) :: dt1
 
    dt1 = dt(i,:)
    
@@ -847,40 +863,40 @@ contains
       implicit none
 
       !parameters
-      integer(kind=i4),parameter :: ntl=36525
+      integer(kind=i_4),parameter :: ntl=36525
 
       ! inputs
-      integer(kind=i4) :: i6, kk, k
+      integer(kind=i_4) :: i6, kk, k
 
-      real(kind=r4),intent(in) :: nppot
-      real(kind=r4),dimension(ntraits, npls),intent(in) :: dt
+      real(kind=r_4),intent(in) :: nppot
+      real(kind=r_4),dimension(ntraits, npls),intent(in) :: dt
       ! intenal
-      real(kind=r4) :: sensitivity
-      real(kind=r4) :: nppot2
+      real(kind=r_4) :: sensitivity
+      real(kind=r_4) :: nppot2
       ! outputs
-      real(kind=r4),dimension(npls),intent(out) :: cleafini
-      real(kind=r4),dimension(npls),intent(out) :: cawoodini
-      real(kind=r4),dimension(npls),intent(out) :: cfrootini
+      real(kind=r_4),dimension(npls),intent(out) :: cleafini
+      real(kind=r_4),dimension(npls),intent(out) :: cawoodini
+      real(kind=r_4),dimension(npls),intent(out) :: cfrootini
 
       ! more internal
-      real(kind=r4),dimension(ntl) :: cleafi_aux
-      real(kind=r4),dimension(ntl) :: cfrooti_aux
-      real(kind=r4),dimension(ntl) :: cawoodi_aux
+      real(kind=r_4),dimension(ntl) :: cleafi_aux
+      real(kind=r_4),dimension(ntl) :: cfrooti_aux
+      real(kind=r_4),dimension(ntl) :: cawoodi_aux
 
-      real(kind=r4) :: aux_leaf
-      real(kind=r4) :: aux_wood
-      real(kind=r4) :: aux_root
-      real(kind=r4) :: out_leaf
-      real(kind=r4) :: out_wood
-      real(kind=r4) :: out_root
+      real(kind=r_4) :: aux_leaf
+      real(kind=r_4) :: aux_wood
+      real(kind=r_4) :: aux_root
+      real(kind=r_4) :: out_leaf
+      real(kind=r_4) :: out_wood
+      real(kind=r_4) :: out_root
 
-      real(kind=r4),dimension(npls) :: aleaf  !npp percentage alocated to leaf compartment
-      real(kind=r4),dimension(npls) :: aawood !npp percentage alocated to aboveground woody biomass compartment
-      real(kind=r4),dimension(npls) :: afroot !npp percentage alocated to fine roots compartmentc 
-      real(kind=r4),dimension(npls) :: tleaf  !turnover time of the leaf compartment (yr)
-      real(kind=r4),dimension(npls) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
-      real(kind=r4),dimension(npls) :: tfroot !turnover time of the fine roots compartment
-      logical(kind=l1) :: iswoody
+      real(kind=r_4),dimension(npls) :: aleaf  !npp percentage alocated to leaf compartment
+      real(kind=r_4),dimension(npls) :: aawood !npp percentage alocated to aboveground woody biomass compartment
+      real(kind=r_4),dimension(npls) :: afroot !npp percentage alocated to fine roots compartmentc 
+      real(kind=r_4),dimension(npls) :: tleaf  !turnover time of the leaf compartment (yr)
+      real(kind=r_4),dimension(npls) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
+      real(kind=r_4),dimension(npls) :: tfroot !turnover time of the fine roots compartment
+      logical(kind=l_1) :: iswoody
 
       ! catch 'C turnover' traits
       tleaf  = dt(3,:)
@@ -892,7 +908,7 @@ contains
 
       sensitivity = 1.0001
       if(nppot .le. 0.0) goto 200
-      nppot2 = nppot !/real(npls,kind=r4)
+      nppot2 = nppot !/real(npls,kind=r_4)
       do i6=1,npls
          iswoody = ((aawood(i6) .gt. 0.0) .and. (tawood(i6) .gt. 0.0))
          do k=1,ntl
@@ -958,40 +974,40 @@ contains
       implicit none
 
       !parameters
-      integer(kind=i4),parameter :: ntl=36525
+      integer(kind=i_4),parameter :: ntl=36525
 
       ! inputs
-      integer(kind=i4) :: kk, k
+      integer(kind=i_4) :: kk, k
 
-      real(kind=r4),intent(in) :: nppot
-      real(kind=r4),dimension(6),intent(in) :: dt
+      real(kind=r_4),intent(in) :: nppot
+      real(kind=r_4),dimension(6),intent(in) :: dt
       ! intenal
-      real(kind=r4) :: sensitivity
-      real(kind=r4) :: nppot2
+      real(kind=r_4) :: sensitivity
+      real(kind=r_4) :: nppot2
       ! outputs
-      real(kind=r4),intent(out) :: cleafini
-      real(kind=r4),intent(out) :: cawoodini
-      real(kind=r4),intent(out) :: cfrootini
+      real(kind=r_4),intent(out) :: cleafini
+      real(kind=r_4),intent(out) :: cawoodini
+      real(kind=r_4),intent(out) :: cfrootini
 
       ! more internal
-      real(kind=r4),dimension(ntl) :: cleafi_aux
-      real(kind=r4),dimension(ntl) :: cfrooti_aux
-      real(kind=r4),dimension(ntl) :: cawoodi_aux
+      real(kind=r_4),dimension(ntl) :: cleafi_aux
+      real(kind=r_4),dimension(ntl) :: cfrooti_aux
+      real(kind=r_4),dimension(ntl) :: cawoodi_aux
 
-      real(kind=r4) :: aux_leaf
-      real(kind=r4) :: aux_wood
-      real(kind=r4) :: aux_root
-      real(kind=r4) :: out_leaf
-      real(kind=r4) :: out_wood
-      real(kind=r4) :: out_root
+      real(kind=r_4) :: aux_leaf
+      real(kind=r_4) :: aux_wood
+      real(kind=r_4) :: aux_root
+      real(kind=r_4) :: out_leaf
+      real(kind=r_4) :: out_wood
+      real(kind=r_4) :: out_root
 
-      real(kind=r4) :: aleaf  !npp percentage alocated to leaf compartment
-      real(kind=r4) :: aawood !npp percentage alocated to aboveground woody biomass compartment
-      real(kind=r4) :: afroot !npp percentage alocated to fine roots compartmentc 
-      real(kind=r4) :: tleaf  !turnover time of the leaf compartment (yr)
-      real(kind=r4) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
-      real(kind=r4) :: tfroot !turnover time of the fine roots compartment
-      logical(kind=l1) :: iswoody
+      real(kind=r_4) :: aleaf  !npp percentage alocated to leaf compartment
+      real(kind=r_4) :: aawood !npp percentage alocated to aboveground woody biomass compartment
+      real(kind=r_4) :: afroot !npp percentage alocated to fine roots compartmentc 
+      real(kind=r_4) :: tleaf  !turnover time of the leaf compartment (yr)
+      real(kind=r_4) :: tawood !turnover time of the aboveground woody biomass compartment (yr)
+      real(kind=r_4) :: tfroot !turnover time of the fine roots compartment
+      logical(kind=l_1) :: iswoody
 
       ! catch 'C turnover' traits
       tleaf  = dt(1)
@@ -1005,7 +1021,7 @@ contains
 
       sensitivity = 1.001
       if(nppot .le. 0.0) goto 200
-      nppot2 = nppot !/real(npls,kind=r4)
+      nppot2 = nppot !/real(npls,kind=r_4)
       do k=1,ntl
          if (k.eq.1) then
             cleafi_aux (k) =  aleaf * nppot2
@@ -1068,11 +1084,11 @@ contains
     implicit none
     
     character*100, intent(in) :: file_in, file_out
-    integer(kind=i4),intent(in) :: nx1, ny1
+    integer(kind=i_4),intent(in) :: nx1, ny1
     
-    integer(kind=i4) :: i, j
+    integer(kind=i_4) :: i, j
     
-    real(kind=r4),allocatable,dimension(:,:) :: arr_in
+    real(kind=r_4),allocatable,dimension(:,:) :: arr_in
     
     allocate(arr_in(nx1,ny1))
     
@@ -1081,7 +1097,7 @@ contains
     
     
     open (unit=21,file=file_out,status='unknown',&
-         form='unformatted',access='direct',recl=nx1*ny1*r4)
+         form='unformatted',access='direct',recl=nx1*ny1*r_4)
     
     
     do j = 1, ny1 ! for each line do
@@ -1103,11 +1119,11 @@ contains
     implicit none
     
     character*100, intent(in) :: file_in, file_out
-    integer(kind=i4),intent(in) :: nx1, ny1
+    integer(kind=i_4),intent(in) :: nx1, ny1
     
-    integer(kind=i4) :: i, j
+    integer(kind=i_4) :: i, j
     
-    real(kind=r4),allocatable,dimension(:,:) :: arr_in
+    real(kind=r_4),allocatable,dimension(:,:) :: arr_in
     
     allocate(arr_in(ny1,nx1))
     
@@ -1116,7 +1132,7 @@ contains
     
     
     open (unit=21,file=file_out,status='unknown',&
-         form='unformatted',access='direct',recl=nx1*ny1*r4)
+         form='unformatted',access='direct',recl=nx1*ny1*r_4)
     
     
     do j = 1, ny1 ! for each line do
@@ -1147,29 +1163,38 @@ contains
     use global_pars, only: ntraits,npls,cmin
     implicit none
     
-    integer(kind=i4),parameter :: npfts = npls
+    integer(kind=i_4),parameter :: npfts = npls
     
     !     variables
-    real(kind=r4),dimension(ntraits),intent(in) :: dt
+    real(kind=r_4),dimension(ntraits),intent(in) :: dt
  
-    real(kind=r4),intent(in) :: npp   !potential npp (KgC/m2/yr)
+    real(kind=r_4),intent(in) :: npp   !potential npp (KgC/m2/yr)
     real(kind=rbig) :: npp_aux        !auxiliary variable to calculate potential npp in KgC/m2/day
-    real(kind=r4),intent( in) :: scl1 !previous day carbon content on leaf compartment (KgC/m2)
-    real(kind=r4),intent(out) :: scl2 !final carbon content on leaf compartment (KgC/m2)
-    real(kind=r4),intent( in) :: sca1 !previous day carbon content on aboveground woody biomass compartment(KgC/m2)
-    real(kind=r4),intent(out) :: sca2 !final carbon content on aboveground woody biomass compartment (KgC/m2)
-    real(kind=r4),intent( in) :: scf1 !previous day carbon content on fine roots compartment (KgC/m2)
-    real(kind=r4),intent(out) :: scf2 !final carbon content on fine roots compartment (KgC/m2)
-    logical(kind=l1),intent(out) :: endpls      
-    !real(kind=r4),intent(out) :: bio_litter
+    real(kind=r_4),intent( in) :: scl1 !previous day carbon content on leaf compartment (KgC/m2)
+    real(kind=r_4),intent(out) :: scl2 !final carbon content on leaf compartment (KgC/m2)
+    real(kind=r_4),intent( in) :: sca1 !previous day carbon content on aboveground woody biomass compartment(KgC/m2)
+    real(kind=r_4),intent(out) :: sca2 !final carbon content on aboveground woody biomass compartment (KgC/m2)
+    real(kind=r_4),intent( in) :: scf1 !previous day carbon content on fine roots compartment (KgC/m2)
+    real(kind=r_4),intent(out) :: scf2 !final carbon content on fine roots compartment (KgC/m2)
+    logical(kind=l_1),intent(out) :: endpls      
+    !real(kind=r_4),intent(out) :: bio_litter
     real(kind=rbig) :: scf2_128 = 0.0, sca2_128 = 0.0, scl2_128 = 0.0
     
+<<<<<<< HEAD
     real(kind=r4) :: aleaf             !npp percentage allocated compartment
     real(kind=r4) :: aawood 
     real(kind=r4) :: afroot 
     real(kind=r4) :: tleaf             !turnover time (yr)
     real(kind=r4) :: tawood
     real(kind=r4) :: tfroot            
+=======
+    real(kind=r_4) :: aleaf             !npp percentage allocated compartment
+    real(kind=r_4) :: aawood
+    real(kind=r_4) :: afroot
+    real(kind=r_4) :: tleaf             !turnover time (yr)
+    real(kind=r_4) :: tawood
+    real(kind=r_4) :: tfroot            
+>>>>>>> uppstream/master
     
     tleaf  = dt(3)
     tawood = dt(4)
@@ -1204,13 +1229,13 @@ contains
    scf2_128 = scf1 +(afroot * npp_aux)-(scf1 /(tfroot * 365.0))
    if(aawood .gt. 0.0) then
       sca2_128 = sca1 +(aawood * npp_aux)-(sca1/(tawood * 365.0))
-      sca2 = real(sca2_128,r4)
+      sca2 = real(sca2_128,r_4)
    else
       sca2 = 0.0
    endif
    
-   scf2 = real(scf2_128,r4)
-   scl2 = real(scl2_128,r4)
+   scf2 = real(scf2_128,r_4)
+   scl2 = real(scl2_128,r_4)
    
    
    if(scl2_128 .lt. 1e-12) scl2 = 0.0
@@ -1232,10 +1257,10 @@ contains
    use types
    implicit none
    
-   integer(kind=i4),intent(in) :: year
-   logical(kind=l1) :: is_leap
+   integer(kind=i_4),intent(in) :: year
+   logical(kind=l_1) :: is_leap
 
-   logical(kind=l1) :: by4, by100, by400
+   logical(kind=l_1) :: by4, by100, by400
 
    by4 = (mod(year,4) .eq. 0)
    by100 = (mod(year,100) .eq. 0)
@@ -1278,16 +1303,16 @@ contains
   use types
   use global_pars
   implicit none
-  integer(kind=i4),parameter :: m = ntimes
+  integer(kind=i_4),parameter :: m = ntimes
   
-  real(kind=r4),dimension(m), intent( in) :: temp ! future __ make temps an allocatable array
-  real(kind=r4),dimension(m), intent(out) :: tsoil
+  real(kind=r_4),dimension(m), intent( in) :: temp ! future __ make temps an allocatable array
+  real(kind=r_4),dimension(m), intent(out) :: tsoil
    
   ! internal vars
   
-  integer(kind=i4) :: n, k
-  real(kind=r4) :: t0 = 0.0
-  real(kind=r4) :: t1 = 0.0
+  integer(kind=i_4) :: n, k
+  real(kind=r_4) :: t0 = 0.0
+  real(kind=r_4) :: t1 = 0.0
 
   tsoil = -9999.0
 
@@ -1308,11 +1333,11 @@ contains
     use global_pars, only: H, TAU, DIFFU
     implicit none
     
-    real(kind=r4),intent( in) :: temp
-    real(kind=r4),intent( in) :: t0! future __ make temps an allocatable array
-    real(kind=r4) :: tsoil
+    real(kind=r_4),intent( in) :: temp
+    real(kind=r_4),intent( in) :: t0! future __ make temps an allocatable array
+    real(kind=r_4) :: tsoil
  
-    real(kind=r4) :: t1 = 0.0
+    real(kind=r_4) :: t1 = 0.0
     
     t1 = (t0*exp(-1.0/TAU) + (1.0 - exp(-1.0/TAU)))*temp
     tsoil = (t0 + t1)/2.0
@@ -1322,23 +1347,23 @@ contains
   !=================================================================
   
   function penman (spre,temp,ur,rn,rc2) result(evap)
-    use types, only: r4
+    use types, only: r_4
     use global_pars, only: rcmin, rcmax
     use photo, only: tetens
     implicit none
     
     
-    real(kind=r4),intent(in) :: spre                 !Surface pressure (mbar)
-    real(kind=r4),intent(in) :: temp                 !Temperature (oC)
-    real(kind=r4),intent(in) :: ur                   !Relative humidity (0-1,dimensionless)
-    real(kind=r4),intent(in) :: rn                   !Radiation balance (W/m2)
-    real(kind=r4),intent(in) :: rc2                  !Canopy resistence (s/m)
+    real(kind=r_4),intent(in) :: spre                 !Surface pressure (mbar)
+    real(kind=r_4),intent(in) :: temp                 !Temperature (oC)
+    real(kind=r_4),intent(in) :: ur                   !Relative humidity (0-1,dimensionless)
+    real(kind=r_4),intent(in) :: rn                   !Radiation balance (W/m2)
+    real(kind=r_4),intent(in) :: rc2                  !Canopy resistence (s/m)
     
-    real(kind=r4) :: evap                             !Evapotranspiration (mm/day)
+    real(kind=r_4) :: evap                             !Evapotranspiration (mm/day)
     !     Parameters
     !     ----------
-    real(kind=r4) :: ra, h5, t1, t2, es, es1, es2, delta_e, delta
-    real(kind=r4) :: gama, gama2
+    real(kind=r_4) :: ra, h5, t1, t2, es, es1, es2, delta_e, delta
+    real(kind=r_4) :: gama, gama2
     
     
     ra = rcmin
@@ -1377,11 +1402,11 @@ contains
   !=================================================================
 
   function available_energy(temp) result(ae)
-    use types, only: r4
+    use types, only: r_4
     implicit none
     
-    real(kind=r4),intent(in) :: temp
-    real(kind=r4) :: ae
+    real(kind=r_4),intent(in) :: temp
+    real(kind=r_4) :: ae
     
     ae = 2.895 * temp + 52.326 !from NCEP-NCAR Reanalysis data  
   end function  available_energy
@@ -1391,11 +1416,11 @@ contains
 
   
   function runoff(wa) result(roff)
-    use types, only: r4
+    use types, only: r_4
     implicit none
     
-    real(kind=r4),intent(in) :: wa
-    real(kind=r4):: roff
+    real(kind=r_4),intent(in) :: wa
+    real(kind=r_4):: roff
     
     !  roff = 38.*((w/wmax)**11.) ! [Eq. 10]
     roff = 11.5*((wa)**6.6) !from NCEP-NCAR Reanalysis data  
@@ -1405,25 +1430,25 @@ contains
   !=================================================================
   
   function evpot2 (spre,temp,ur,rn) result(evap) 
-    use types, only: r4
+    use types, only: r_4
     use global_pars, only: rcmin, rcmax
     use photo, only: tetens
     implicit none
     
     !     Inputs
     
-    real(kind=r4),intent(in) :: spre                 !Surface pressure (mb)
-    real(kind=r4),intent(in) :: temp                 !Temperature (oC)
-    real(kind=r4),intent(in) :: ur                   !Relative humidity (0-1,dimensionless)
-    real(kind=r4),intent(in) :: rn                   !Radiation balance (W/m2)
+    real(kind=r_4),intent(in) :: spre                 !Surface pressure (mb)
+    real(kind=r_4),intent(in) :: temp                 !Temperature (oC)
+    real(kind=r_4),intent(in) :: ur                   !Relative humidity (0-1,dimensionless)
+    real(kind=r_4),intent(in) :: rn                   !Radiation balance (W/m2)
     !     Output
     !     ------
     !     
-    real(kind=r4) :: evap                 !Evapotranspiration (mm/day)
+    real(kind=r_4) :: evap                 !Evapotranspiration (mm/day)
     !     Parameters
     !     ----------
-    real(kind=r4) :: ra, t1, t2, es, es1, es2, delta_e, delta
-    real(kind=r4) :: gama, gama2, rc
+    real(kind=r_4) :: ra, t1, t2, es, es1, es2, delta_e, delta
+    real(kind=r_4) :: gama, gama2, rc
     
     ra = rcmin            !s/m
     

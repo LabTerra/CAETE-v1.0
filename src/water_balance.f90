@@ -39,86 +39,86 @@ contains
     
     implicit none
     
-    integer(kind=i4),parameter :: q = npls 
-    integer(kind=i4),parameter :: nt = ntimes
+    integer(kind=i_4),parameter :: q = npls 
+    integer(kind=i_4),parameter :: nt = ntimes
   
     
     !     --------------------------I N P U T S----------------------------
-    real(kind=r4),dimension(ntraits, q),intent(in) :: dt
-    real(kind=r4),dimension(nt),intent(in) :: p0         !Atmospheric pressure (mb)
-    real(kind=r4),dimension(nt),intent(in) :: prec       !Precipitation (mm/month)
-    real(kind=r4),dimension(nt),intent(in) :: temp       !Temperature (oC)
-    real(kind=r4),dimension(nt),intent(in) :: par        !IPAR (Ein/m2/s)
-    real(kind=r4),dimension(nt),intent(in) :: rhs        !Relative humidity
+    real(kind=r_4),dimension(ntraits, q),intent(in) :: dt
+    real(kind=r_4),dimension(nt),intent(in) :: p0         !in Pa ->>>> transf Atmospheric pressure (mb)
+    real(kind=r_4),dimension(nt),intent(in) :: prec       !in kg m-2 s-1  ---> transform Precipitation (mm/month)
+    real(kind=r_4),dimension(nt),intent(in) :: temp       !Temperature (oC)
+    real(kind=r_4),dimension(nt),intent(in) :: par        !IPAR in W m-2 ->>> transform(Ein/m2/s)
+    real(kind=r_4),dimension(nt),intent(in) :: rhs        !Relative humidity
     
-    real(kind=r4),dimension(q),intent(in) ::  cleaf_ini  ! Initial carbon content in leaves (kg m-2)
-    real(kind=r4),dimension(q),intent(in) :: cawood_ini  ! Initial carbon content in aboveground wood (kg m-2)
-    real(kind=r4),dimension(q),intent(in) :: cfroot_ini  ! Initial carbon content in fineroots (kg m-2)
+    real(kind=r_4),dimension(q),intent(in) ::  cleaf_ini  ! Initial carbon content in leaves (kg m-2)
+    real(kind=r_4),dimension(q),intent(in) :: cawood_ini  ! Initial carbon content in aboveground wood (kg m-2)
+    real(kind=r_4),dimension(q),intent(in) :: cfroot_ini  ! Initial carbon content in fineroots (kg m-2)
     !     -----------------------------E N D-------------------------------
     
     !     -------------------------O U T P U T S---------------------------
     
-    real(kind=r4),dimension(nt),intent(out) :: tsoil       !soil temperature
-    real(kind=r4),dimension(nt),intent(out) :: emaxm        !Max.evapotranspiration (kg m-2 day-1)
+    real(kind=r_4),dimension(nt),intent(out) :: tsoil       !soil temperature
+    real(kind=r_4),dimension(nt),intent(out) :: emaxm        !Max.evapotranspiration (kg m-2 day-1)
     
-    real(kind=r4),dimension(q,nt),intent(out) :: photo_pft !Monthly photosynthesis   (kgC m-2)
-    real(kind=r4),dimension(q,nt),intent(out) :: aresp_pft !Monthly autotrophic res  (kgC m-2)
-    real(kind=r4),dimension(q,nt),intent(out) :: npp_pft   !Monthly net primary produ (kgC m-2)
+    real(kind=r_4),dimension(q,nt),intent(out) :: photo_pft !Monthly photosynthesis   (kgC m-2)
+    real(kind=r_4),dimension(q,nt),intent(out) :: aresp_pft !Monthly autotrophic res  (kgC m-2)
+    real(kind=r_4),dimension(q,nt),intent(out) :: npp_pft   !Monthly net primary produ (kgC m-2)
     
-    real(kind=r4),dimension(q,nt),intent(out) :: lai_pft      !Monthly leaf area index
-    real(kind=r4),dimension(q,nt),intent(out) :: clit_pft     !Monthly litter carbon
-    real(kind=r4),dimension(q,nt),intent(out) :: csoil_pft    !Monthly soil carbon
-    real(kind=r4),dimension(q,nt),intent(out) :: hresp_pft    !Monthly het resp  (kgC/m2)
-    real(kind=r4),dimension(q,nt),intent(out) :: rcm_pft 
-    real(kind=r4),dimension(q,nt),intent(out) :: runom_pft  !Runoff 
-    real(kind=r4),dimension(q,nt),intent(out) :: evapm_pft  !Actual evapotranspiration        
-    real(kind=r4),dimension(q,nt),intent(out) :: wsoil_pft  !Soil moisture (mm)
-    real(kind=r4),dimension(q,nt),intent(out) :: wue,cue
+    real(kind=r_4),dimension(q,nt),intent(out) :: lai_pft      !Monthly leaf area index
+    real(kind=r_4),dimension(q,nt),intent(out) :: clit_pft     !Monthly litter carbon
+    real(kind=r_4),dimension(q,nt),intent(out) :: csoil_pft    !Monthly soil carbon
+    real(kind=r_4),dimension(q,nt),intent(out) :: hresp_pft    !Monthly het resp  (kgC/m2)
+    real(kind=r_4),dimension(q,nt),intent(out) :: rcm_pft 
+    real(kind=r_4),dimension(q,nt),intent(out) :: runom_pft  !Runoff 
+    real(kind=r_4),dimension(q,nt),intent(out) :: evapm_pft  !Actual evapotranspiration        
+    real(kind=r_4),dimension(q,nt),intent(out) :: wsoil_pft  !Soil moisture (mm)
+    real(kind=r_4),dimension(q,nt),intent(out) :: wue,cue
     !c     NOVOS OUTPUTS DA BIANCA
-    real(kind=r4),dimension(q,nt),intent(out) :: rm_pft
-    real(kind=r4),dimension(q,nt),intent(out) :: rg_pft
-    real(kind=r4),dimension(q),intent(out) :: cleaf_pft   ! leaf biomass (KgC/m2)
-    real(kind=r4),dimension(q),intent(out) :: cawood_pft  ! aboveground wood biomass (KgC/m2)
-    real(kind=r4),dimension(q),intent(out) :: cfroot_pft  ! fine root biomass      
-    real(kind=r4),dimension(q),intent(out) :: grid_area   ! gridcell area fraction of pfts!
-    real(kind=r4),dimension(q),intent(out) :: grid_area0   ! gridcell area fraction of pfts!
+    real(kind=r_4),dimension(q,nt),intent(out) :: rm_pft
+    real(kind=r_4),dimension(q,nt),intent(out) :: rg_pft
+    real(kind=r_4),dimension(q),intent(out) :: cleaf_pft   ! leaf biomass (KgC/m2)
+    real(kind=r_4),dimension(q),intent(out) :: cawood_pft  ! aboveground wood biomass (KgC/m2)
+    real(kind=r_4),dimension(q),intent(out) :: cfroot_pft  ! fine root biomass      
+    real(kind=r_4),dimension(q),intent(out) :: grid_area   ! gridcell area fraction of pfts!
+    real(kind=r_4),dimension(q),intent(out) :: grid_area0   ! gridcell area fraction of pfts!
     !  c     --------------------------------E N D----------------------------
     
     !  c     ------------------------- internal variables---------------------
     
-    integer(kind=i4) :: k, kk, n, mes, nerro, p
+    integer(kind=i_4) :: k, kk, n, mes, nerro, p
     
-    real(kind=r4),dimension(nt) :: wg0        !Previous year soil moisture
-    real(kind=r4),dimension(nt) :: wsoilt     !soil water (check wbm equilibrium)
-    real(kind=r4),dimension(nt) :: gsoilt     !soil ice   (check wbm equilibrium)
-    real(kind=r4),dimension(q,nt) :: gsoil    !Soil ice 
-    real(kind=r4),dimension(q,nt) :: ssoil    !Soil snow
-    real(kind=r4),dimension(q,nt) :: snowm    !Snowmelt
+    real(kind=r_4),dimension(nt) :: wg0        !Previous year soil moisture
+    real(kind=r_4),dimension(nt) :: wsoilt     !soil water (check wbm equilibrium)
+    real(kind=r_4),dimension(nt) :: gsoilt     !soil ice   (check wbm equilibrium)
+    real(kind=r_4),dimension(q,nt) :: gsoil    !Soil ice 
+    real(kind=r_4),dimension(q,nt) :: ssoil    !Soil snow
+    real(kind=r_4),dimension(q,nt) :: snowm    !Snowmelt
     
-    real(kind=r4),dimension(q) :: sini,sfim
-    real(kind=r4),dimension(q) :: wini,wfim
-    real(kind=r4),dimension(q) :: gini,gfim
+    real(kind=r_4),dimension(q) :: sini,sfim
+    real(kind=r_4),dimension(q) :: wini,wfim
+    real(kind=r_4),dimension(q) :: gini,gfim
     
-    real(kind=r4),dimension(q) :: cleaf1_pft
-    real(kind=r4),dimension(q) :: cawood1_pft
-    real(kind=r4),dimension(q) :: cfroot1_pft
+    real(kind=r_4),dimension(q) :: cleaf1_pft
+    real(kind=r_4),dimension(q) :: cawood1_pft
+    real(kind=r_4),dimension(q) :: cfroot1_pft
     
-    real(kind=r4) :: epmes ! equal for all pfts - potential evapotranspiration(PET)(mm day-1)
-    real(kind=r4),dimension(q) :: rmes,phmes,smes,rcmes,hrmes
-    real(kind=r4),dimension(q) :: nppmes,laimes, armes,clmes,csmes
-    real(kind=r4),dimension(q) :: emes,rmmes,rgmes,cuemes
-    real(kind=r4),dimension(q) :: cleafmes,cawoodmes,cfrootmes
-    real(kind=r4),dimension(q) :: gridocpmes,sm,wuemes 
-    real(kind=r4) :: wsaux1
-    real(kind=r4) :: dwww 
-    real(kind=r4) :: pr,spre,ta,td,ipar,ru
-    real(kind=r4) :: land_c,c_change
-    real(kind=r4) :: carbon_test
-    real(kind=r4) :: c1232 
-    real(kind=r4) :: c1234 
-    real(kind=r4) :: c1342 
+    real(kind=r_4) :: epmes ! equal for all pfts - potential evapotranspiration(PET)(mm day-1)
+    real(kind=r_4),dimension(q) :: rmes,phmes,smes,rcmes,hrmes
+    real(kind=r_4),dimension(q) :: nppmes,laimes, armes,clmes,csmes
+    real(kind=r_4),dimension(q) :: emes,rmmes,rgmes,cuemes
+    real(kind=r_4),dimension(q) :: cleafmes,cawoodmes,cfrootmes
+    real(kind=r_4),dimension(q) :: gridocpmes,sm,wuemes 
+    real(kind=r_4) :: wsaux1
+    real(kind=r_4) :: dwww 
+    real(kind=r_4) :: pr,spre,ta,td,ipar,ru
+    real(kind=r_4) :: land_c,c_change
+    real(kind=r_4) :: carbon_test
+    real(kind=r_4) :: c1232 
+    real(kind=r_4) :: c1234 
+    real(kind=r_4) :: c1342 
     ! initial_area
-    real(kind=r4),dimension(q) :: ocp_coeffs_ini
+    real(kind=r_4),dimension(q) :: ocp_coeffs_ini
     
     
     
@@ -136,7 +136,7 @@ contains
     cfroot1_pft = cfroot_ini
     
 
-    ocp_coeffs_ini = 1.0/real(q,r4)   
+    ocp_coeffs_ini = 1.0/real(q,r_4)   
     grid_area0 = ocp_coeffs_ini * 100.0
 
 
@@ -181,7 +181,7 @@ contains
     carbon_test =  c1232 + c1234 + c1342
 
 10  continue
-    n = n + 1  
+    n = n + 1
     k = mod(n,12)
     if (k.eq.0) k = 12
     mes = k
@@ -189,7 +189,11 @@ contains
     td = tsoil(k)
     ta = temp(k)
     pr = prec(k)
+<<<<<<< HEAD
     ipar = (par(k) * 0.5)/2.18e5 !modificado de 0.7 para 0.5
+=======
+    ipar = par(k) / 2.18e5
+>>>>>>> uppstream/master
     ru = rhs(k) / 100.
 
     !     Monthly water budget
@@ -283,10 +287,10 @@ contains
        do kk=1,nt
           wsaux1 = wsoilt(kk) + gsoilt(kk)   
           dwww = (wsaux1 - wg0(kk)) / wmax
-          if (abs(dwww).gt. 1e-3) nerro = nerro + 1
+          if (abs(dwww).gt. 1e-2) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
-       if(c_change .gt. 0.05) then
+       if(c_change .gt. 0.03) then
           nerro = 1
           carbon_test = land_c
        endif
@@ -300,6 +304,7 @@ contains
              wg0(kk) = wsoilt(kk) + gsoilt(kk)
           enddo
        else
+!          print *, n, 'exiting'
           goto 100
        endif
     endif

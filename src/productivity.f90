@@ -26,7 +26,11 @@ module productivity
 
 contains
   
+<<<<<<< HEAD
   subroutine prod(dt,light_limit,ts,temp,p0,w,&
+=======
+  subroutine prod(dt,light_limit,temp,ts,p0,w,&
+>>>>>>> uppstream/master
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
        beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
        rm,rg,rc,wue) ! outputs
@@ -43,8 +47,9 @@ contains
     !-----     
     
 
-    real(kind=r4),dimension(ntraits),intent(in) :: dt
+    real(kind=r_4),dimension(ntraits),intent(in) :: dt
 
+<<<<<<< HEAD
     real(kind=r4), intent(in) :: temp                 !Mean monthly temperature (oC)
     real(kind=r4), intent(in) :: ts                   !Mean monthly soil temperature (oC)
     real(kind=r4), intent(in) :: p0                   !Mean surface pressure (hPa)
@@ -57,31 +62,44 @@ contains
     real(kind=r4), intent(in) :: beta_froot
     real(kind=r4), intent(in) :: ocprod
     logical, intent(in) :: light_limit                !True for no ligth limitation
+=======
+    real(kind=r_4), intent(in) :: temp,ts                 !Mean monthly temperature (oC)
+    real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
+    real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
+    real(kind=r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (einstein m-2 s-1)'
+    real(kind=r_4), intent(in) :: rh,emax              !Relative humidity/MAXIMUM EVAPOTRANSPIRATION
+    real(kind=r_4), intent(in) :: cl1, cf1, ca1        !Carbon in plant tissues (kg/m2)
+    real(kind=r_4), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)
+    real(kind=r_4), intent(in) :: beta_awood
+    real(kind=r_4), intent(in) :: beta_froot
+    real(kind=r_4), intent(in) :: ocprod
+    logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
+>>>>>>> uppstream/master
     
     !     Output
     !     ------
-    real(kind=r4), intent(out) :: ph                   !Canopy gross photosynthesis (kgC/m2/yr)
-    real(kind=r4), intent(out) :: rc                   !Stomatal resistence (not scaled to canopy!) (s/m)
-    real(kind=r4), intent(out) :: laia                 !Autotrophic respiration (kgC/m2/yr)
-    real(kind=r4), intent(out) :: ar                   !Leaf area index (m2 leaf/m2 area)
-    real(kind=r4), intent(out) :: nppa                 !Net primary productivity (kgC/m2/yr) 
-    real(kind=r4), intent(out) :: vpd            
-    real(kind=r4), intent(out) :: f5                   !Water stress response modifier (unitless) 
-    real(kind=r4), intent(out) :: rm                   !autothrophic respiration (kgC/m2/day)
-    real(kind=r4), intent(out) :: rg 
-    real(kind=r4), intent(out) :: wue
+    real(kind=r_4), intent(out) :: ph                   !Canopy gross photosynthesis (kgC/m2/yr)
+    real(kind=r_4), intent(out) :: rc                   !Stomatal resistence (not scaled to canopy!) (s/m)
+    real(kind=r_4), intent(out) :: laia                 !Autotrophic respiration (kgC/m2/yr)
+    real(kind=r_4), intent(out) :: ar                   !Leaf area index (m2 leaf/m2 area)
+    real(kind=r_4), intent(out) :: nppa                 !Net primary productivity (kgC/m2/yr) 
+    real(kind=r_4), intent(out) :: vpd            
+    real(kind=r_4), intent(out) :: f5                   !Water stress response modifier (unitless) 
+    real(kind=r_4), intent(out) :: rm                   !autothrophic respiration (kgC/m2/day)
+    real(kind=r_4), intent(out) :: rg 
+    real(kind=r_4), intent(out) :: wue
     !     Internal
     !     --------
     
-    real(kind=r4) :: f1       !Leaf level gross photosynthesis (molCO2/m2/s)
-    real(kind=r4) :: f1a      !auxiliar_f1
+    real(kind=r_4) :: f1       !Leaf level gross photosynthesis (molCO2/m2/s)
+    real(kind=r_4) :: f1a      !auxiliar_f1
     
-    real(kind=r4) :: tleaf             !leaf turnover time (yr)
-    real(kind=r4) :: p21               !Maximum carboxilation rate (micromolC m-2 d-1)
-    real(kind=r4) :: g1
+    real(kind=r_4) :: tleaf             !leaf turnover time (yr)
+    real(kind=r_4) :: p21               !Maximum carboxilation rate (micromolC m-2 d-1)
+    real(kind=r_4) :: g1
     
-    real(kind=r4) :: sla          !specific leaf area (m2/kg)
-    logical(l1) :: no_cell = .false.
+    real(kind=r_4) :: sla          !specific leaf area (m2/kg)
+    logical(l_1) :: no_cell = .false.
     
     !getting pls parameters
 
@@ -106,7 +124,7 @@ contains
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
     
-    f1a = photosynthesis_rate(p21,temp,p0,ipar,light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.7, light_limit)
     
     ! VPD
     !========
@@ -138,8 +156,8 @@ contains
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
      sla = spec_leaf_area(tleaf)
     !  laia = leaf_area_index(cl1*ocprod,sla)
-     laia = leaf_area_index(cl1, sla)
-
+     laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
+ 
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
     ph =  gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - proxy of gpp or gpp?

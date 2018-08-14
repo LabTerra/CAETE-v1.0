@@ -32,7 +32,8 @@ import multiprocessing as mp
 import concurrent.futures as conc
 import numpy as np
 
-from plsgen import attr_table
+# from plsgen import ATTR_TABLE
+from plsgen import table_gen
 import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
@@ -108,6 +109,17 @@ def chunks(lst, chunck_size):
         yield lst[i:i + chunck_size]
 
 
+def pls_generator():
+    print("running table gen from pls_generator")
+    return table_gen(npls)
+#(1)
+
+
+# Global variable! --------------------------------------------
+ATTR_TABLE = pls_generator()
+# make_dir_spe(OUTPUT_NC_DIR)
+
+
 def init_caete(grd):
     grd.pr = global_pr[:, grd.y, grd.x]
     grd.ps = global_ps[:, grd.y, grd.x]
@@ -118,7 +130,7 @@ def init_caete(grd):
     grd.filled = True
 
 
-def run_model(grd, at = attr_table):
+def run_model(grd, at = ATTR_TABLE):
 
     #print('running_model (inside)')
     if grd.filled and not grd.complete:
@@ -466,9 +478,9 @@ assert global_rhs.shape == std_shape
 assert input_data.check_dataset()
 
 # Creating directories structure
-make_dir_spe(RESULTS_DIR)
-make_dir_spe(TMP_DIR)
-make_dir_spe(OUTPUT_NC_DIR)
+# make_dir_spe(RESULTS_DIR)
+# make_dir_spe(TMP_DIR)
+# make_dir_spe(OUTPUT_NC_DIR)
 
 
 
@@ -531,12 +543,12 @@ if __name__ == "__main__":
         log.write('end_run %s\n' % time.ctime())
 
     else:
-        if npls <= 50:
-            hi = 240
-            n_process = disp_processors * 3
+        if npls <= 200:
+            hi = 1040
+            n_process = disp_processors * 2
         else:
-            hi = 360
-            n_process = disp_processors * 3 
+            hi = 375
+            n_process = disp_processors * 3
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
         id = 1
@@ -568,3 +580,4 @@ if __name__ == "__main__":
         print(time.ctime())
         log.write('end_run %s\n' % time.ctime())
         log.close()
+
