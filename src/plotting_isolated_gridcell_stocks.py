@@ -6,16 +6,14 @@ grd1 = ct.gridcell(239,183)
 ct.init_caete(grd1)
 ct.run_model(grd1)
 
-npls= input('quantos pls?')
-npls = int(npls)
 
-cleaf = grd1.cleaf.sum(axis=0)
-cawood = grd1.cawood.sum(axis=0)
-cfroot = grd1.cfroot.sum(axis=0)
+cleaf = grd1.cleaf*grd1.area/100
+cleaf = cleaf.sum(axis=0)
+cawood = grd1.cawood*grd1.area/100
+cawood = cawood.sum(axis=0)
+cfroot = grd1.cfroot*grd1.area/100
+cfroot = cfroot.sum(axis=0)
 
-cleaf = cleaf/(npls)
-cawood = cawood/(npls)
-cfroot = cfroot/(npls)
 
 cmass = cleaf+cawood+cfroot
 
