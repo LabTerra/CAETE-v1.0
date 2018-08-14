@@ -487,6 +487,7 @@ contains
 
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   function m_resp(ts,temp,cl1,cf1,ca1) result(rm)
     use types, only: r4,r8
     use global_pars, only: ncl,ncf,ncs
@@ -504,12 +505,22 @@ contains
     use global_pars, only: ncl,ncf,ncs
     implicit none
 
+=======
+  function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
+    use types, only: r_4,r_8
+    use global_pars, only: ncl,ncf,ncs
+    implicit none
+
+>>>>>>> origrepo/master
     real(kind=r_4), intent(in) :: temp, tsoil
     real(kind=r_4), intent(in) :: cl1
     real(kind=r_4), intent(in) :: cf1
     real(kind=r_4), intent(in) :: ca1
     real(kind=r_4) :: rm
+<<<<<<< HEAD
 >>>>>>> uppstream/master
+=======
+>>>>>>> origrepo/master
     
     real(kind=r_8) :: csa, rm64, rml64, rmf64, rms64
     
@@ -519,6 +530,7 @@ contains
 
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 !<<<<<<< HEAD
 !<<<<<<< HEAD
@@ -534,12 +546,15 @@ contains
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
 =======
+=======
+>>>>>>> origrepo/master
     rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
 >>>>>>> uppstream/master
  
     rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.03*ts)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.03*temp)) !the value 0.03 is originally 0.07, but I used 0.03 to
     !decrease the temperature's sensibility
@@ -550,6 +565,9 @@ contains
 =======
     rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
 >>>>>>> uppstream/master
+=======
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
+>>>>>>> origrepo/master
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -1181,6 +1199,7 @@ contains
     real(kind=rbig) :: scf2_128 = 0.0, sca2_128 = 0.0, scl2_128 = 0.0
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     real(kind=r4) :: aleaf             !npp percentage allocated compartment
     real(kind=r4) :: aawood 
     real(kind=r4) :: afroot 
@@ -1188,13 +1207,18 @@ contains
     real(kind=r4) :: tawood
     real(kind=r4) :: tfroot            
 =======
+=======
+>>>>>>> origrepo/master
     real(kind=r_4) :: aleaf             !npp percentage allocated compartment
     real(kind=r_4) :: aawood
     real(kind=r_4) :: afroot
     real(kind=r_4) :: tleaf             !turnover time (yr)
     real(kind=r_4) :: tawood
     real(kind=r_4) :: tfroot            
+<<<<<<< HEAD
 >>>>>>> uppstream/master
+=======
+>>>>>>> origrepo/master
     
     tleaf  = dt(3)
     tawood = dt(4)
