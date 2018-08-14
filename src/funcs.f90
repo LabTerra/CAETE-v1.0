@@ -158,10 +158,10 @@ contains
     leaf_t_months = tau_leaf*12. ! turnover time in months
     leaf_t_coeff = leaf_t_months/100. !1 - 100 months == ~ 1/12 to 8.3 years (TRY-kattge et al. 2011; Jedi-Pavlick 2012) 
 !<<<<<<< HEAD
-    leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
+! leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-  !  leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
+    leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
     sla = (3e-2 * (365.0/leaf_turnover)**(-0.46))     
 
     
@@ -201,7 +201,7 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-0.06 * f5_64)
+       f5_64 = exp(-0.08 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = wa
@@ -507,9 +507,9 @@ contains
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp)) 
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
+    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.05*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
@@ -671,7 +671,7 @@ contains
     total_biomass = 0.0
     total_wood = 0.0
 
-        ! check for nan in cleaf cawood cfroot
+        ! check for nan in cleaf cawood cfroot and infinit
     do p = 1,npft
        if(isnan(cleaf(p))) cleaf(p) = 0.0
        if(isnan(cfroot(p))) cfroot(p) = 0.0
