@@ -88,9 +88,9 @@ def table_gen(NPLS):
         restime[1] = 0.0
         restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
-        #if check_viability(data_to_test0):
-        alloc_g.append(data_to_test0)
-        index0 += 1
+        if check_viability(data_to_test0):
+            alloc_g.append(data_to_test0)
+            index0 += 1
 
     index1 = 0
     while index1 < diffw:
@@ -100,9 +100,9 @@ def table_gen(NPLS):
         restime[1] = vec_ranging(np.random.beta(1, 3), 1, 80.0)
         restime[2] = vec_ranging(np.random.beta(1, 3), 1/12, 8.3)
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
-       # if check_viability(data_to_test1):
-        alloc_w.append(data_to_test1)
-        index1 += 1
+        if check_viability(data_to_test1):
+            alloc_w.append(data_to_test1)
+            index1 += 1
 
     alloc_g = np.array(alloc_g)
     alloc_w = np.array(alloc_w)

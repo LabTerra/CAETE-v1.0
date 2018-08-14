@@ -42,7 +42,7 @@ module global_pars
   real(kind=r4),parameter :: rcmin = 100.0
   real(kind=r4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r4),parameter :: wmax = 500.0
-  real(kind=r4),parameter :: cmin = 5e-4 !minimum of carbon to a trait combination be valid
+  real(kind=r4),parameter :: cmin = 5e-3 !minimum of carbon to a trait combination be valid
   
   real(kind=r8),parameter :: csru = 0.5
   real(kind=r8),parameter :: alfm = 1.391
@@ -55,7 +55,7 @@ module global_pars
 !  integer(kind=i4) :: ndmonth(12)       !Number of months
 !  data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
 
-  integer(kind=i4),parameter :: npls = 50 
+  integer(kind=i4),parameter :: npls = 1000 
   integer(kind=i4),parameter :: ntimes = 12
   integer(kind=i4),parameter :: ntraits = 8
 
