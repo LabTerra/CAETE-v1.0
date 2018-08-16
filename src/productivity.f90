@@ -106,8 +106,8 @@ contains
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
     
-    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.7, light_limit)
-    
+    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.5, light_limit)
+     !ipar * 0.5 for considering just the photossintetically active radiation    
     ! VPD
     !========
     vpd = vapor_p_defcit(temp,rh)

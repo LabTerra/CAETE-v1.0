@@ -15,7 +15,7 @@
 
 ! contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com> 
 !             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
-
+!             Bianca Fazio Rius <biancafaziorius (at) gmail.com>
 
 module water_balance
   implicit none
@@ -109,14 +109,14 @@ contains
     real(kind=r_4),dimension(q) :: emes,rmmes,rgmes,cuemes
     real(kind=r_4),dimension(q) :: cleafmes,cawoodmes,cfrootmes
     real(kind=r_4),dimension(q) :: gridocpmes,sm,wuemes 
-    real(kind=r_4) :: wsaux1
-    real(kind=r_4) :: dwww 
+    real(kind=r_4) :: wsaux1 !auxiliar to check water equilibrium
+    real(kind=r_4) :: dwww !auxiliar to check water equilibrium
     real(kind=r_4) :: pr,spre,ta,td,ipar,ru
-    real(kind=r_4) :: land_c,c_change
-    real(kind=r_4) :: carbon_test
-    real(kind=r_4) :: c1232 
-    real(kind=r_4) :: c1234 
-    real(kind=r_4) :: c1342 
+    real(kind=r_4) :: land_c,c_change !auxiliar to check carbon equilibrium
+    real(kind=r_4) :: carbon_test  !auxiliar to check carbon equilibrium
+    real(kind=r_4) :: c1232 !auxiliar to check carbon equilibrium (carbon on leaf compartment)
+    real(kind=r_4) :: c1234 !auxiliar to check carbon equilibrium (carbon on fine roots compartment)
+    real(kind=r_4) :: c1342 !auxiliar to check carbon equilibrium (carbon on abovebround wood compartment)
     ! initial_area
     real(kind=r_4),dimension(q) :: ocp_coeffs_ini
     
@@ -189,7 +189,7 @@ contains
     td = tsoil(k)
     ta = temp(k)
     pr = prec(k)
-    ipar = par(k) / 2.18e5
+    ipar = par(k) / 2.18e5 !it converts from w/m2 to Ein/m2/s
     ru = rhs(k) / 100.
 
     !     Monthly water budget

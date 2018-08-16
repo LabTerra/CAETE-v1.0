@@ -1192,9 +1192,9 @@ contains
    scl2 = real(scl2_128,r_4)
    
    
-   if(scl2_128 .lt. 1e-12) scl2 = 0.0
-   if(scf2_128 .lt. 1e-12) scf2 = 0.0
-   if(sca2_128 .lt. 1e-12) sca2 = 0.0
+   if(scl2_128 .lt. 1e-7) scl2 = 0.0
+   if(scf2_128 .lt. 1e-7) scf2 = 0.0
+   if(sca2_128 .lt. 1e-7) sca2 = 0.0
 
    if(scl2 .le. 0.0 .and. scf2 .le. 0.0) endpls = .true.
    
@@ -1206,7 +1206,7 @@ contains
  !===================================================================
  !===================================================================
 
- function leap(year) result(is_leap)
+ function leap(year) result(is_leap) !This function check if is a leap year
 
    use types
    implicit none

@@ -12,6 +12,7 @@ Copyright 2017- LabTerra
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
+            Bianca Fazio Rius <biancafaziorius ( at ) gmail.com>
 """
 
 from math import ceil
