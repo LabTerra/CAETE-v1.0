@@ -16,6 +16,7 @@ Copyright 2017- LabTerra
 
 contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
+            Bianca Fazio Rius <biancafaziorius ( at ) gmail.com>
 """
 
 from math import ceil
@@ -57,7 +58,7 @@ def turnover_combinations(verbose=False):
     """CREATE the residence time and allocation combinations"""
 
     # constrained distributions (must sum up to 1.)
-    aleafw = np.arange(5., 91.0, 1.25)
+    aleafw = np.arange(5., 91.0, 1.25) 
     aleafg = np.arange(5., 91.0, 1.25)
     arootw = np.arange(5., 91.0, 1.25)
     arootg = np.arange(5., 91.0, 1.25)
