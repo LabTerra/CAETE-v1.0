@@ -57,11 +57,11 @@ def turnover_combinations(verbose=False):
     """CREATE the residence time and allocation combinations"""
 
     # constrained distributions (must sum up to 1.)
-    aleafw = np.arange(15., 86.0, 0.25)
-    aleafg = np.arange(15., 86.0, 0.25)
-    arootw = np.arange(15., 86.0, 0.25)
-    arootg = np.arange(15., 86.0, 0.25)
-    awood = np.arange(15., 86.0, 0.25)
+    aleafw = np.arange(5., 91.0, 1.25)
+    aleafg = np.arange(5., 91.0, 1.25)
+    arootw = np.arange(5., 91.0, 1.25)
+    arootg = np.arange(5., 91.0, 1.25)
+    awood = np.arange(5., 81.0, 1.25)
 
     plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
                    if (a + c) == 100.0]
@@ -118,7 +118,7 @@ def table_gen(NPLS):
     # # # COMBINATIONS
     # # # Random samples from  distributions (g1, tleaf ...)
     # # # Random variables
-    g1 = np.random.uniform(low=1, high=7, size=NPLS) # dimensionles
+    g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
     vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
 
