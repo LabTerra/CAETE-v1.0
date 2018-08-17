@@ -19,6 +19,7 @@ Copyright 2017- LabTerra
 
 contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
+            Bianca Fazio Rius <biancafaziorius ( at ) gmail.com> 
 """
 
 __author__ = "https://github.com/jpdarela/"
