@@ -297,6 +297,7 @@ program env
            p0   = ps    (i,j,1:nt) 
            prec = pr    (i,j,1:nt)
 
+
            
            
            call wbm (dt,prec,temp,p0,par,rhs,cleafin,cawoodin,cfrootin,&

@@ -16,6 +16,7 @@ Copyright 2017- LabTerra
 
 contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
+            Bianca Fazio Rius <biancafaziorius ( at ) gmail.com>
 """
 
 from math import ceil
@@ -37,7 +38,10 @@ def check_viability(trait_values):
 
     rtur = np.array(model.spinup3(0.1, trait_values))
     if rtur[0] <= 0.001 or rtur[1] <= 0.001:
-        return False
+        #print("invalid_combination")
+        #print(rtur[0], rtur[1])
+        #print("\n")
+        return False # aways return true
     return True
 
 
@@ -54,11 +58,11 @@ def turnover_combinations(verbose=False):
     """CREATE the residence time and allocation combinations"""
 
     # constrained distributions (must sum up to 1.)
-    aleafw = np.arange(15., 86.0, 0.25)
-    aleafg = np.arange(15., 86.0, 0.25)
-    arootw = np.arange(15., 86.0, 0.25)
-    arootg = np.arange(15., 86.0, 0.25)
-    awood = np.arange(15., 86.0, 0.25)
+    aleafw = np.arange(5., 91.0, 1.25) 
+    aleafg = np.arange(5., 91.0, 1.25)
+    arootw = np.arange(5., 91.0, 1.25)
+    arootg = np.arange(5., 91.0, 1.25)
+    awood = np.arange(5., 81.0, 1.25)
 
     plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
                    if (a + c) == 100.0]
@@ -84,9 +88,9 @@ def table_gen(NPLS):
     while index0 < diffg:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
-        restime[0] = vec_ranging(np.random.beta(2, 20), 1.0 / 12.0, 8.3)
+        restime[0] = np.random.uniform(low=1/12., high=8.3)
         restime[1] = 0.0
-        restime[2] = vec_ranging(np.random.beta(2, 20), 1.0 / 12.0, 8.3)
+        restime[2] = np.random.uniform(low=1/12., high=8.3)
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test0):
             alloc_g.append(data_to_test0)
@@ -96,9 +100,9 @@ def table_gen(NPLS):
     while index1 < diffw:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
-        restime[0] = vec_ranging(np.random.beta(2, 20), 1.0 / 12.0, 8.3)
-        restime[1] = vec_ranging(np.random.beta(2, 20), 1.0, 80.0)
-        restime[2] = vec_ranging(np.random.beta(2, 20), 1.0 / 12.0, 8.3)
+        restime[0] = np.random.uniform(low=1/12., high=8.3)
+        restime[1] = np.random.uniform(low=1.0, high=80.0)
+        restime[2] = np.random.uniform(low=1/12., high=8.3)
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test1):
             alloc_w.append(data_to_test1)
@@ -107,14 +111,17 @@ def table_gen(NPLS):
     alloc_g = np.array(alloc_g)
     alloc_w = np.array(alloc_w)
 
-    alloc = np.concatenate((alloc_g, alloc_w), axis=0,)
+    # print(len(alloc_g))
+    # print(len(alloc_w))
 
+    alloc = np.concatenate((alloc_g, alloc_w), axis=0,)
+    # print(len(alloc))
     # # # COMBINATIONS
     # # # Random samples from  distributions (g1, tleaf ...)
     # # # Random variables
-    g1 = vec_ranging(np.random.beta(1.2, 2, NPLS), 0.1, 10.0) # dimensionles
+    g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
-    vcmax = vec_ranging(np.random.beta(1.2, 2, NPLS), 9e-6, 150e-5)
+    vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
 
     stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5])

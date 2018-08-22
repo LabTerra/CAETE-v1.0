@@ -26,6 +26,7 @@ module productivity
 
 contains
   
+
   subroutine prod(dt,light_limit,temp,ts,p0,w,&
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
        beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
@@ -56,7 +57,7 @@ contains
     real(kind=r_4), intent(in) :: beta_froot
     real(kind=r_4), intent(in) :: ocprod
     logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
-    
+
     !     Output
     !     ------
     real(kind=r_4), intent(out) :: ph                   !Canopy gross photosynthesis (kgC/m2/yr)
@@ -105,8 +106,8 @@ contains
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
     
-    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.7, light_limit)
-    
+    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.5, light_limit)
+     !ipar * 0.5 for considering just the photossintetically active radiation    
     ! VPD
     !========
     vpd = vapor_p_defcit(temp,rh)
@@ -174,6 +175,7 @@ contains
     !     Net primary productivity(kgC/m2/yr)
     !     ====================================
     nppa = ph - ar
+  
 
     if(nppa .lt. 0.0) nppa = 0.0
 

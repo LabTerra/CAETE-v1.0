@@ -43,6 +43,7 @@ contains
     !     ----------------------------INPUTS-------------------------------
     !
     
+
     integer(kind=i_4),intent(in) :: month             !Actual month (1-12)
     real(kind=r_4),dimension(ntraits,npft),intent(in) :: dt
     real(kind=r_4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
@@ -51,6 +52,7 @@ contains
     real(kind=r_4),dimension(npft),intent(inout) :: cl1_pft  ! initial BIOMASS cleaf compartment
     real(kind=r_4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
     real(kind=r_4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
+
     
     real(kind=r_4),intent(in) :: ts                   !Soil temperature (oC)
     real(kind=r_4),intent(in) :: temp                 !Surface air temperature (oC)
@@ -228,6 +230,7 @@ contains
           dt1 = dt(:,p)
           ocp = ocp_coeffs(p)
           
+
           call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
                &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ocp,ph(p),ar(p),nppa(p)&

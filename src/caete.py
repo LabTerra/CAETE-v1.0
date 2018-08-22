@@ -19,6 +19,7 @@ Copyright 2017- LabTerra
 
 contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
+            Bianca Fazio Rius <biancafaziorius ( at ) gmail.com> 
 """
 
 __author__ = "https://github.com/jpdarela/"
@@ -268,7 +269,7 @@ def catch_nt(input_file, nx, ny, pixel_depht):
     input_file = flat binary (from fortran unfformated output)filename
     nx = (int) number of columns
     ny = (int) number of rows
-    pixel_depth = (int) stride length in bits
+    pixel_depth = (int) stride length in bitsGridcell
     returns nt = number of layers(records) stored in input_file"""
 
     image_size = (nx * ny * (pixel_depht / 8)) / 1024 # in bytes

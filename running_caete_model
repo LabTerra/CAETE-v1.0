@@ -1,0 +1,9 @@
+Running CAETE model
+
+Compilation
+~src
+./build.sh
+
+Running
+~src
+python3 caete_driver.py

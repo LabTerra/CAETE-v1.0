@@ -158,11 +158,12 @@ contains
     leaf_t_months = tau_leaf*12. ! turnover time in months
     leaf_t_coeff = leaf_t_months/100. !1 - 100 months == ~ 1/12 to 8.3 years (TRY-kattge et al. 2011; Jedi-Pavlick 2012) 
 !<<<<<<< HEAD
-    leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
+! leaf_turnover =  (365.0/12.0) * 5.25**(2.0*leaf_t_coeff)
 !=======
 !>>>>>>> 2ca26587106701e0883c85ea235c431dcb9ee97b
-  !  leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
+    leaf_turnover =  (365.0/12.0) * (10 ** (2.0*leaf_t_coeff))
     sla = (3e-2 * (365.0/leaf_turnover)**(-0.46))     
+
     
   end function spec_leaf_area
   
@@ -200,7 +201,7 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-0.06 * f5_64)
+       f5_64 = exp(-0.08 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = wa
@@ -485,6 +486,7 @@ contains
   !====================================================================
 
   
+
   function m_resp(temp,tsoil,cl1,cf1,ca1) result(rm)
     use types, only: r_4,r_8
     use global_pars, only: ncl,ncf,ncs
@@ -504,11 +506,11 @@ contains
 
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
- 
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*temp))
 
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*tsoil))
+    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.05*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -669,7 +671,7 @@ contains
     total_biomass = 0.0
     total_wood = 0.0
 
-        ! check for nan in cleaf cawood cfroot
+        ! check for nan in cleaf cawood cfroot and infinit
     do p = 1,npft
        if(isnan(cleaf(p))) cleaf(p) = 0.0
        if(isnan(cfroot(p))) cfroot(p) = 0.0
@@ -927,7 +929,7 @@ contains
    ! ===========================================================
    ! ===========================================================
 
-   subroutine spinup3(nppot,dt,cleafini,cfrootini,cawoodini)
+   subroutine spinup3(nppot,dt,cleafini,cfrootini,cawoodini) !testa se a combinação de alocação e turnover é viavel
       use types
       use global_pars, only: ntraits,npls
       implicit none
@@ -1139,12 +1141,14 @@ contains
     !real(kind=r_4),intent(out) :: bio_litter
     real(kind=rbig) :: scf2_128 = 0.0, sca2_128 = 0.0, scl2_128 = 0.0
     
+
     real(kind=r_4) :: aleaf             !npp percentage allocated compartment
     real(kind=r_4) :: aawood
     real(kind=r_4) :: afroot
     real(kind=r_4) :: tleaf             !turnover time (yr)
     real(kind=r_4) :: tawood
     real(kind=r_4) :: tfroot            
+
     
     tleaf  = dt(3)
     tawood = dt(4)
@@ -1188,9 +1192,9 @@ contains
    scl2 = real(scl2_128,r_4)
    
    
-   if(scl2_128 .lt. 1e-12) scl2 = 0.0
-   if(scf2_128 .lt. 1e-12) scf2 = 0.0
-   if(sca2_128 .lt. 1e-12) sca2 = 0.0
+   if(scl2_128 .lt. 1e-7) scl2 = 0.0
+   if(scf2_128 .lt. 1e-7) scf2 = 0.0
+   if(sca2_128 .lt. 1e-7) sca2 = 0.0
 
    if(scl2 .le. 0.0 .and. scf2 .le. 0.0) endpls = .true.
    
@@ -1202,7 +1206,7 @@ contains
  !===================================================================
  !===================================================================
 
- function leap(year) result(is_leap)
+ function leap(year) result(is_leap) !This function check if is a leap year
 
    use types
    implicit none
