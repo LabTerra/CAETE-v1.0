@@ -141,7 +141,7 @@ def make_table():
         for folder in fl:
             print (folder)
             i += 1
-            run = np.int32(folder.split('_')[-1][-1])
+            run = folder.split("_")[-1]
             #print run
             with open(rname + '.csv', mode='a') as fh:
                 csv_writer = csv.writer(fh,delimiter=',')

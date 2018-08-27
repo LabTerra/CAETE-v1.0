@@ -93,13 +93,14 @@ def model_driver():
 
     log_file('exec.log')
     for model_run in range(1,n_runs + 1):
+        model_run_aux = str(model_run)
         with open('exec.log', mode='a') as fh:
-            fh.write('\n\n\t---Rodada n° %d\n\n' % model_run )
+            fh.write('\n\n\t---Rodada n° %s\n\n' % model_run_aux )
         os.system(comm)
         if comm == '%s caete.py' % py_executable:
-            if len(str(model_run)) == 1:
-                model_run = "%s%s" %('0', str(model_run))
-            fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
+            if len(model_run_aux) == 1:
+                model_run_aux = "%s%s" %('0', model_run_aux)
+            fprocess(npls, model_run_aux, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
         os.system('bash clean_dir.sh')
 
 if __name__ == '__main__':
