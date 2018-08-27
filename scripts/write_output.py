@@ -41,7 +41,7 @@ monthly_out = ['aresp',
                'wue_sig',
                'cue',
                'cue_avg',
-               'cue_sig'] 
+               'cue_sig']
 
 npls_out = ['area',
             'area0',
@@ -65,15 +65,14 @@ def mask_gen(nlayers):
     return z
 
 def flt_attrs():
-    
+
     """
     header :: filename without extension
     standard_name :: variable name for netcdf file
     units :: must conform udunits2/cfunits
     """
-    
+
     return {'header'   : ['long_name',                 'unit',           'standart_name', 'ldim'],
-            
             'rsds'     : ['short_wav_rad_down',        'W m-2',                 'rsds',    nt], 
             'wind'     : ['wind_velocity',             'm s-1',                 'wind',    nt],
             'ps'       : ['sur_pressure',              'Pa',                      'ps',    nt],
@@ -139,7 +138,6 @@ def write_CAETE_output(nc_filename, arr, var):
     # create netcdf file
     rootgrp = dt(nc_filename, mode='w', format='NETCDF3_CLASSIC')
     #dimensions  & variables
-        
     rootgrp.createDimension("latitude", la)
     rootgrp.createDimension("longitude", lo)
 
@@ -152,7 +150,7 @@ def write_CAETE_output(nc_filename, arr, var):
         rootgrp.createDimension("pls", t)
         pls = rootgrp.createVariable(varname="pls", datatype=np.int32,
                                       dimensions=("pls",))
-    
+
     latitude  = rootgrp.createVariable(varname="latitude", datatype=np.float32,dimensions=("latitude",))
     longitude = rootgrp.createVariable(varname="longitude", datatype=np.float32, dimensions=("longitude",))
 
@@ -169,7 +167,6 @@ def write_CAETE_output(nc_filename, arr, var):
                                        dimensions=("latitude","longitude",),
                                        fill_value=NO_DATA[0])
 
-   
     #attributes
     ## rootgrp
     rootgrp.description = flt_attrs()[var][0] + " caete-v1.0 OUTPUT"
@@ -183,7 +180,7 @@ def write_CAETE_output(nc_filename, arr, var):
     if var in npls_out:
         pls.units = 'Plant_Life_Strategie'
         pls.axis= u'T'
-        
+
     ## lat
     latitude.units = u"degrees_north"
     latitude.long_name=u"latitude"
@@ -206,10 +203,10 @@ def write_CAETE_output(nc_filename, arr, var):
                                196.5, 227.5, 258., 288.5, 319., 349.5])
     if var in npls_out:
         pls[:] = np.arange(1,t+1)
-    
+
     longitude[:] = np.arange(-179.75, 180, 0.5)
     latitude[:] =  np.arange(-89.75, 90, 0.5)
-     
+
     if ldim > 1:
         var_[:,:,:] = np.fliplr(np.ma.masked_array(arr, lsmk_internal))
     else:

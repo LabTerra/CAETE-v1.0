@@ -1,4 +1,5 @@
 #!/usr/local/bin/ipython3
+
 import concurrent.futures as conc
 import os
 from glob import glob1
@@ -71,6 +72,7 @@ def fprocess(npls, run, res, out, pls):
 
 
 def model_driver():
+    print("\n\n\n\n")
     npls = gp.npls
     q = str(input('modo PFTs? (s or n): ')).lower()
     while True:
@@ -106,3 +108,5 @@ def model_driver():
 if __name__ == '__main__':
     model_driver()
     os.system('rm -rf %s' % TMP_DIR)
+
+

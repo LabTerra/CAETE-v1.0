@@ -1,66 +1,45 @@
 import os
+import sys
 import glob
-#import multiprocessing as mp
 import numpy as np
 import gdal
-#import netCDF4 as nc
+import write_output as wo
 
-# Edit these lines to you output folders
-data_dir = "/home/amazonfaceme/jpdarela/results_testing_numbering"
-attr_dir = '/home/amazonfaceme/jpdarela/pls_tables_testing_numbering'
+#import netCDF4 as nc # Change in future
 
+
+# Import filepaths from homedir
+sys.path.insert(0, '../src/')
+
+import homedir
+
+# This variable must store the correct path to the results folder
+data_dir = homedir.RESULTS_DIR
+
+# This variable contains the correct path to save all pls_attrs.csv together and the final csv for analysis
+attr_dir = homedir.SAVE_CSV_FILES
+
+csv_dir = homedir.SAVE_CSV_FINAL
+
+# Create outputs folder if it dont exists
 if not os.path.exists(attr_dir): os.mkdir(attr_dir)
-
+if not os.path.exists(csv_dir): os.mkdir(csv_dir) 
+# Some variables
 root  = os.getcwd()
 nx = 720
 ny = 360
-
 lat = np.arange(-89.75, 90., 0.5)
 lon = np.arange(-179.75, 180., 0.5)
 
-def CellAreas(lat,lon):
-    """     Borrowed from ILAMB_code____
+# Defining some functions
 
-    Given arrays of latitude and longitude, return cell areas in square meters.
-
-    Parameters
-    ----------
-    lat : numpy.ndarray
-        a 1D array of latitudes which represent cell centroids
-    lon : numpy.ndarray
-        a 1D array of longitudes which represent cell centroids
-
-    Returns
-    -------
-    areas : numpy.ndarray
-        a 2D array of cell areas in [m2]
-
-    Borrowed from ILAMB_lib
-    """
-    #from constants import earth_rad
-    earth_rad = 6.371e6 # meters
-    x = np.zeros(lon.size+1)
-    x[1:-1] = 0.5*(lon[1:]+lon[:-1])
-    x[ 0]   = lon[ 0]-0.5*(lon[ 1]-lon[ 0])
-    x[-1]   = lon[-1]+0.5*(lon[-1]-lon[-2])
-    if(x.max() > 181): x -= 180
-    x  = x.clip(-180,180)
-    x *= np.pi/180.
-
-    y = np.zeros(lat.size+1)
-    y[1:-1] = 0.5*(lat[1:]+lat[:-1])
-    y[ 0]   = lat[ 0]-0.5*(lat[ 1]-lat[ 0])
-    y[-1]   = lat[-1]+0.5*(lat[-1]-lat[-2])
-    y       = y.clip(-90,90)
-    y *= np.pi/180.
-
-    dx    = earth_rad*(x[1:]-x[:-1])
-    dy    = earth_rad*(np.sin(y[1:])-np.sin(y[:-1]))
-    areas = np.outer(dx,dy).T
-
-    return areas
 
 def folder_list(dr = data_dir):
+
+    """Constructs a list of lists containing the structure 
+       of directories that contains CAETÊ outputs
+       dr : path to outputs"""
+
     os.chdir(dr)
     # creating a list with all folders results
     folders = os.listdir(os.getcwd())
@@ -78,6 +57,7 @@ def folder_list(dr = data_dir):
 
 
 def make_table():
+    """ Constructs the final table of caete results"""
 
     import csv
     #from pandas import read_csv
@@ -131,8 +111,10 @@ def make_table():
 
     for fl in folder_list():
         # print fl
-        rname = fl[0].split('_')[0]
-        with open(rname + '.csv', mode='w') as fh:
+        rname = fl[0].split('_')[0] # to be used in pls_attrs_save
+
+        rname1 = os.sep.join([csv_dir, rname])
+        with open(rname1 + '.csv', mode='w') as fh:
             csv_writer = csv.writer(fh, delimiter=',')
             csv_writer.writerow(csv_header)
         root = os.getcwd()
@@ -141,9 +123,10 @@ def make_table():
         for folder in fl:
             print (folder)
             i += 1
+
             run = folder.split("_")[-1]
             #print run
-            with open(rname + '.csv', mode='a') as fh:
+            with open(rname1 + '.csv', mode='a') as fh:
                 csv_writer = csv.writer(fh,delimiter=',')
                 #csv_writer.writerow(csv_header)
                 #files =  os.listdir(os.getcwd() + '/results/' + folder)
@@ -173,7 +156,8 @@ def make_table():
                 attr_table = pd.read_csv('pls_attrs.csv',dtype=np.float32)
 
                 rpath =  attr_dir + '/'
-                attr_table.to_csv(rpath + 'pls_attrs' + '-' +str(run) + '-' +rname[3:] + '.csv', index=False)
+                NPLS = rname[3:]
+                attr_table.to_csv(rpath + 'pls_attrs' + '-' +str(run) + '-' + NPLS + '.csv', index=False)
 
 
                 var_dict = dict(zip(fluxes,map(annual_mean_sd,fluxes)))
@@ -264,12 +248,10 @@ def make_table():
                 cfroot = None
                 cawood = None
                 attr_table = None
-     
             os.chdir(root)
-    return None
-    # for each gridcell(360,720) in each run in runs  
+    return NPLS
+    # for each gridcell(360,720) in each run in runs
     # load data arrays and make annual means (npp, gpp, ra, cue, wue, rcm, evamp)
-    
     # load area1 = area_ocp[:,Y,X]
     # load cmass
 
@@ -297,7 +279,7 @@ def calc_diversity(runs):
     os.chdir(root)
     return div_arr
 
-    
+
 def calc_stats_vars(runs,var):
     """ runs :: list containing run folders
     var  :: string ->>> var name ex.: npp"""
@@ -367,10 +349,10 @@ def make_stats(runs):
     #     print os.getcwd()
     os.chdir(data_dir)
     res= os.getcwd()
-    run = runs[0].split('_')[0] + 'PLSs_assembled/'
+    run = runs[0].split('_')[0] + 'PLS_assembled/'
     os.mkdir(run)
     for var in vars_tuple:
-        print (var)#, '...reading data'
+        print (var) #, '...reading data'
         if var in wo.monthly_out:
             avg,sig = calc_stats_vars(runs,var)
         else:
@@ -380,13 +362,11 @@ def make_stats(runs):
         np.save(var + '_avg.npy', avg)
         #np.save(var + '_med.npy', med)
         np.save(var + '_sig.npy', sig)
-        
         os.chdir(res)
     print('reading area --> richness')
     div = calc_diversity(runs)
     os.chdir(data_dir + '/' + run)
     np.save('richness' + '.npy', div)
-    
     os.chdir(root)
     return run # returns folder name for pls results
 
@@ -394,11 +374,10 @@ def make_stats(runs):
 if __name__ == '__main__':
 
     # Faz a tabela com dados de cada celula de grid
-    make_table()
+    npls = make_table()
 
     # Salva os arquivos de medias de dp (netCDF files)
     # cria uma pasta 
-    import write_output as wo
 
     # lat = np.arange(-89.75, 90, 0.5)
     # lon = np.arange(-179.75, 180, 0.5)
@@ -417,15 +396,13 @@ if __name__ == '__main__':
     # out50PLS_assembled
     for f in results:
         os.chdir(data_dir + '/' + f)
-        f_to_save = os.listdir(os.getcwd())
-        npls = f.split('P')[0].split('t')[-1]
+        f_to_save = glob.glob1(os.getcwd(), "*.npy")
+        #npls = f.split('P')[0].split('t')[-1]
         for npy in f_to_save:
+            #print(npy)
             var = npy.split('.')[0] 
             arr = np.load(npy)
             ncfilename = var + npls + 'PLS' + '.nc'
-            print (ncfilename)#, arr.shape, var
-            #if len(arr.shape) == 2:
+            print(ncfilename)
             wo.write_CAETE_output(ncfilename,arr,var)
-        #elif len(arr.shape) > 2:
-           # wo.write_CAETE_output(ncfilename,arr,var)
         os.chdir(root)

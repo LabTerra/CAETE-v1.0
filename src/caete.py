@@ -39,6 +39,7 @@ import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
 
+# You need to create a homedir file specifying some file paths and the name of you python3 executable 
 import homedir
 from homedir import OUTPUT_NC_DIR
 from homedir import RESULTS_DIR
@@ -48,10 +49,6 @@ from homedir import TMP_DIR
 #RUN IN SOMBRERO
 HOME_DIR = homedir.HOMEDIR
 
-# RUN IN DESKTOP
-#RESULTS_DIR = '/home/jpdarela/Desktop/rtest_model'
-#TMP_DIR = '/home/jpdarela/Desktop/tmp1_testm'
-#OUTPUT_NC_DIR = TMP_DIR + os.sep + 'outputs_nc'
 
 disp_processors = os.cpu_count()
 nx = gp.nx
