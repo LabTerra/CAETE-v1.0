@@ -3,13 +3,10 @@ import concurrent.futures as conc
 import os
 from glob import glob1
 from shutil import copyfile
-
 from homedir import OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
-
-os.system('./build.sh')
-
 from caete_module import global_pars as gp
 
+os.system('./build.sh')
 
 def make_dir_spe(folder_path):
     try:
@@ -56,7 +53,7 @@ def fprocess(npls, run, res, out, pls):
             #f.result() # uncomment to simulate a serial execution
     # COPY FILES TO FINAL DESTINATION
     tars = glob1(os.getcwd(), '*.tar.gz')
-    outputs_folder = out + os.sep + 'out' + str(npls) + '_r' + str(run)
+    outputs_folder = out + os.sep + 'out' + str(npls) + '_r' + run
     if not os.path.exists(outputs_folder):
         os.mkdir(outputs_folder)
     outnames = [outputs_folder + os.sep + n for n in tars ]
@@ -96,11 +93,14 @@ def model_driver():
 
     log_file('exec.log')
     for model_run in range(1,n_runs + 1):
+        model_run_aux = str(model_run)
         with open('exec.log', mode='a') as fh:
-            fh.write('\n\n\t---Rodada n° %d\n\n' % model_run )
+            fh.write('\n\n\t---Rodada n° %s\n\n' % model_run_aux )
         os.system(comm)
         if comm == '%s caete.py' % py_executable:
-            fprocess(npls, model_run, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
+            if len(model_run_aux) == 1:
+                model_run_aux = "%s%s" %('0', model_run_aux)
+            fprocess(npls, model_run_aux, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
         os.system('bash clean_dir.sh')
 
 if __name__ == '__main__':
