@@ -2,16 +2,16 @@
    """
 
 import os
-# CHANGE HOMEDIR to make tests in forks
-# for example: to run in sombrero make HOMEDIR = os.sep.join(['','home','amazonfaceme','your username'])
-
 
 py_executable = 'ipython3'
-HOMEDIR = os.sep.join(['', 'home', 'jpdarela', 'Desktop'])
-RESULTS_DIR = os.sep.join([HOMEDIR, 'results'])
-TMP_DIR = os.sep.join([HOMEDIR, 'tmp'])
-OUTPUT_NC_DIR = os.sep.join([TMP_DIR, 'outputs_nc'])
 
-# EDIT AND SAVE IN your /src folder (in your fork)
-# py_executable = 'python'
-# HOMEDIR = os.sep.join(['C:', 'Users', 'jpdarela', 'Desktop'])
+HOMEDIR = os.sep.join(['', 'home', 'amazonfaceme','jpdarela'])
+RESULTS_DIR = os.sep.join([HOMEDIR, 'results_nCO2'])
+TMP_DIR = os.sep.join([HOMEDIR, 'tmp'])
+OUTPUT_NC_DIR = os.sep.join([TMP_DIR, 'outputs'])
+
+# Path to save all pls_attrs.csv renamed with run information
+SAVE_CSV_FILES = os.sep.join([HOMEDIR, 'csv_outputs'])
+# Path to save the final files for each set of runs
+SAVE_CSV_FINAL = os.sep.join([HOMEDIR, 'csv_final'])
+
