@@ -6,8 +6,8 @@ import gdal
 #import netCDF4 as nc
 
 # Edit these lines to you output folders
-data_dir = "/home/amazonfaceme/jpdarela/results_2018_nCO2"
-attr_dir = '/home/amazonfaceme/jpdarela/pls_tables_nCO2'
+data_dir = "/home/amazonfaceme/jpdarela/results_testing_numbering"
+attr_dir = '/home/amazonfaceme/jpdarela/pls_tables_testing_numbering'
 
 if not os.path.exists(attr_dir): os.mkdir(attr_dir)
 

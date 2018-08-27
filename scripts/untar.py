@@ -2,7 +2,7 @@ import os
 from glob import glob1
 
 root_dir = os.getcwd()
-os.chdir("/home/amazonfaceme/jpdarela/results_2018_nCO2")
+os.chdir("/home/amazonfaceme/jpdarela/results_testing_numbering")
 
 out_dir = os.getcwd()
 
