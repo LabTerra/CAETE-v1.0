@@ -39,6 +39,7 @@ import write_output as wo
 import caete_module as C
 from caete_module import global_pars as gp
 
+# You need to create a homedir file specifying some file paths and the name of you python3 executable 
 import homedir
 from homedir import OUTPUT_NC_DIR
 from homedir import RESULTS_DIR
@@ -48,10 +49,6 @@ from homedir import TMP_DIR
 #RUN IN SOMBRERO
 HOME_DIR = homedir.HOMEDIR
 
-# RUN IN DESKTOP
-#RESULTS_DIR = '/home/jpdarela/Desktop/rtest_model'
-#TMP_DIR = '/home/jpdarela/Desktop/tmp1_testm'
-#OUTPUT_NC_DIR = TMP_DIR + os.sep + 'outputs_nc'
 
 disp_processors = os.cpu_count()
 nx = gp.nx
@@ -504,8 +501,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(150, 230):             # 150, 230
-        for X in range(230, 260):           # 230, 260
+    for Y in range(ny):               # 150, 230
+        for X in range(nx):           # 230, 260
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)

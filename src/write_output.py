@@ -100,8 +100,8 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
     lsmk_internal = mask_gen(ldim)
     # create netcdf file
     rootgrp = dt(nc_filename, mode='w', format='NETCDF3_CLASSIC')
-    
-    #dimensions  & variables    
+
+    #dimensions  & variables
     rootgrp.createDimension("latitude", la)
     rootgrp.createDimension("longitude", lo)
 
@@ -113,7 +113,7 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
         rootgrp.createDimension("pls", npls)
         pls = rootgrp.createVariable(varname="pls", datatype=np.int32,
                                       dimensions=("pls",))
-    
+
     latitude  = rootgrp.createVariable(varname="latitude", datatype=np.float32,dimensions=("latitude",))
     longitude = rootgrp.createVariable(varname="longitude", datatype=np.float32, dimensions=("longitude",))
 
@@ -129,7 +129,7 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
         var_ = rootgrp.createVariable(varname = str(flt_attrs()[var][2]), datatype=np.float32,
                                        dimensions=("latitude","longitude",),
                                        fill_value=NO_DATA[0])
-   
+
     #attributes
     ## rootgrp
     rootgrp.description = flt_attrs()[var][0] + " caete-v1.0 OUTPUT"
@@ -143,7 +143,7 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
     if var in npls_out:
         pls.units = '1'
         pls.axis= u'T'
-        
+
     ## lat
     latitude.units = u"degrees_north"
     latitude.long_name=u"latitude"
@@ -166,10 +166,10 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
                                196.5, 227.5, 258., 288.5, 319., 349.5])
     if var in npls_out:
         pls[:] = np.arange(1,npls+1)
-    
+
     longitude[:] = np.arange(-179.75, 180, 0.5)
     latitude[:] =  np.arange(-89.75, 90, 0.5)
-     
+
     if not one_layer:
         var_[:,:,:] = np.fliplr(np.ma.masked_array(arr, lsmk_internal))
     else:
