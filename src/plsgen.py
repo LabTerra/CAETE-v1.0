@@ -27,10 +27,16 @@ from caete_module import global_pars as gp
 
 npls = gp.npls
 
-def vec_ranging(vec, min1, max1):
+def vec_ranging(values, new_min, new_max):
     """ range vec to min max"""
+    output = []
+    old_min, old_max = min(values), max(values)
 
-    return vec * ((max1 - min1) + min1)
+    for v in values:
+        new_v = (new_max - new_min) / (old_max - old_min) * (v - old_min) + new_min
+        output.append(new_v)
+
+    return output
 
 
 def check_viability(trait_values):
