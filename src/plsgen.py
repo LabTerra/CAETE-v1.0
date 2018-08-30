@@ -27,10 +27,16 @@ from caete_module import global_pars as gp
 
 npls = gp.npls
 
-def vec_ranging(vec, min1, max1):
+def vec_ranging(values, new_min, new_max):
     """ range vec to min max"""
+    output = []
+    old_min, old_max = min(values), max(values)
 
-    return vec * ((max1 - min1) + min1)
+    for v in values:
+        new_v = (new_max - new_min) / (old_max - old_min) * (v - old_min) + new_min
+        output.append(new_v)
+
+    return np.array(output, dtype=np.float32)
 
 
 def check_viability(trait_values):
@@ -80,6 +86,9 @@ def table_gen(NPLS):
     diffg, diffw = assertion_data_size(NPLS)
     plsa_wood, plsa_grass = turnover_combinations(True)
 
+    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    restime_wood = vec_ranging(np.random.normal(0,1,10000),1.0, 80.0)
+    restime_root = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
     # Creating Grasses and others c3 and c4
     alloc_w = []
     alloc_g = []
@@ -88,21 +97,21 @@ def table_gen(NPLS):
     while index0 < diffg:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
-        restime[0] = np.random.uniform(low=1/12., high=8.3)
+        restime[0] = restime_leaf[np.random.randint(1,10000)]
         restime[1] = 0.0
-        restime[2] = np.random.uniform(low=1/12., high=8.3)
+        restime[2] = restime_root[np.random.randint(1,10000)]
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test0):
             alloc_g.append(data_to_test0)
-            index0 += 1
+            index0 += 1 
 
     index1 = 0
     while index1 < diffw:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
-        restime[0] = np.random.uniform(low=1/12., high=8.3)
-        restime[1] = np.random.uniform(low=1.0, high=80.0)
-        restime[2] = np.random.uniform(low=1/12., high=8.3)
+        restime[0] = restime_leaf[np.random.randint(1,10000)]
+        restime[1] = restime_wood[np.random.randint(1,10000)]
+        restime[2] = restime_root[np.random.randint(1,10000)]
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test1):
             alloc_w.append(data_to_test1)
