@@ -507,9 +507,9 @@ contains
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.05*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
 
     rm64 = (rml64 + rmf64 + rms64)/1e3

@@ -86,9 +86,13 @@ def table_gen(NPLS):
     diffg, diffw = assertion_data_size(NPLS)
     plsa_wood, plsa_grass = turnover_combinations(True)
 
-    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
-    restime_wood = vec_ranging(np.random.normal(0,1,10000),1.0, 80.0)
-    restime_root = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+#    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    restime_leaf = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+#    restime_leaf = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
+    restime_wood = vec_ranging(np.random.beta(1.4,6.24,10000),1.0, 80.0)
+#    restime_wood = vec_ranging(np.random.uniform(0,1,10000),1.0, 80.0)
+    restime_root = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+#    restime_root = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
     # Creating Grasses and others c3 and c4
     alloc_w = []
     alloc_g = []
@@ -130,7 +134,7 @@ def table_gen(NPLS):
     # # # Random variables
     g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
     # # vcmax = np.random.uniform(3e-5, 100e-5,N) # molCO2 m-2 s-1
-    vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
+    vcmax = vec_ranging(np.random.beta(1.4, 6.24, size=NPLS),15e-5, 150e-5)
 
     stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5])
