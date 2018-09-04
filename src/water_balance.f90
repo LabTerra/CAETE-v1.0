@@ -286,7 +286,7 @@ contains
           if (abs(dwww).gt. 1e-2) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
-       if(c_change .gt. 0.03) then
+       if(c_change .gt. 0.2) then
           nerro = 1
           carbon_test = land_c
        endif
