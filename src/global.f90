@@ -43,7 +43,7 @@ module global_pars
   real(kind=r_4),parameter :: rcmin = 100.0
   real(kind=r_4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r_4),parameter :: wmax = 500.0
-  real(kind=r_4),parameter :: cmin = 5e-3 ! it restricts the possible combination of traits
+  real(kind=r_4),parameter :: cmin = 0.1 ! it restricts the possible combination of traits
   
   real(kind=r_8),parameter :: csru = 0.5
   real(kind=r_8),parameter :: alfm = 1.391
