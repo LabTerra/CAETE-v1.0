@@ -501,8 +501,8 @@ if __name__ == "__main__":
     log.write('\n\n\ninit caete --- %d PLSs\n' % npls)
     log.write('--init-time--%s\n\n' % time.ctime())
     print(time.ctime())
-    for Y in range(ny):               # 150, 230
-        for X in range(nx):           # 230, 260
+    for Y in range(150, 230):               # 150, 230
+        for X in range(230, 260):           # 230, 260
             if not mask[Y][X]:
                 id_n += 1
                 grd_cell = gridcell(X,Y)
