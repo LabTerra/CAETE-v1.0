@@ -4,7 +4,7 @@ import concurrent.futures as conc
 import os
 from glob import glob1
 from shutil import copyfile
-from homedir import OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
+from homedir import HOMEDIR, OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
 from caete_module import global_pars as gp
 
 os.system('./build.sh')
@@ -39,6 +39,7 @@ def log_file(f_con):
 
 
 ROOT_DIR = os.getcwd()
+make_dir_spe(HOMEDIR)
 make_dir_spe(TMP_DIR)
 make_dir_spe(OUTPUT_NC_DIR)
 make_dir_spe(RESULTS_DIR)
