@@ -380,8 +380,9 @@ contains
     real(kind=r_8) :: f1a
     
     !============================================================
-    vm_in = (vm*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0))) 
-    
+    !vm_in = (vm*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0))) 
+    vm_in = (0.00004*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0)))
+
     !Photo-respiration compensation point (Pa)
     mgama = p3/(p8*(p9**(p10*(temp-p11))))
     
