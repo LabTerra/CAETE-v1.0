@@ -7,7 +7,9 @@ from shutil import copyfile
 from homedir import HOMEDIR, OUTPUT_NC_DIR, RESULTS_DIR, TMP_DIR, py_executable
 from caete_module import global_pars as gp
 
-os.system('./build.sh')
+
+NPLS = gp.npls
+
 
 def make_dir_spe(folder_path):
     try:
@@ -58,7 +60,7 @@ def fprocess(npls, run, res, out, pls):
     outputs_folder = out + os.sep + 'out' + str(npls) + '_r' + run
     if not os.path.exists(outputs_folder):
         os.mkdir(outputs_folder)
-    outnames = [outputs_folder + os.sep + n for n in tars ]
+    outnames = [outputs_folder + os.sep + n for n in tars]
     with conc.ThreadPoolExecutor(max_workers=len(files)) as executor:
         for ft in list(zip(tars,outnames)):
             f = executor.submit(cpfile,ft)
@@ -74,14 +76,13 @@ def fprocess(npls, run, res, out, pls):
 
 def model_driver():
     print("\n\n\n\n")
-    npls = gp.npls
     q = str(input('modo PFTs? (s or n): ')).lower()
     while True:
         if q == 's':
             comm = '%s caete_pfts.py' % py_executable
             print('Número de Rodadas definido: 1')
             n_runs = 1
-            assert npls == 12, 'O modo PFTS precisa ser compilado com npls=12, npls =  %d fornecido' %npls
+            assert NPLS == 12, 'O modo PFTS precisa ser compilado com npls=12, npls =  %d fornecido' %npls
             break
         elif q == 'n':
             n_runs = int(input('Número de Rodadas: '))
@@ -103,8 +104,9 @@ def model_driver():
         if comm == '%s caete.py' % py_executable:
             if len(model_run_aux) == 1:
                 model_run_aux = "%s%s" %('0', model_run_aux)
-            fprocess(npls, model_run_aux, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
+            fprocess(NPLS, model_run_aux, res=OUTPUT_NC_DIR, out=RESULTS_DIR, pls=True)
         os.system('bash clean_dir.sh')
+    os.system("rm -rf caete_module*")
 
 if __name__ == '__main__':
     model_driver()
