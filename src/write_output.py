@@ -1,4 +1,4 @@
-# Functionalities to write model outputs 
+nmmmmmmmmmmmmm# Functionalities to write model outputs 
 
 import numpy as np
 from netCDF4 import Dataset as dt
@@ -141,7 +141,7 @@ def write_CAETE_output(nc_filename, arr, var, pls_mode=False):
         time.axis='T'
 
     if var in npls_out:
-        pls.units = '1'
+        pls.units = 'Plant_Life_Strategy'
         pls.axis= u'T'
 
     ## lat
