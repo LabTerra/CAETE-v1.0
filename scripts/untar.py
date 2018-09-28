@@ -25,7 +25,7 @@ for f in os.listdir(os.getcwd()):
         if len(f_cont) > 0:
             for i in f_cont:
                 os.system('tar -xvzf %s' %i)
-                #os.system('rm -rf %s' %i)
+                os.system('rm -rf %s' %i)
         else:
             pass
         os.chdir(out_dir)

@@ -178,7 +178,7 @@ def write_CAETE_output(nc_filename, arr, var):
         time.axis='T'
 
     if var in npls_out:
-        pls.units = 'Plant_Life_Strategie'
+        pls.units = 'Plant_Life_Strategy'
         pls.axis= u'T'
 
     ## lat
