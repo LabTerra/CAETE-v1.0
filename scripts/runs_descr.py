@@ -1,17 +1,19 @@
+#!-*-coding:utf-8-*-
 import os
 import sys
 import glob
+import time
 import numpy as np
 import gdal
 import write_output as wo
-
-#import netCDF4 as nc # Change in future
-
+import netCDF4 as nc
 
 # Import filepaths from homedir
 sys.path.insert(0, '../src/')
-
 import homedir
+
+# UNTAR output files
+os.system("ipython3 untar.py")
 
 # This variable must store the correct path to the results folder
 data_dir = homedir.RESULTS_DIR
@@ -23,7 +25,7 @@ csv_dir = homedir.SAVE_CSV_FINAL
 
 # Create outputs folder if it dont exists
 if not os.path.exists(attr_dir): os.mkdir(attr_dir)
-if not os.path.exists(csv_dir): os.mkdir(csv_dir) 
+if not os.path.exists(csv_dir): os.mkdir(csv_dir)
 # Some variables
 root  = os.getcwd()
 nx = 720
@@ -32,6 +34,10 @@ lat = np.arange(-89.75, 90., 0.5)
 lon = np.arange(-179.75, 180., 0.5)
 
 # Defining some functions
+
+def read_as_array(nc_fname, var):
+    data = nc.Dataset(nc_fname).variables[var][:]
+    return data
 
 
 def folder_list(dr = data_dir):
@@ -64,7 +70,7 @@ def make_table():
     import pandas as pd
 
     fluxes = ['npp','photo','aresp','cue','wue','evapm','rcm']
-    pools = ['area','area0','cmass']
+    pools = ['area','cmass']
     traits = ['g1','vcmax','tleaf','twood','troot','aleaf','awood','aroot']
 
 
@@ -104,13 +110,17 @@ def make_table():
 
     # csv_header = [x.encode() for x in csv_header]
 
-    mask = np.load('mask12.npy')[0]
+    # Read some metadata 
+#    mask = np.load('mask12.npy')[0]
     mask_forest = np.load('mask_forests.npy')
+    area_m2 = read_as_array("cell_area.nc", "cell_area")
 
-    area_m2 = gdal.Open('cell_area.nc').ReadAsArray()
-
-    for fl in folder_list():
-        # print fl
+    # Create the list of lists of output directories
+    flds = folder_list()
+    flds.sort()
+    for fl in flds:
+        # print fl each fl is a listo of runs
+        fl.sort()
         rname = fl[0].split('_')[0] # to be used in pls_attrs_save
 
         rname1 = os.sep.join([csv_dir, rname])
@@ -133,34 +143,24 @@ def make_table():
                 os.chdir(data_dir + '/' + folder )
 
                 # open files
-                area_ocp = gdal.Open('area.nc').ReadAsArray() / 100.0
-                cmass =  (gdal.Open('cmass.nc').ReadAsArray() * area_ocp).sum(axis=0,)
-                cleaf = (gdal.Open('cleaf.nc').ReadAsArray() * area_ocp).sum(axis=0,)
-                cfroot = (gdal.Open('cfroot.nc').ReadAsArray() * area_ocp).sum(axis=0,)
-                cawood = (gdal.Open('cawood.nc').ReadAsArray() * area_ocp).sum(axis=0,)
-               #  clin = gdal.Open('clin.nc').ReadAsArray()
-               #  cwin = gdal.Open('cwin.nc').ReadAsArray()
-               #  cfin = gdal.Open('cfin.nc').ReadAsArray()
-               #  area_ocp0 = np.zeros(shape=cfin.shape,dtype=np.float32)
-
-               # total_biomass_pft = clin + cfin + cwin
-               # total_biomass = clin.sum(axis=0,) + cwin.sum(axis=0,) + cfin.sum(axis=0,)
-
-               # for ii in range(total_biomass_pft.shape[0]):
-               #     area_ocp0[ii,:,:] = total_biomass_pft[ii,:,:] / total_biomass[:,:]
-
-               # del(cwin,cfin,clin,total_biomass)
-
-               # area_ocp0 = nan_remove(area_ocp0)
-
+                area_ocp = read_as_array("area.nc", "area") / 100.0
+                cmass = (read_as_array("cmass.nc", "cmass") * area_ocp).sum(axis=0,)
+                cleaf = (read_as_array("cleaf.nc", "cleaf") * area_ocp).sum(axis=0,)
+                cfroot = (read_as_array("cfroot.nc", "cfroot") * area_ocp).sum(axis=0,)
+                cawood = (read_as_array("cawood.nc", "cawood") * area_ocp).sum(axis=0,)
                 attr_table = pd.read_csv('pls_attrs.csv',dtype=np.float32)
 
-                rpath =  attr_dir + '/'
+                rpath =  attr_dir + os.sep
+                
                 NPLS = rname[3:]
                 attr_table.to_csv(rpath + 'pls_attrs' + '-' +str(run) + '-' + NPLS + '.csv', index=False)
 
-
+                print("Making var_dict %s --- %s" % (run,time.ctime()))
                 var_dict = dict(zip(fluxes,map(annual_mean_sd,fluxes)))
+                print("ending var_dict %s --- %s\n\n" % (run,time.ctime()))
+
+                mask = cleaf.mask
+                print("Printing to file %s --- %s" % (run,time.ctime()))
 
                 for Y in range(360):
                     for X in range(720):
@@ -172,9 +172,8 @@ def make_table():
                             evapm = var_dict['evapm'][0][Y,X] # et =
                             wue = var_dict['wue'][0][Y,X]
                             cue = var_dict['cue'][0][Y,X]
-
-                            if photo <= 0.0001:
-                                 pass
+                            if photo <= 1e-12:
+                                pass
                             else:
                                 area1 = area_ocp[:,Y,X]
                                 line =[Y, # ny =
@@ -196,12 +195,12 @@ def make_table():
                                        # '%.4f'%var_dict['npp'][1][Y,X], # npp_sig =
                                        # '%.4f'%var_dict['rcm'][1][Y,X], # rc_sig =
                                        # '%.4f'%var_dict['evapm'][1][Y,X], # et_sig =
-
+                                       
                                        '%.5f'%cmass[Y,X],
                                        '%.5f'%cleaf[Y,X],
                                        '%.5f'%cfroot[Y,X],
                                        '%.5f'%cawood[Y,X],
-
+                                       
                                        #from run
                                        '%.6f'%cwmv(area1, attr_table[traits[0]])[0], # g1_cwm =
                                        '%.10f'%cwmv(area1, attr_table[traits[1]])[0], # vcmax_cwm =
@@ -211,7 +210,7 @@ def make_table():
                                        '%.6f'%cwmv(area1, attr_table[traits[5]])[0], # aleaf_cwm =
                                        '%.6f'%cwmv(area1, attr_table[traits[6]])[0], # awood_cwm =
                                        '%.6f'%cwmv(area1, attr_table[traits[7]])[0], # aroot_cwm =
-
+                                       
                                        '%.6f'%cwmv(area1, attr_table[traits[0]])[1], # g1_cwv =
                                        '%.10f'%cwmv(area1, attr_table[traits[1]])[1], # vcmax_cwv =
                                        '%.6f'%cwmv(area1, attr_table[traits[2]])[1], # tleaf_cwv =
@@ -219,28 +218,26 @@ def make_table():
                                        '%.6f'%cwmv(area1, attr_table[traits[4]])[1], # troot_cwv =
                                        '%.6f'%cwmv(area1, attr_table[traits[5]])[1], # aleaf_cwv =
                                        '%.6f'%cwmv(area1, attr_table[traits[6]])[1], # awood_cwv =
-                                       '%.6f'%cwmv(area1, attr_table[traits[7]])[1]] # aroot_cwv =
-
-                                       # from spinup (npp_pot,carbon pools in vegetation)
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[0]]),#[0], # g1_cwm =
-                                      #  '%.10f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[1]]),#[0], # vcmax_cwm =
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[2]]),#[0], # tleaf_cwm =
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[3]]),#[0], # twood_cwm
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[4]]),#[0], # troot_cwm =
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[5]]),#[0], # aleaf_cwm =
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[6]]),#[0], # awood_cwm =
-                                      #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[7]])]#[0], # aroot_cwm =
-                                      # # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[0]]),#[1], # g1_cwv =
-                                      # '%.10f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[1]]),#[1], # vcmax_cwv =
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[2]]),#[1], # tleaf_cwv =
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[3]]),#[1], # twood_cwv
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[4]]),#[1], # troot_cwv =
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[5]]),#[1], # aleaf_cwv =
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[6]]),#[1], # awood_cwv =
-                                      # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[7]])#[1]] # aroot_cwv =
-
+                                       '%.6f'%cwmv(area1, attr_table[traits[7]])[1]] 
                                 csv_writer.writerow(line)
-
+                                
+                                # from spinup (npp_pot,carbon pools in vegetation)
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[0]]),#[0], # g1_cwm =
+                                #  '%.10f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[1]]),#[0], # vcmax_cwm =
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[2]]),#[0], # tleaf_cwm =
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[3]]),#[0], # twood_cwm
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[4]]),#[0], # troot_cwm =
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[5]]),#[0], # aleaf_cwm =
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[6]]),#[0], # awood_cwm =
+                                #  '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[7]])]#[0], # aroot_cwm =
+                                # # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[0]]),#[1], # g1_cwv =
+                                # '%.10f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[1]]),#[1], # vcmax_cwv =
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[2]]),#[1], # tleaf_cwv =
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[3]]),#[1], # twood_cwv
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[4]]),#[1], # troot_cwv =
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[5]]),#[1], # aleaf_cwv =
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[6]]),#[1], # awood_cwv =
+                                # '%.4f'%cwmv(area_ocp0[:,Y,X], attr_table[traits[7]])#[1]] # aroot_cwv =
                 area_ocp = None
                 area_ocp0 = None
                 cmass = None
@@ -249,11 +246,8 @@ def make_table():
                 cawood = None
                 attr_table = None
             os.chdir(root)
-    return NPLS
-    # for each gridcell(360,720) in each run in runs
-    # load data arrays and make annual means (npp, gpp, ra, cue, wue, rcm, evamp)
-    # load area1 = area_ocp[:,Y,X]
-    # load cmass
+    return None
+
 
 def calc_diversity(runs):
     """runs :: list of runs"""
@@ -261,13 +255,14 @@ def calc_diversity(runs):
     os.chdir(data_dir)
     res = os.getcwd()
     os.chdir(runs[0])
-    sh = gdal.Open('area.nc').ReadAsArray().shape
+    sh = read_as_array("area.nc", "area").shape
+    
     os.chdir(res)
     div = np.zeros(shape=sh,dtype=np.float32)
     #lst_div = []
     for run in runs:
         os.chdir(run)
-        dt = gdal.Open('area.nc').ReadAsArray()
+        dt = read_as_array("area.nc", "area")
         div += np.array(dt > 0.0, np.int32)/np.float32(len(runs))
         #lst_div.append(div)
         dt = None
@@ -275,7 +270,7 @@ def calc_diversity(runs):
     #div_arr = np.array(lst_div)
     #del(lst_div)
     div_arr = div.mean(axis=0,)
-    #del(div)
+    del(div)
     os.chdir(root)
     return div_arr
 
@@ -325,7 +320,7 @@ def calc_stats_pools(runs,var):
         files = [ folder +'/'+ f for f in files]
         #print files
         for f in files:
-            dt = gdal.Open(f).ReadAsArray()
+            dt = read_as_array(f, var)
             dt = dt.sum(axis=0,)
             list_of_arrays.append(dt.copy())
             dt = None
@@ -370,34 +365,21 @@ def make_stats(runs):
     os.chdir(root)
     return run # returns folder name for pls results
 
-
 if __name__ == '__main__':
 
     # Faz a tabela com dados de cada celula de grid
-    npls = make_table()
+    make_table()
 
     # Salva os arquivos de medias de dp (netCDF files)
-    # cria uma pasta 
-
-    # lat = np.arange(-89.75, 90, 0.5)
-    # lon = np.arange(-179.75, 180, 0.5)
-    # areacell = CellAreas(lat,lon)
-    # fname = '/home/jpdarela/Desktop/caete_jp/dev/caete_results/cell_area.nc'
-    # wo.write_CAETE_output(fname,areacell, 'cell_area')
-
-    mask = np.load('mask12.npy')
     folderl = folder_list()
     results = []
     for f in folderl:
        results.append(make_stats(f))
 
-
-    # write_CAETE_output(nc_filename, arr, var, npls1=1):
-    # out50PLS_assembled
     for f in results:
         os.chdir(data_dir + '/' + f)
         f_to_save = glob.glob1(os.getcwd(), "*.npy")
-        #npls = f.split('P')[0].split('t')[-1]
+        npls = f.split('P')[0].split('t')[-1]
         for npy in f_to_save:
             #print(npy)
             var = npy.split('.')[0] 
