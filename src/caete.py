@@ -542,11 +542,11 @@ if __name__ == "__main__":
 
     else:
         if npls <= 200:
-            hi = 1040
             n_process = disp_processors * 2
+            hi = n_process * 30
         else:
-            hi = 375
             n_process = disp_processors * 3
+            hi = n_process * 30
         n_chunks = ceil(len(land_data)/hi)
         log.write('Iniciando multiprocessing - chunks mode\n')
         id = 1
