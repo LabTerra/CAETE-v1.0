@@ -1,33 +1,45 @@
 import os
 import sys
-
 from glob import glob1
+import concurrent.futures as conc
 
 
-# Import filepaths from homedir
 sys.path.insert(0, '../src/')
 import homedir
 
-# This variable must store the correct path to the results folder
+# path to the results folder
 data_dir = homedir.RESULTS_DIR
-
-
 root_dir = os.getcwd()
+
+# Goto outputs base directory 
 os.chdir(data_dir)
 
-out_dir = os.getcwd()
+def untar_file(filename):
+    os.system('tar -xvzf %s' %filename)
+    os.system('rm -rf %s' %filename)
 
-for f in os.listdir(os.getcwd()):
-    # print(f)
-    if os.path.isdir(f):
-        os.chdir(f)
-        f_cont = glob1(os.getcwd(), '*.tar.gz')
-        if len(f_cont) > 0:
-            for i in f_cont:
-                os.system('tar -xvzf %s' %i)
-                os.system('rm -rf %s' %i)
-        else:
-            pass
-        os.chdir(out_dir)
+def process_folder(f):
+    
+    out_dir = os.getcwd()
+    
+    #if os.path.isdir(f):
+    os.chdir(f)
+    f_cont = glob1(os.getcwd(),"*.tar.gz")
+    n_files = len(f_cont)
+    print(f_cont)
+    print(n_files)
+    if n_files > 0:
+        with conc.ThreadPoolExecutor(max_workers=n_files) as executor:
+            for fl in f_cont:
+                f2 = executor.submit(untar_file, fl)
+    os.chdir(out_dir)
+
+
+folders_to_process = os.listdir(os.getcwd())
+
+print(folders_to_process)
+
+for directory in folders_to_process:
+    process_folder(directory)
+
 os.chdir(root_dir)
-
