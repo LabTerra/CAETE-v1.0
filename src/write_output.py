@@ -1,5 +1,4 @@
-# Functionalities to write model outputs 
-
+# Functionalities to write model outputs
 import numpy as np
 from netCDF4 import Dataset as dt
 from caete_module import global_pars as gp
