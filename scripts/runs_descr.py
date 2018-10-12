@@ -37,8 +37,6 @@ lon = np.arange(-179.75, 180., 0.5)
 
 def read_as_array(nc_fname, var):
     data = nc.Dataset(nc_fname).variables[var][:]
-    if "cell_areas.nc" == nc_fname:
-        return np.flipud(data)
     return np.fliplr(data)
 
 
@@ -115,7 +113,7 @@ def make_table():
     # Read some metadata 
     mask = np.load('mask12.npy')[0]
     mask_forest = np.load('mask_forests.npy')
-    area_m2 = read_as_array("cell_area.nc", "cell_area")
+    area_m2 = gdal.Open("cell_area.nc").ReadAsArray()
 
     # Create the list of lists of output directories
     flds = folder_list()
