@@ -40,12 +40,19 @@ lon = np.arange(-179.75, 180., 0.5)
 
 # Defining some functions
 
-def cwmv(area,traits):
-    # area :: [np.array  1D] shape(npls,)
-    # traits [np.array 1D ] shape(npls):: g1 || vcmax || tleaf || twood || troot || aleaf || awood || aroot
-    assert area.shape == traits.shape, 'shape mismatch'
-    return (area * traits).sum(axis=0,), pow((area * traits).std(),2)
+def _cwm(area, traits):
+    """area :: [np.array  1D] shape(npls,)
+    traits [np.array 1D ] shape(npls):: g1 || vcmax || tleaf || twood || troot || aleaf || awood || aroot"""
 
+    # assert area.shape == traits.shape, 'shape mismatch'
+    return (area * traits).sum(axis=0,)
+
+def _cwv(area, traits):
+    """area :: [np.array  1D] shape(npls,)
+    traits [np.array 1D ] shape(npls):: g1 || vcmax || tleaf || twood || troot || aleaf || awood || aroot"""
+    
+    # assert area.shape == traits.shape, 'shape mismatch'
+    return pow((area * traits).std(),2)
 
 def read_as_array(nc_fname, var):
     """ only for multilayers file"""
@@ -80,7 +87,7 @@ def make_table_aux(folder):
     mask_forest = np.load('mask_forests.npy')
     area_m2 = np.flipud(nc.Dataset("cell_area.nc").variables['cell_area'][:])
 
-    print('Running Make_table for folder\n', end ="-")
+    print('\n\nRunning Make_table for folder', end ="-")
     print (folder)
     
     rname = folder.split('_')[0] # to be used in pls_attrs_save
@@ -152,22 +159,22 @@ def make_table_aux(folder):
                            cleaf[Y, X],
                            cfroot[Y, X],
                            cawood[Y, X],
-                           cwmv(area1, attr_table[traits[0]])[0],  # g1_cwm 
-                           cwmv(area1, attr_table[traits[1]])[0],  # vcmax_cwm
-                           cwmv(area1, attr_table[traits[2]])[0],  # tleaf_cwm
-                           cwmv(area1, attr_table[traits[3]])[0],  # twood_cwm
-                           cwmv(area1, attr_table[traits[4]])[0],  # troot_cwm
-                           cwmv(area1, attr_table[traits[5]])[0],  # aleaf_cwm
-                           cwmv(area1, attr_table[traits[6]])[0],  # awood_cwm
-                           cwmv(area1, attr_table[traits[7]])[0],  # aroot_cwm
-                           cwmv(area1, attr_table[traits[0]])[1],  # g1_cwv
-                           cwmv(area1, attr_table[traits[1]])[1],  # vcmax_cwv
-                           cwmv(area1, attr_table[traits[2]])[1],  # tleaf_cwv
-                           cwmv(area1, attr_table[traits[3]])[1],  # twood_cwv
-                           cwmv(area1, attr_table[traits[4]])[1],  # troot_cwv
-                           cwmv(area1, attr_table[traits[5]])[1],  # aleaf_cwv
-                           cwmv(area1, attr_table[traits[6]])[1],  # awood_cwv
-                           cwmv(area1, attr_table[traits[7]])[1])
+                           _cwm(area1, attr_table[traits[0]]),  # g1_cwm 
+                           _cwm(area1, attr_table[traits[1]]),  # vcmax_cwm
+                           _cwm(area1, attr_table[traits[2]]),  # tleaf_cwm
+                           _cwm(area1, attr_table[traits[3]]),  # twood_cwm
+                           _cwm(area1, attr_table[traits[4]]),  # troot_cwm
+                           _cwm(area1, attr_table[traits[5]]),  # aleaf_cwm
+                           _cwm(area1, attr_table[traits[6]]),  # awood_cwm
+                           _cwm(area1, attr_table[traits[7]]),  # aroot_cwm
+                           _cwv(area1, attr_table[traits[0]]),  # g1_cwv
+                           _cwv(area1, attr_table[traits[1]]),  # vcmax_cwv
+                           _cwv(area1, attr_table[traits[2]]),  # tleaf_cwv
+                           _cwv(area1, attr_table[traits[3]]),  # twood_cwv
+                           _cwv(area1, attr_table[traits[4]]),  # troot_cwv
+                           _cwv(area1, attr_table[traits[5]]),  # aleaf_cwv
+                           _cwv(area1, attr_table[traits[6]]),  # awood_cwv
+                           _cwv(area1, attr_table[traits[7]]))  # aroot_cwv
                     
                     sys.stdout.write("\rLines completed: %d" % counter)
                     struct_array.append(line)
