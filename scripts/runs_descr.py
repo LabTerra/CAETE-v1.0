@@ -56,7 +56,10 @@ def _cwv(area, traits):
 
 def read_as_array(nc_fname, var):
     """ only for multilayers file"""
-    return np.fliplr(nc.Dataset(nc_fname).variables[var][:])
+    with nc.Dataset(nc_fname, mode='r') as fcon:
+    #fcon = nc.Dataset(nc_fname)
+        data_array = fcon.variables[var][:]
+    return np.fliplr(data_array)
 
 
 def folder_list(dr = data_dir):
@@ -181,9 +184,9 @@ def make_table_aux(folder):
     sys.stdout.flush()
     fname_csv = rname1 + ".csv"
     if os.path.exists(fname_csv):
-        pd.DataFrame(np.array(struct_array, dtype=dtypes_list)).to_csv(fname_csv, index=False, mode='a')
+        pd.DataFrame(np.array(struct_array, dtype=dtypes_list)).to_csv(fname_csv, header=False, index=False, mode='a')
     else:
-        pd.DataFrame(np.array(struct_array, dtype=dtypes_list)).to_csv(fname_csv, index=False, mode='w')
+        pd.DataFrame(np.array(struct_array, dtype=dtypes_list)).to_csv(fname_csv, header=True, index=False, mode='w')
         # clean_variables
     struct_array = None
     area_ocp = None
@@ -198,20 +201,18 @@ def make_table_aux(folder):
 
 
 def make_folder_runs(fl):
-    #import concurrent.futures as conc
+    
     aux = fl.sort()
-    # with conc.ThreadPoolExecutor(max_workers=5) as executor:
+    #with conc.ThreadPoolExecutor(max_workers=5) as executor:
     for folder in fl:
         make_table_aux(folder)
     
 
 def make_table():
     """ Constructs the final table of caete results"""
-    
     root = os.getcwd()
     # Create the list of lists of output directories
-    flds = folder_list()
-
+    flds = folder_list()    
     for fl in flds:
         make_folder_runs(fl)
     return None

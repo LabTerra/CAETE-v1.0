@@ -26,8 +26,8 @@ def process_folder(f):
     os.chdir(f)
     f_cont = glob1(os.getcwd(),"*.tar.gz")
     n_files = len(f_cont)
-    print(f_cont)
-    print(n_files)
+    #print(f_cont)
+    #print(n_files)
     if n_files > 0:
         with conc.ThreadPoolExecutor(max_workers=n_files) as executor:
             for fl in f_cont:
