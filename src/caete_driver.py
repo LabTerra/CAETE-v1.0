@@ -1,5 +1,3 @@
-#!/usr/local/bin/ipython3
-
 import concurrent.futures as conc
 import os
 from glob import glob1
