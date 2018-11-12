@@ -211,7 +211,7 @@ contains
        f5_64 = wa
     endif
    
-    if(f5_64 .le. 0.0) f5_64 = 1.0
+    if(f5_64 .le. 0.0) f5_64 = wa
     f5 = real(f5_64,4)      
   end function water_stress_modifier
 
@@ -516,9 +516,9 @@ contains
     !rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
     !rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.05*temp))
-    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.05*tsoil))
-    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.05*temp))
+    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.08*temp))
+    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.08*tsoil))
+    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.08*temp))
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
