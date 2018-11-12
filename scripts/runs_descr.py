@@ -37,7 +37,7 @@ NY = 360
 
 lat = np.arange(-89.75, 90., 0.5)
 lon = np.arange(-179.75, 180., 0.5)
-
+dtypes = dict(dtypes_list)
 # Defining some functions
 
 def _cwm(area, traits):
@@ -55,7 +55,7 @@ def _cwv(area, traits):
     return pow((area * traits).std(),2)
 
 def read_as_array(nc_fname, var):
-    """ only for multilayers file"""
+    """ only for multilayers files"""
     with nc.Dataset(nc_fname, mode='r') as fcon:
     #fcon = nc.Dataset(nc_fname)
         data_array = fcon.variables[var][:]
@@ -138,9 +138,9 @@ def make_table_aux(folder):
     for Y in range(NY):
         for X in range(NX):
             if not mask[Y, X]:
-                GPP = photo[Y, X]
+                NPP = npp[Y, X]
                 area1 = area_ocp[:,Y,X]
-                if GPP <= 1e-12:
+                if NPP <= 1e-5:
                     pass
                 else:
                     counter += 1                             # types
@@ -151,33 +151,33 @@ def make_table_aux(folder):
                            mask_forest[Y, X],    # f4
                            area_m2[Y, X],        # f4
                            run,                 # i2
-                           photo[Y, X],          # daqui pra frente tudo f4
-                           aresp[Y, X],
-                           npp[Y, X], 
-                           rcm[Y, X], 
-                           evapm[Y, X],
-                           wue[Y, X],
-                           cue[Y, X],     
-                           cmass[Y, X],
-                           cleaf[Y, X],
-                           cfroot[Y, X],
-                           cawood[Y, X],
-                           _cwm(area1, attr_table[traits[0]]),  # g1_cwm 
-                           _cwm(area1, attr_table[traits[1]]),  # vcmax_cwm
-                           _cwm(area1, attr_table[traits[2]]),  # tleaf_cwm
-                           _cwm(area1, attr_table[traits[3]]),  # twood_cwm
-                           _cwm(area1, attr_table[traits[4]]),  # troot_cwm
-                           _cwm(area1, attr_table[traits[5]]),  # aleaf_cwm
-                           _cwm(area1, attr_table[traits[6]]),  # awood_cwm
-                           _cwm(area1, attr_table[traits[7]]),  # aroot_cwm
-                           _cwv(area1, attr_table[traits[0]]),  # g1_cwv
-                           _cwv(area1, attr_table[traits[1]]),  # vcmax_cwv
-                           _cwv(area1, attr_table[traits[2]]),  # tleaf_cwv
-                           _cwv(area1, attr_table[traits[3]]),  # twood_cwv
-                           _cwv(area1, attr_table[traits[4]]),  # troot_cwv
-                           _cwv(area1, attr_table[traits[5]]),  # aleaf_cwv
-                           _cwv(area1, attr_table[traits[6]]),  # awood_cwv
-                           _cwv(area1, attr_table[traits[7]]))  # aroot_cwv
+                           '%.6f' %  photo[Y, X],          # daqui pra frente tudo f4
+                           '%.6f' %  aresp[Y, X],
+                           '%.6f' %  npp[Y, X], 
+                           '%.6f' %  rcm[Y, X], 
+                           '%.6f' %  evapm[Y, X],
+                           '%.6f' %  wue[Y, X],
+                           '%.6f' %  cue[Y, X],     
+                           '%.6f' %  cmass[Y, X],
+                           '%.6f' %  cleaf[Y, X],
+                           '%.6f' %  cfroot[Y, X],
+                           '%.6f' %  cawood[Y, X],
+                        #    '%.6f' %  _cwm(area1, attr_table[traits[0]]),  # g1_cwm 
+                        #    '%.6f' %  _cwm(area1, attr_table[traits[1]]),  # vcmax_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[2]]),  # tleaf_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[3]]),  # twood_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[4]]),  # troot_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[5]]),  # aleaf_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[6]]),  # awood_cwm
+                           '%.6f' %  _cwm(area1, attr_table[traits[7]]))  # aroot_cwm
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[0]]),  # g1_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[1]]),  # vcmax_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[2]]),  # tleaf_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[3]]),  # twood_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[4]]),  # troot_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[5]]),  # aleaf_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[6]]),  # awood_cwv
+                        #    '%.6f' %  _cwv(area1, attr_table[traits[7]]))  # aroot_cwv
                     
                     sys.stdout.write("\rLines completed: %d" % counter)
                     struct_array.append(line)

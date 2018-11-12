@@ -190,6 +190,10 @@ contains
     
     wa = w/wmax
     
+    !S = cSRU CR fW
+    !D = 
+    ! αH2O = 1−exp(−S/D)
+    f5_64 = -9999999
     pt = csru*(cfroot*1000.)*wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
     if(rc .gt. 0.0) then
        gc = (1.0/(rc * 1.15741e-08))  ! s/m
@@ -201,13 +205,13 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-0.08 * f5_64)
+       f5_64 = exp(f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = wa
     endif
    
-    if(f5_64 .lt. 0.0) f5_64 = wa
+    if(f5_64 .le. 0.0) f5_64 = 1.0
     f5 = real(f5_64,4)      
   end function water_stress_modifier
 
@@ -508,10 +512,13 @@ contains
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    !rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    !rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    !rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
+    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.05*temp))
+    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.05*tsoil))
+    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.05*temp))
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
