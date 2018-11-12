@@ -134,12 +134,12 @@ def table_gen(NPLS):
     # # # Random variables
 
     # Mantendo g1 constante para todos os PLSs
-    g1 = np.zeros(NPLS) + 3.77
-    #g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
+    # g1 = np.zeros(NPLS) + 3.77
+    g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
     
     # Vcmax igual para todos os PLSs
-    vcmax = np.zeros(NPLS) + 0.00004  # molCO2 m-2 s-1
-    #vcmax = vec_ranging(np.random.beta(1.4, 6.24, size=NPLS),15e-5, 150e-5)
+    # vcmax = np.zeros(NPLS) + 0.00004  # molCO2 m-2 s-1
+    vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
 
     stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5])
