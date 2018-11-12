@@ -543,7 +543,7 @@ if __name__ == "__main__":
     else:
         if npls <= 200:
             n_process = disp_processors * 2
-            hi = n_process * 30
+            hi = n_process * 60
         else:
             n_process = disp_processors * 3
             hi = n_process * 30

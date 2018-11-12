@@ -219,7 +219,7 @@ contains
     wuemes = 0.0
     
     call budget (dt,mes,wini,gini,sini,td,ta,pr,spre,ipar,ru&
-         &,cleaf1_pft,cawood1_pft,cfroot1_pft ,wfim,gfim, sfim,smes&
+         &,cleaf1_pft,cawood1_pft,cfroot1_pft ,wfim,gfim,sfim,smes&
          &,rmes,emes,epmes,phmes,armes,nppmes,laimes,clmes,csmes,hrmes&
          &,rcmes,rmmes,rgmes,cleafmes,cawoodmes,cfrootmes, gridocpmes&
          &,wuemes,cuemes)
@@ -286,7 +286,7 @@ contains
           if (abs(dwww).gt. 1e-2) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
-       if(c_change .gt. 0.01) then
+       if(c_change .gt. 1e-2) then
           nerro = 1
           carbon_test = land_c
        endif

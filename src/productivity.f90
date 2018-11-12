@@ -142,7 +142,7 @@ contains
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
-    ph =  gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - proxy of gpp or gpp?
+    ph = gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - gpp
 
     
     !     Autothrophic respiration

@@ -134,6 +134,9 @@ contains
     logical(kind=l_1) :: end_pls = .false., no_cell = .false.
     real(kind=r_4) :: ocp = 0
     real(kind=r_4) :: ae
+    real(kind=r_4) :: water1
+    real(kind=r_4) :: ice1
+    real(kind=r_4) :: snow1
   
     !integer(kind=i_4),dimension(12) :: ndmonth       !Number of months
     !data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
@@ -370,9 +373,9 @@ contains
              cl1_pft(p) = 0.0
              ca1_pft(p) = 0.0
              cf1_pft(p) = 0.0
-             w2(p) = 0.0
-             g2(p) = 0.0
-             s2(p) = 0.0
+!             w2(p) = 0.0
+!             g2(p) = 0.0
+!             s2(p) = 0.0
            endif
        enddo                  ! end pls loop  
     enddo                     ! end ndmonth loop
@@ -380,11 +383,16 @@ contains
     !     Final calculations
     !     ------------------
     !     monthly values
+    ! New Vars to store water
+    water1 = sum(w * ocp_coeffs)
+    ice1 = sum(g * ocp_coeffs)
+    snow1 = sum(s * ocp_coeffs)
+
     do p=1,NPFT
        if (p .eq. 1) epavg = epavg/real(ndmonth(month))
-       w2(p) = w(p) !* (ocp_mm(p)/real(ndmonth(month)))
-       g2(p) = g(p) !* (ocp_mm(p)/real(ndmonth(month)))
-       s2(p) = s(p) !* (ocp_mm(p)/real(ndmonth(month)))
+       w2(p) = water1
+       g2(p) = ice1
+       s2(p) = snow1 
        smavg(p)  = smavg(p)/real(ndmonth(month))
        ruavg(p)  = ruavg(p)/real(ndmonth(month))
        evavg(p)  = evavg(p)/real(ndmonth(month))
