@@ -29,7 +29,7 @@ contains
 
   subroutine prod(dt,light_limit,temp,ts,p0,w,&
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
-       beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
+       beta_froot,ph,ar,nppa,laia,f5,f1,vpd,&
        rm,rg,rc,wue) ! outputs
     
     use types
@@ -46,7 +46,7 @@ contains
 
     real(kind=r_4),dimension(ntraits),intent(in) :: dt
 
-    real(kind=r_4), intent(in) :: temp,ts                 !Mean monthly temperature (oC)
+    real(kind=r_4), intent(in) :: temp,ts              !Mean monthly temperature (oC)
     real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
     real(kind=r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (einstein m-2 s-1)'
@@ -55,7 +55,7 @@ contains
     real(kind=r_4), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)
     real(kind=r_4), intent(in) :: beta_awood
     real(kind=r_4), intent(in) :: beta_froot
-    real(kind=r_4), intent(in) :: ocprod
+    !real(kind=r_4), intent(in) :: ocprod
     logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
 
     !     Output
@@ -106,7 +106,7 @@ contains
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
     
-    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.5, light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
      !ipar * 0.5 for considering just the photossintetically active radiation    
     ! VPD
     !========
@@ -121,7 +121,13 @@ contains
     wue = water_ue(f1a, rc, p0, vpd)
     
     !     Water stress response modifier (dimensionless)
-    !     ----------------------------------------------
+   !  !     ----------------------------------------------
+    print *, 'w', w
+    print *, 'cf1',cf1
+    print *, 'rc',rc
+    print *, 'emax', emax
+    print *, ' '
+    print *, ' -------------------- -   -  -  -'
     f5 =  water_stress_modifier(w, cf1, rc, emax)
     
     !     Photosysthesis minimum and maximum temperature

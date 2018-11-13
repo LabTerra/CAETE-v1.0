@@ -193,7 +193,7 @@ contains
     !S = cSRU CR fW
     !D = 
     ! αH2O = 1−exp(−S/D)
-    f5_64 = -9999999
+    f5_64 = 0.0
     pt = csru*(cfroot*1000.)*wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
     if(rc .gt. 0.0) then
        gc = (1.0/(rc * 1.15741e-08))  ! s/m
@@ -205,13 +205,13 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(f5_64)
+       f5_64 = exp(-1 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = wa
     endif
    
-    if(f5_64 .le. 0.0) f5_64 = wa
+    if(f5_64 .le. 0.0) f5_64 = 1e-3 ! residual carbon assimilation 
     f5 = real(f5_64,4)      
   end function water_stress_modifier
 

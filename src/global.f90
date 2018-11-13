@@ -40,10 +40,10 @@ module global_pars
   real(kind=r_4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
   real(kind=r_4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
   real(kind=r_4),parameter :: rcmax = 4500.0
-  real(kind=r_4),parameter :: rcmin = 10.0
+  real(kind=r_4),parameter :: rcmin = 100.0
   real(kind=r_4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r_4),parameter :: wmax = 500.0
-  real(kind=r_4),parameter :: cmin = 0.2 ! it restricts the possible combination of traits
+  real(kind=r_4),parameter :: cmin = 0.01 ! it restricts the possible combination of traits
   
   real(kind=r_8),parameter :: csru = 0.5
   real(kind=r_8),parameter :: alfm = 1.391
@@ -56,7 +56,7 @@ module global_pars
   integer(kind=i_4) :: ndmonth(12)       !Number of months
   data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month
 
-  integer(kind=i_4),parameter :: npls = 25
+  integer(kind=i_4),parameter :: npls = 20
   integer(kind=i_4),parameter :: ntimes = 12
   integer(kind=i_4),parameter :: ntraits = 8
 

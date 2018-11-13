@@ -132,15 +132,11 @@ contains
     real(kind=r_4),dimension(npft) ::  cl1,cf1,ca1 ! carbon pre-allocation 
     real(kind=r_4),dimension(npft) ::  cl2,cf2,ca2 ! carbon pos-allocation
     logical(kind=l_1) :: end_pls = .false., no_cell = .false.
-    real(kind=r_4) :: ocp = 0
+    !real(kind=r_4) :: ocp = 0
     real(kind=r_4) :: ae
     real(kind=r_4) :: water1
     real(kind=r_4) :: ice1
     real(kind=r_4) :: snow1
-  
-    !integer(kind=i_4),dimension(12) :: ndmonth       !Number of months
-    !data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month 
-
 
     do p = 1,npft
        rc2(p) = 0.0
@@ -160,11 +156,17 @@ contains
     else
        prain = prec/real(ndmonth(month))
     endif
+
+    print *, "prain", prain
     
     !     Initialization
     !     --------------
     epavg = 0.0
     do p = 1,npft
+      ! print *, 'w1', w1(p), 'p', p
+      ! print *, 'g1', g1(p), 'p', p
+      ! print *, 's1', s1(p), 'p', p
+
        w(p)       = w1(p)     ! hidrological pools state vars  
        g(p)       = g1(p)
        s(p)       = s1(p)
@@ -223,7 +225,7 @@ contains
        
        !     Maximum evapotranspiration   (emax)
        !     =================================
-       ae = ipar * 2.18e5 !W m-2 Can use available energy
+       ae = 2.895 * temp + 52.326 !from NCEP-NCAR Reanalysis data
        emax = evpot2(p0, temp, rh, ae)
        
        !     Productivity (ph, aresp, vpd, rc2 & etc.) for each PFT
@@ -231,12 +233,11 @@ contains
        do p = 1,npft
           end_pls = .false.
           dt1 = dt(:,p)
-          ocp = ocp_coeffs(p)
-          
+          !ocp = ocp_coeffs(p)
 
           call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
                &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
-               &,beta_awood(p),beta_froot(p),ocp,ph(p),ar(p),nppa(p)&
+               &,beta_awood(p),beta_froot(p),ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))
           
           
@@ -265,9 +266,9 @@ contains
           
           !     Snow budget
           !     ===========     
-          smelt(p) = 2.63 + 2.55*temp + 0.0912*temp*prain !Snowmelt (mm/day)
+          smelt(p) = 2.63 + 2.55* temp + 0.0912 * temp * prain !Snowmelt (mm/day)
           smelt(p) = amax1(smelt(p),0.)
-          smelt(p) = amin1(smelt(p),s(p)+psnow)
+          smelt(p) = amin1(smelt(p), s(p) + psnow)
           ds(p) = psnow - smelt(p)
           s(p) = s(p) + ds(p)
           
@@ -373,9 +374,9 @@ contains
              cl1_pft(p) = 0.0
              ca1_pft(p) = 0.0
              cf1_pft(p) = 0.0
-!             w2(p) = 0.0
-!             g2(p) = 0.0
-!             s2(p) = 0.0
+            !  w2(p) = 0.0
+            !  g2(p) = 0.0
+            !  s2(p) = 0.0
            endif
        enddo                  ! end pls loop  
     enddo                     ! end ndmonth loop
@@ -390,9 +391,15 @@ contains
 
     do p=1,NPFT
        if (p .eq. 1) epavg = epavg/real(ndmonth(month))
-       w2(p) = water1
-       g2(p) = ice1
-       s2(p) = snow1 
+       if (ocp_coeffs(p) .gt. 0.0) then
+         w2(p) = water1
+         g2(p) = ice1
+         s2(p) = snow1
+       else 
+         w2(p) = 0.0
+         g2(p) = 0.0
+         s2(p) = 0.0
+       endif 
        smavg(p)  = smavg(p)/real(ndmonth(month))
        ruavg(p)  = ruavg(p)/real(ndmonth(month))
        evavg(p)  = evavg(p)/real(ndmonth(month))

@@ -144,11 +144,10 @@ contains
     
     cleaf_pft  = 0.0 ! leaf biomass (KgC/m2)
     cawood_pft = 0.0 ! aboveground wood biomass (KgC/m2)
-    cfroot_pft = 0.0 ! fine root biomass (KgC/m2)
-    ! grid_area0  = 0.0 ! gridcell (spinup) area fraction of pfts(%)
+    cfroot_pft = 0.0 ! fine root biomass (KgC/m2) ! grid_area0  = 0.0 ! gridcell (spinup) area fraction of pfts(%)
     grid_area  = 0.0 ! gridcell area fraction of pfts(%)
     
-    wg0 = -1.0 !Soil water content in preceeding year integration
+    wg0 = 0.0 !Soil water content in first integration
     emaxm =  0.0 !Maximum evapotranspiration
     photo_pft = 0.0 !Monthly photosynthesis (kgC/m2/y)
     aresp_pft = 0.0 !Monthly autotrophic respiration (kgC/m2/y)
@@ -226,10 +225,10 @@ contains
     
     emaxm(k) = epmes
     do p=1,q
-       gsoil    (p,k) = gfim(p) * (gridocpmes(p) / 100.)
-       ssoil    (p,k) = sfim(p) * (gridocpmes(p) / 100.)
-       wsoil_pft(p,k) = wfim(p) * (gridocpmes(p) / 100.)
-       snowm    (p,k) = smes(p) * (gridocpmes(p) / 100.)
+       gsoil    (p,k) = gfim(p) !* (gridocpmes(p) / 100.)
+       ssoil    (p,k) = sfim(p) !* (gridocpmes(p) / 100.)
+       wsoil_pft(p,k) = wfim(p) !* (gridocpmes(p) / 100.)
+       snowm    (p,k) = smes(p) !* (gridocpmes(p) / 100.)
        runom_pft(p,k) = rmes(p)
        evapm_pft(p,k) = emes(p)
        rcm_pft  (p,k) = rcmes(p)
@@ -283,7 +282,7 @@ contains
        do kk=1,nt
           wsaux1 = wsoilt(kk) + gsoilt(kk)   
           dwww = (wsaux1 - wg0(kk)) / wmax
-          if (abs(dwww).gt. 1e-2) nerro = nerro + 1
+          if (abs(dwww) .gt. 1e-2) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
        if(c_change .gt. 1e-2) then
