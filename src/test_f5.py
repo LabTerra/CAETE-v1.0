@@ -9,6 +9,8 @@ def f1():
     caete.init_caete(b)
     caete.run_model(b)
 
+    return a,b
+
 import caete_module as model
 import numpy as np
 import matplotlib.pyplot as plt

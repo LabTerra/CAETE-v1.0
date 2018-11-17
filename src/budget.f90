@@ -157,7 +157,7 @@ contains
        prain = prec/real(ndmonth(month))
     endif
 
-    print *, "prain", prain
+   !  print *, "prain", prain
     
     !     Initialization
     !     --------------

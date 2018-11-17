@@ -166,7 +166,7 @@ contains
     rg_pft    = 0.0
     wue       = 0.0
     cue       = 0.0
-    wini  = 0.01  !Soil moisture_initial condition (mm)
+    wini  = 0.1  !Soil moisture_initial condition (mm)
     gini  = 0.0   !Soil ice_initial condition (mm)
     sini  = 0.0   !Overland snow_initial condition (mm)
     
@@ -216,7 +216,8 @@ contains
     gridocpmes = 0.0
     wuemes = 0.0
     wuemes = 0.0
-    
+   !  print *, 'n', n
+   !  print *, 'k', k
     call budget (dt,mes,wini,gini,sini,td,ta,pr,spre,ipar,ru&
          &,cleaf1_pft,cawood1_pft,cfroot1_pft ,wfim,gfim,sfim,smes&
          &,rmes,emes,epmes,phmes,armes,nppmes,laimes,clmes,csmes,hrmes&
@@ -225,6 +226,9 @@ contains
     
     emaxm(k) = epmes
     do p=1,q
+      !  print *, 'p', p
+      !  print *, 'wfim', wfim(p)
+
        gsoil    (p,k) = gfim(p) !* (gridocpmes(p) / 100.)
        ssoil    (p,k) = sfim(p) !* (gridocpmes(p) / 100.)
        wsoil_pft(p,k) = wfim(p) !* (gridocpmes(p) / 100.)
@@ -244,11 +248,13 @@ contains
        wue      (p,k) = wuemes(p)
        cue      (p,k) = cuemes(p)
     enddo
-    
-    wini = wfim
-    gini = gfim
-    sini = sfim
-    
+
+    do p=1,q
+      wini(p) = wfim(p)
+      gini(p) = gfim(p)
+      sini(p) = sfim(p)
+    end do
+
     cleaf1_pft  = cleafmes 
     cawood1_pft = cawoodmes
     cfroot1_pft = cfrootmes

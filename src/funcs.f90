@@ -205,7 +205,7 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-1 * f5_64)
+       f5_64 = exp(-1.0 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = wa
@@ -223,7 +223,7 @@ contains
     ! Coded by Helena Alves do Prado & João Paulo Darela Filho
 
     use types, only: r_4 ,r_8
-    use global_pars, only: ca
+    use global_pars, only: ca, rcmax, rcmin
 
 
     !implicit none
@@ -247,7 +247,9 @@ contains
     D1 = sqrt(vpd_in)
     gs = 0.001 + 1.6 * (1.0 + (g1/D1)) * ((f1_in * 1e6)/ca)
     ! rc2_in = real(1./gs, r_4)
-    rc2_in = real(1.0 / (gs / 41.0), r_4)  ! transform mmol m-2 s-1 to s m-1 
+    rc2_in = real(1.0 / (gs / 41.0), r_4)  ! transform mmol m-2 s-1 to s m-1
+    if (rc2_in .lt. rcmin) rc2_in = rcmin
+    if (rc2_in .gt. rcmax) rc2_in = rcmax    
   end function canopy_resistence
   
   !=================================================================
