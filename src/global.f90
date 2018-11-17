@@ -39,8 +39,8 @@ module global_pars
   real(kind=r_4),parameter :: H = 1.0                         ! soil layer thickness (meters)
   real(kind=r_4),parameter :: DIFFU = 1.036800e14 ! soil thermal diffusivity (m2/mes)
   real(kind=r_4),parameter :: TAU = (H**2)/(2.0*diffu)  ! e-folding times (months) 
-  real(kind=r_4),parameter :: rcmax = 10000.0
-  real(kind=r_4),parameter :: rcmin = 200.00
+  real(kind=r_4),parameter :: rcmax = 5000.0
+  real(kind=r_4),parameter :: rcmin = 180.00
   real(kind=r_4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r_4),parameter :: wmax = 500.0
   real(kind=r_4),parameter :: cmin = 0.01 ! it restricts the possible combination of traits
