@@ -124,7 +124,7 @@ def init_caete(grd):
     grd.rsds = global_rsds[:, grd.y, grd.x]
     grd.tas = global_tas[:, grd.y, grd.x]
     grd.rhs = global_rhs[:, grd.y, grd.x]
-    grd.npp0 = 0.1 #npp_init[grd.y, grd.x]
+    grd.npp0 = npp_init[grd.y, grd.x]
     grd.filled = True
 
 
