@@ -1,21 +1,22 @@
-import caete
+
 def f1():
-    a = caete.gridcell(277,202)   #239,183 
+    import caete
+    a = caete.gridcell(405,227)   #south africa
     caete.init_caete(a)
     caete.run_model(a)
 
 
-    b = caete.gridcell(239,183)   # 
-    caete.init_caete(b)
-    caete.run_model(b)
+    # b = caete.gridcell(239,183)   # 
+    # caete.init_caete(b)
+    # caete.run_model(b)
 
-    return a,b
-
-import caete_module as model
-import numpy as np
-import matplotlib.pyplot as plt
+    return a
 
 def f2():
+    import caete_module as model
+    import numpy as np
+    import matplotlib.pyplot as plt
+    
     a = np.linspace(0,500,100)
     b = np.zeros(100,)
 

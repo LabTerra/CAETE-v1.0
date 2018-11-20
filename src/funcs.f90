@@ -41,7 +41,7 @@ module photo
        pft_area_frac          ,& ! area fraction by biomass
        pft_par                ,& ! aux subroutine to read pls data
        pft_par2               ,&
-       spinup3                 ,&
+       spinup3                ,&
        spinup                 ,&
        ascii2bin              ,&
        ascii2bin2             ,&
@@ -278,12 +278,12 @@ contains
     
 !     f1b = f1_in * 1e6        ! mol 2 µmol : conversion factor = 1e6
 !     aa = f1b / ca              
-!     g0 = 0.001           
+!     g0 = 0.01           
     
-!     if(f1_in .le. 0.0) then 
-!        rc2_in = rcmax
-!        return
-!     endif
+!    !  if(f1_in .le. 0.0) then 
+!    !     rc2_in = rcmin
+!    !     return
+!    !  endif
 !     if(vpd_in .gt. 0.1) then
 !        goto 10
 !     else
@@ -1119,8 +1119,6 @@ contains
   !====================================================================
   !====================================================================
 
-
-
    !=====================================================================
  !c     subroutine allocation calculates the daily carbon content of each
  !c     compartment
@@ -1345,7 +1343,7 @@ contains
     !     Delta_e
     !     -------
     es = tetens (temp)
-    delta_e = es*(1. - ur)    !mbar
+    delta_e = es*(1. - ur)    !mbar !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
     
     if ((delta_e.ge.(1./h5)-0.5).or.(rc2.ge.rcmax)) evap = 0.
     if ((delta_e.lt.(1./h5)-0.5).or.(rc2.lt.rcmax)) then
@@ -1414,7 +1412,7 @@ contains
     real(kind=r_4) :: ra, t1, t2, es, es1, es2, delta_e, delta
     real(kind=r_4) :: gama, gama2, rc
     
-    ra = rcmin            !s/m
+    ra = 100.            !s/m
     
     !     Delta
     !     -----     

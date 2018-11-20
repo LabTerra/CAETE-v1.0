@@ -25,10 +25,10 @@ module budget_caete
   
 contains
   
-  subroutine budget (dt,month,w1,g1,s1,ts,temp,prec,p0,ipar,rh&
-       &,cl1_pft,ca1_pft,cf1_pft,w2,g2,s2,smavg,ruavg,evavg,epavg&
-       &,phavg,aravg,nppavg,laiavg,clavg,csavg,hravg,rcavg,rmavg,rgavg&
-       &,cleafavg_pft,cawoodavg_pft,cfrootavg_pft,ocpavg,wueavg,cueavg)
+  subroutine budget (dt, month, w1, g1, s1, ts, temp, prec, p0, ipar, rh&
+       & ,cl1_pft, ca1_pft, cf1_pft, w2, g2, s2, smavg, ruavg, evavg, epavg&
+       & ,phavg, aravg, nppavg, laiavg, clavg, csavg, hravg, rcavg, rmavg, rgavg&
+       & ,cleafavg_pft, cawoodavg_pft, cfrootavg_pft, ocpavg, wueavg, cueavg)
     
     use types
     use global_pars
@@ -39,11 +39,8 @@ contains
     implicit none
     integer(kind=i_4),parameter :: npft = npls
     
-    
-    !     ----------------------------INPUTS-------------------------------
-    !
-    
-
+    !     ----------------------------INPUTS------------------------------
+    ! STATE VARIABLES
     integer(kind=i_4),intent(in) :: month             !Actual month (1-12)
     real(kind=r_4),dimension(ntraits,npft),intent(in) :: dt
     real(kind=r_4),dimension(npft),intent(in) :: w1 !Initial (previous month last day) soil moisture storage (mm)
@@ -53,7 +50,7 @@ contains
     real(kind=r_4),dimension(npft),intent(inout) :: cf1_pft  !                 froot
     real(kind=r_4),dimension(npft),intent(inout) :: ca1_pft  !                 cawood
 
-    
+    ! INPUT
     real(kind=r_4),intent(in) :: ts                   !Soil temperature (oC)
     real(kind=r_4),intent(in) :: temp                 !Surface air temperature (oC)
     real(kind=r_4),intent(in) :: prec                 !Precipitation (mm/day)
@@ -92,7 +89,6 @@ contains
     real(kind=r_4),dimension(ntraits) :: dt1
     
     !     RELATED WITH GRIDCELL OCUPATION
-    
     real(kind=r_4),dimension(npft) :: ocp_coeffs,ocp_mm
     logical(kind=l_1),dimension(npft) :: ocp_wood
 
@@ -101,7 +97,7 @@ contains
     real(kind=r_4) :: tice                 !Temperature threshold for soil freezing (oC)
     real(kind=r_4) :: psnow                !Snowfall (mm/day)
     real(kind=r_4) :: prain                !Rainfall (mm/day)
-    real(kind=r_4) :: emax
+    real(kind=r_4) :: emax, vapo
     
     real(kind=r_4),dimension(npft) :: rimelt               !Runoff due to soil ice melting
     real(kind=r_4),dimension(npft) :: smelt                !Snowmelt (mm/day)
@@ -151,13 +147,13 @@ contains
     !     =============     
     psnow = 0.0
     prain = 0.0
-    if (temp.lt.tsnow) then
+    if (temp .lt. tsnow) then
        psnow = prec/real(ndmonth(month))
     else
        prain = prec/real(ndmonth(month))
     endif
 
-   !  print *, "prain", prain
+   !print *, "prain", prain
     
     !     Initialization
     !     --------------
@@ -193,6 +189,8 @@ contains
        alfa_froot(p) = 1e-7
     enddo
     
+
+
     !     Numerical integration
     !     ---------------------
     do i=1,ndmonth(month)
@@ -227,6 +225,7 @@ contains
        !     =================================
        ae = 2.895 * temp + 52.326 !from NCEP-NCAR Reanalysis data
        emax = evpot2(p0, temp, rh, ae)
+       !print *, 'emax', emax
        
        !     Productivity (ph, aresp, vpd, rc2 & etc.) for each PFT
        !     =================================
@@ -286,7 +285,7 @@ contains
              cl(p) = 0.0
              cs(p) = 0.0
              hr(p) = 0.0
-             rc2(p) = rcmax
+             rc2(p) = rcmin
              rm(p) = 0.0
              rg(p) = 0.0
              ! colocar as outras vars da prod aqui??
@@ -303,6 +302,8 @@ contains
              roff(p) = runoff(w(p)/wmax)       !Soil moisture runoff (roff, mm/day)
              
              evap(p) = penman(p0, temp, rh, ae, rc2(p)) !Actual evapotranspiration (evap, mm/day)
+             vapo = amin1(emax,evap(p))
+             evap(p) = vapo
              dw(p) = prain + smelt(p) - evap(p) - roff(p)
              w(p) = w(p) + dw(p)
              if (w(p).gt.wmax) then
@@ -311,12 +312,11 @@ contains
              endif
              if (w(p).lt.0.) w(p) = 0.
              roff(p) = roff(p) + rimelt(p) !Total runoff
-             
-             
+          endif
+
              !     Carbon cycle (Microbial respiration, litter and soil carbon)
              !     ============================================================     
-             call carbon2 (ts,f5(p),evap(p),laia(p),cl(p),cs(p),hr(p))   
-          endif
+          call carbon2 (ts,f5(p),evap(p),laia(p),cl(p),cs(p),hr(p))   
           
           !     Accumulate daily budgets weighted by occupation coefficients
           
@@ -406,11 +406,9 @@ contains
        rcavg(p)  = rcavg(p)/real(ndmonth(month))
        wueavg(p) = wueavg(p)/real(ndmonth(month))
        cueavg(p) = cueavg(p)/real(ndmonth(month))
-
        laiavg(p) = laiavg(p)/real(ndmonth(month))
        ! laiavg(p) = (laiavg(p)/365.0) * 12.0
        ! laiavg(p) = (laiavg(p)/365.0) * 12.0       
-       
        phavg(p)  = (phavg(p)/365.0)  * 12.0 !kgC/m2/yr
        aravg(p)  = (aravg(p)/365.0)  * 12.0   !kgC/m2/yr
        nppavg(p) = (nppavg(p)/365.0) * 12.0 !kgC/m2/yr

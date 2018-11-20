@@ -21,3 +21,7 @@
 /src/exporting_areacsv.py
 /src/biomass_10-09-18.csv
 /scripts/*.csv
+/input/*.stx
+/input/*.xml
+/src/gallo.npy
+/src/wallo.npy

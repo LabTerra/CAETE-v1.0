@@ -105,19 +105,25 @@ contains
     
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
+    f1a = photosynthesis_rate(p21, temp, p0, 0.5 * ipar, light_limit)
+    !print *, 'f1a',f1a
+    !ipar * 0.5 for considering just the photossintetically active radiation    
     
-    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
-     !ipar * 0.5 for considering just the photossintetically active radiation    
-    ! VPD
+    ! VPD function definition on funcs.f90
     !========
     vpd = vapor_p_defcit(temp,rh)
     
     !Stomatal resistence
     !===================
-    rc = canopy_resistence(vpd, f1a, g1)
+   ! Método do CPTEC PVM:
+
+   !  f1a = amin1(1.32e-7, f1a)
+   !  rc = (ca/(0.9*f1a*0.685*(p0*100)))
+   
+    ! Novo Metodo - function definition on funcs.f90
+   rc = canopy_resistence(vpd, f1a, g1)
 
     ! Novo calculo da WUE
-
     wue = water_ue(f1a, rc, p0, vpd)
     
     !     Water stress response modifier (dimensionless)
@@ -129,8 +135,8 @@ contains
    !  print *, 'emax', emax
    !  print *, ' '
    !  print *, ' -------------------- -   -  -  -'
-    f5 =  water_stress_modifier(w, cf1, rc, emax)
-    
+    f5 = water_stress_modifier(w, cf1, rc, emax)
+   
     !     Photosysthesis minimum and maximum temperature
     !     ----------------------------------------------
     
@@ -139,7 +145,7 @@ contains
     else
        f1 = 0.0               !Temperature above/below photosynthesis windown
     endif
-    
+    !print *, 'f1', f1
     
     !     Leaf area index (m2/m2)
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
@@ -149,7 +155,7 @@ contains
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
-    ph = gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - gpp
+    ph = gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - gpp function definition on funcs.f90
 
     
     !     Autothrophic respiration
@@ -176,8 +182,6 @@ contains
     
     !c     -----------------------------------------------------------------
     !     NPP
-    !     ============
-    !     Productivity
     !     ============
     !     Net primary productivity(kgC/m2/yr)
     !     ====================================
