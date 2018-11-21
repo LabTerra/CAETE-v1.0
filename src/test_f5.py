@@ -1,16 +1,16 @@
 
 def f1():
     import caete
-    a = caete.gridcell(405,227)   #south africa
-    caete.init_caete(a)
-    caete.run_model(a)
+    #a = caete.gridcell(405,227)   #south africa
+    #caete.init_caete(a)
+    #caete.run_model(a)
 
 
-    # b = caete.gridcell(239,183)   # 
-    # caete.init_caete(b)
-    # caete.run_model(b)
+    b = caete.gridcell(239,183)   # 
+    caete.init_caete(b)
+    caete.run_model(b)
 
-    return a
+    return b
 
 def f2():
     import caete_module as model

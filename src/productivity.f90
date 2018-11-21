@@ -105,7 +105,7 @@ contains
     
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
-    f1a = photosynthesis_rate(p21, temp, p0, 0.5 * ipar, light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
     !print *, 'f1a',f1a
     !ipar * 0.5 for considering just the photossintetically active radiation    
     
@@ -121,7 +121,8 @@ contains
    !  rc = (ca/(0.9*f1a*0.685*(p0*100)))
    
     ! Novo Metodo - function definition on funcs.f90
-   rc = canopy_resistence(vpd, f1a, g1)
+    rc = canopy_resistence(vpd, f1a, g1)
+    print *, 'rc', rc
 
     ! Novo calculo da WUE
     wue = water_ue(f1a, rc, p0, vpd)

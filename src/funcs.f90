@@ -242,14 +242,15 @@ contains
     if(vpd_in .le. 0.0) then
       print *, 'vpd less than zero in canopy_resistence'
       stop
-    endif
+   endif
 
+   !Convert C assimilatio n - from mol m-2 s-1 to micromol m-2 s-1
     D1 = sqrt(vpd_in)
-    gs = 0.001 + 1.6 * (1.0 + (g1/D1)) * ((f1_in * 1e6)/ca)
+    gs = 0.0000001 + 1.6 * (1.0 + (g1/D1)) * ((f1_in * 1e6)/ca)
     ! rc2_in = real(1./gs, r_4)
     rc2_in = real(1.0 / (gs / 41.0), r_4)  ! transform mmol m-2 s-1 to s m-1
     if (rc2_in .lt. rcmin) rc2_in = rcmin
-    if (rc2_in .gt. rcmax) rc2_in = rcmax    
+    if (rc2_in .gt. rcmax) rc2_in = rcmax 
   end function canopy_resistence
   
   !=================================================================
@@ -479,10 +480,12 @@ contains
     real(kind=r_4) :: es
     
     if (t .ge. 0.) then
-       es = 6.1121 * exp((18.678-(t/234.5))*(t/(257.14+t))) ! mbar == hPa
+       es = 6.1078*exp((7.5*t/(237.3+t))*log(10.))
+       ! es = 6.1121 * exp((18.678-(t/234.5))*(t/(257.14+t))) ! mbar == hPa
        return
     else
-       es = 6.1115 * exp((23.036-(t/333.7))*(t/(279.82+t))) ! mbar == hPa
+       es = 6.1078*exp((9.5*t/(265.5+t))*log(10.))
+       ! es = 6.1115 * exp((23.036-(t/333.7))*(t/(279.82+t))) ! mbar == hPa
        return
     endif
     
