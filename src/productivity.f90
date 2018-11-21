@@ -140,16 +140,16 @@ contains
     !     Water stress response modifier (dimensionless)
    !  !     ----------------------------------------------
     f5 = water_stress_modifier(w, cf1, rc, emax)
-    print *, 'w', w
-    print *, 'wa', w/500.0
-    print *, 'f5', f5
-    print *, 'f1a', f1a
-    print *, 'cf1',cf1
-    print *, 'rc',rc
-    print *, 'emax', emax
+!    print *, 'w', w
+!    print *, 'wa', w/500.0
+!    print *, 'f5', f5
+!    print *, 'f1a', f1a
+!    print *, 'cf1',cf1
+!    print *, 'rc',rc
+!    print *, 'emax', emax
 
-     print *, ' '
-     print *, ' -------------------- -   -  -  -'
+!     print *, ' '
+!     print *, ' -------------------- -   -  -  -'
    
     !     Photosysthesis minimum and maximum temperature
     !     ----------------------------------------------
@@ -204,8 +204,8 @@ contains
 
     if(nppa .lt. 0.0) nppa = 0.0
 
-    print *, nppa
-    print *, '---------'
+!    print *, nppa
+!    print *, '---------'
     no_cell = .false.
    
    999 continue
