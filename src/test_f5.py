@@ -1,7 +1,7 @@
 
 def f1():
     import caete
-    
+
     # a = caete.gridcell(405,227)   #south africa
     # caete.init_caete(a)
     # caete.run_model(a)
