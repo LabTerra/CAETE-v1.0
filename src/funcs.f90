@@ -208,10 +208,10 @@ contains
        f5_64 = exp(-1.0 * f5_64)
        f5_64 = 1.0 - f5_64
     else
-       f5_64 = wa
+       f5_64 = 1e-4
     endif
    
-    if(f5_64 .le. 0.0) f5_64 = 1e-3 ! residual carbon assimilation 
+    if(f5_64 .lt. 0.0) f5_64 = 1e-4 ! residual carbon assimilation 
     f5 = real(f5_64,4)      
   end function water_stress_modifier
 

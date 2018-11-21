@@ -132,21 +132,24 @@ contains
     rc = canopy_resistence(vpd, f1a, g1, temp, p0)
    !  print *, '------------'
    !  print *, 'vpd', vpd
-   !  print *, 'rc', rc
+   ! print *, 'rc', rc
 
     ! Novo calculo da WUE
     wue = water_ue(f1a, rc, p0, vpd)
     
     !     Water stress response modifier (dimensionless)
    !  !     ----------------------------------------------
-   !  print *, 'w', w
-   !  print *, 'f1a', f1a
-   !  print *, 'cf1',cf1
-   !  print *, 'rc',rc
-   !  print *, 'emax', emax
-   !  print *, ' '
-   !  print *, ' -------------------- -   -  -  -'
     f5 = water_stress_modifier(w, cf1, rc, emax)
+    print *, 'w', w
+    print *, 'wa', w/500.0
+    print *, 'f5', f5
+    print *, 'f1a', f1a
+    print *, 'cf1',cf1
+    print *, 'rc',rc
+    print *, 'emax', emax
+
+     print *, ' '
+     print *, ' -------------------- -   -  -  -'
    
     !     Photosysthesis minimum and maximum temperature
     !     ----------------------------------------------
@@ -201,6 +204,8 @@ contains
 
     if(nppa .lt. 0.0) nppa = 0.0
 
+    print *, nppa
+    print *, '---------'
     no_cell = .false.
    
    999 continue
