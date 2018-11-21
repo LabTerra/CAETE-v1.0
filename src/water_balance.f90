@@ -25,11 +25,11 @@ module water_balance
   
   
 contains
-  subroutine wbm (dt,prec,temp,p0,par,rhs,cleaf_ini,cawood_ini&
-       &,cfroot_ini,emaxm, tsoil, photo_pft,aresp_pft,npp_pft,lai_pft&
-       &,clit_pft,csoil_pft, hresp_pft,rcm_pft,runom_pft,evapm_pft&
-       &,wsoil_pft,rm_pft,rg_pft,cleaf_pft,cawood_pft,cfroot_pft&
-       &,grid_area,grid_area0,wue,cue)
+  subroutine wbm (dt, prec, temp, p0, par, rhs, cleaf_ini, cawood_ini&
+       &, cfroot_ini, emaxm, tsoil, photo_pft, aresp_pft, npp_pft, lai_pft&
+       &, clit_pft, csoil_pft, hresp_pft, rcm_pft, runom_pft, evapm_pft&
+       &, wsoil_pft, rm_pft,rg_pft, cleaf_pft, cawood_pft, cfroot_pft&
+       &, grid_area, grid_area0, wue, cue)
     
     use types
     use global_pars
@@ -42,7 +42,6 @@ contains
     integer(kind=i_4),parameter :: q = npls 
     integer(kind=i_4),parameter :: nt = ntimes
   
-    
     !     --------------------------I N P U T S----------------------------
     real(kind=r_4),dimension(ntraits, q),intent(in) :: dt
     real(kind=r_4),dimension(nt),intent(in) :: p0         !in Pa ->>>> transf Atmospheric pressure (mb)
@@ -56,8 +55,7 @@ contains
     real(kind=r_4),dimension(q),intent(in) :: cfroot_ini  ! Initial carbon content in fineroots (kg m-2)
     !     -----------------------------E N D-------------------------------
     
-    !     -------------------------O U T P U T S---------------------------
-    
+    !     -------------------------O U T P U T S---------------------------  
     real(kind=r_4),dimension(nt),intent(out) :: tsoil       !soil temperature
     real(kind=r_4),dimension(nt),intent(out) :: emaxm        !Max.evapotranspiration (kg m-2 day-1)
     
@@ -119,7 +117,7 @@ contains
     real(kind=r_4) :: c1342 !auxiliar to check carbon equilibrium (carbon on abovebround wood compartment)
     ! initial_area
     real(kind=r_4),dimension(q) :: ocp_coeffs_ini
-    
+    logical(kind=l_1), dimension(q) :: lt
     
     
     !     ================      
@@ -136,19 +134,15 @@ contains
     cfroot1_pft = cfroot_ini
     
 
-    ocp_coeffs_ini = 1.0/real(q,r_4)   
+    call pft_area_frac(cleaf_ini, cfroot_ini, cawood_ini, ocp_coeffs_ini, lt)  
     grid_area0 = ocp_coeffs_ini * 100.0
-
-
-
     
     cleaf_pft  = 0.0 ! leaf biomass (KgC/m2)
     cawood_pft = 0.0 ! aboveground wood biomass (KgC/m2)
-    cfroot_pft = 0.0 ! fine root biomass (KgC/m2)
-    ! grid_area0  = 0.0 ! gridcell (spinup) area fraction of pfts(%)
+    cfroot_pft = 0.0 ! fine root biomass (KgC/m2) ! grid_area0  = 0.0 ! gridcell (spinup) area fraction of pfts(%)
     grid_area  = 0.0 ! gridcell area fraction of pfts(%)
     
-    wg0 = -1.0 !Soil water content in preceeding year integration
+    wg0 = 0.0 !Soil water content in first integration
     emaxm =  0.0 !Maximum evapotranspiration
     photo_pft = 0.0 !Monthly photosynthesis (kgC/m2/y)
     aresp_pft = 0.0 !Monthly autotrophic respiration (kgC/m2/y)
@@ -167,7 +161,7 @@ contains
     rg_pft    = 0.0
     wue       = 0.0
     cue       = 0.0
-    wini  = 0.01  !Soil moisture_initial condition (mm)
+    wini  = 0.1  !Soil moisture_initial condition (mm)
     gini  = 0.0   !Soil ice_initial condition (mm)
     sini  = 0.0   !Overland snow_initial condition (mm)
     
@@ -217,7 +211,9 @@ contains
     gridocpmes = 0.0
     wuemes = 0.0
     wuemes = 0.0
-    
+
+   !  print *, 'n', n
+   !  print *, 'k', k
     call budget (dt,mes,wini,gini,sini,td,ta,pr,spre,ipar,ru&
          &,cleaf1_pft,cawood1_pft,cfroot1_pft ,wfim,gfim,sfim,smes&
          &,rmes,emes,epmes,phmes,armes,nppmes,laimes,clmes,csmes,hrmes&
@@ -225,11 +221,14 @@ contains
          &,wuemes,cuemes)
     
     emaxm(k) = epmes
+    
     do p=1,q
-       gsoil    (p,k) = gfim(p) * (gridocpmes(p) / 100.)
-       ssoil    (p,k) = sfim(p) * (gridocpmes(p) / 100.)
-       wsoil_pft(p,k) = wfim(p) * (gridocpmes(p) / 100.)
-       snowm    (p,k) = smes(p) * (gridocpmes(p) / 100.)
+      !  print *, 'p', p
+      !  print *, 'wfim', wfim(p)
+       gsoil    (p,k) = gfim(p) !* (gridocpmes(p) / 100.)
+       ssoil    (p,k) = sfim(p) !* (gridocpmes(p) / 100.)
+       wsoil_pft(p,k) = wfim(p) !* (gridocpmes(p) / 100.)
+       snowm    (p,k) = smes(p) !* (gridocpmes(p) / 100.)
        runom_pft(p,k) = rmes(p)
        evapm_pft(p,k) = emes(p)
        rcm_pft  (p,k) = rcmes(p)
@@ -245,11 +244,13 @@ contains
        wue      (p,k) = wuemes(p)
        cue      (p,k) = cuemes(p)
     enddo
-    
-    wini = wfim
-    gini = gfim
-    sini = sfim
-    
+
+    do p=1,q
+      wini(p) = wfim(p)
+      gini(p) = gfim(p)
+      sini(p) = sfim(p)
+    end do
+
     cleaf1_pft  = cleafmes 
     cawood1_pft = cawoodmes
     cfroot1_pft = cfrootmes
@@ -283,9 +284,9 @@ contains
        do kk=1,nt
           wsaux1 = wsoilt(kk) + gsoilt(kk)   
           dwww = (wsaux1 - wg0(kk)) / wmax
-          if (abs(dwww).gt. 1e-2) nerro = nerro + 1
+          if (abs(dwww) .gt. 1e-2) nerro = nerro + 1
        enddo
-       c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2/year
+       c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2
        if(c_change .gt. 1e-2) then
           nerro = 1
           carbon_test = land_c

@@ -29,7 +29,7 @@ contains
 
   subroutine prod(dt,light_limit,temp,ts,p0,w,&
        ipar,rh,emax,cl1,ca1,cf1,beta_leaf,beta_awood,&
-       beta_froot,ocprod,ph,ar,nppa,laia,f5,f1,vpd,&
+       beta_froot,ph,ar,nppa,laia,f5,f1,vpd,&
        rm,rg,rc,wue) ! outputs
     
     use types
@@ -46,7 +46,7 @@ contains
 
     real(kind=r_4),dimension(ntraits),intent(in) :: dt
 
-    real(kind=r_4), intent(in) :: temp,ts                 !Mean monthly temperature (oC)
+    real(kind=r_4), intent(in) :: temp,ts              !Mean monthly temperature (oC)
     real(kind=r_4), intent(in) :: p0                   !Mean surface pressure (hPa)
     real(kind=r_4), intent(in) :: w                    !Soil moisture (dimensionless)
     real(kind=r_4), intent(in) :: ipar                 !Incident photosynthetic active radiation (einstein m-2 s-1)'
@@ -55,7 +55,7 @@ contains
     real(kind=r_4), intent(in) :: beta_leaf            !npp allocation to carbon pools (kg/m2/day)
     real(kind=r_4), intent(in) :: beta_awood
     real(kind=r_4), intent(in) :: beta_froot
-    real(kind=r_4), intent(in) :: ocprod
+    !real(kind=r_4), intent(in) :: ocprod
     logical(kind=l_1), intent(in) :: light_limit                !True for no ligth limitation
 
     !     Output
@@ -78,7 +78,7 @@ contains
     
     real(kind=r_4) :: tleaf             !leaf turnover time (yr)
     real(kind=r_4) :: p21               !Maximum carboxilation rate (micromolC m-2 d-1)
-    real(kind=r_4) :: g1
+    real(kind=r_4) :: g1!, cv
     
     real(kind=r_4) :: sla          !specific leaf area (m2/kg)
     logical(l_1) :: no_cell = .false.
@@ -105,25 +105,52 @@ contains
     
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
+    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
+    !print *, 'f1a',f1a
+    !ipar * 0.5 for considering just the photossintetically active radiation    
     
-    f1a = photosynthesis_rate(p21, temp, p0, ipar * 0.5, light_limit)
-     !ipar * 0.5 for considering just the photossintetically active radiation    
-    ! VPD
+    ! VPD function definition on funcs.f90
     !========
     vpd = vapor_p_defcit(temp,rh)
+   !  print *, 'rh', rh
     
     !Stomatal resistence
     !===================
-    rc = canopy_resistence(vpd, f1a, g1)
+   ! Método do CPTEC PVM:
+
+   !  f1a = amin1(1.32e-7, f1a)
+   !  rc = (ca/(0.9*f1a*0.685*(p0*100)))
+    ! convwersion factor
+
+    !cv = 44.6 * (273.15/(273.17 + temp)) * ((p0/10.0)/101.3)
+    !cv = (8.314472 * (273.15 + temp)) / (p0/10.0)
+    !cv = 40.3
+    !cv = 41.0
+    !print *, 'cv', cv
+   
+    ! Novo Metodo - function definition on funcs.f90
+    rc = canopy_resistence(vpd, f1a, g1, temp, p0)
+   !  print *, '------------'
+   !  print *, 'vpd', vpd
+   ! print *, 'rc', rc
 
     ! Novo calculo da WUE
-
     wue = water_ue(f1a, rc, p0, vpd)
     
     !     Water stress response modifier (dimensionless)
-    !     ----------------------------------------------
-    f5 =  water_stress_modifier(w, cf1, rc, emax)
-    
+   !  !     ----------------------------------------------
+    f5 = water_stress_modifier(w, cf1, rc, emax)
+    print *, 'w', w
+    print *, 'wa', w/500.0
+    print *, 'f5', f5
+    print *, 'f1a', f1a
+    print *, 'cf1',cf1
+    print *, 'rc',rc
+    print *, 'emax', emax
+
+     print *, ' '
+     print *, ' -------------------- -   -  -  -'
+   
     !     Photosysthesis minimum and maximum temperature
     !     ----------------------------------------------
     
@@ -132,7 +159,7 @@ contains
     else
        f1 = 0.0               !Temperature above/below photosynthesis windown
     endif
-    
+    !print *, 'f1', f1
     
     !     Leaf area index (m2/m2)
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
@@ -142,7 +169,7 @@ contains
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
-    ph = gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - gpp
+    ph = gross_ph(f1,cl1,sla)       ! kg m-2 year-1 - gpp function definition on funcs.f90
 
     
     !     Autothrophic respiration
@@ -170,8 +197,6 @@ contains
     !c     -----------------------------------------------------------------
     !     NPP
     !     ============
-    !     Productivity
-    !     ============
     !     Net primary productivity(kgC/m2/yr)
     !     ====================================
     nppa = ph - ar
@@ -179,6 +204,8 @@ contains
 
     if(nppa .lt. 0.0) nppa = 0.0
 
+    print *, nppa
+    print *, '---------'
     no_cell = .false.
    
    999 continue

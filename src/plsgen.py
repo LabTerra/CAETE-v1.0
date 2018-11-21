@@ -18,7 +18,7 @@ contacts :: David Montenegro Lapola <lapoladm ( at ) gmail.com>
             João Paulo Darela Filho <darelafilho ( at ) gmail.com>
             Bianca Fazio Rius <biancafaziorius ( at ) gmail.com>
 """
-
+import os
 from math import ceil
 import csv
 import numpy as np
@@ -26,6 +26,10 @@ from caete_module import photo as model
 from caete_module import global_pars as gp
 
 npls = gp.npls
+
+# Cache of allocation coefficients
+woody_allocations_file = "wallo.npy"
+grassy_allocations_file = "gallo.npy"
 
 def vec_ranging(values, new_min, new_max):
     """ range vec to min max"""
@@ -38,17 +42,18 @@ def vec_ranging(values, new_min, new_max):
 
     return np.array(output, dtype=np.float32)
 
-
-def check_viability(trait_values):
+def check_viability(trait_values, wood):
     """ check the viability of allocation(a) &  residence time(ŧ) combinations"""
 
     rtur = np.array(model.spinup3(0.1, trait_values))
-    if rtur[0] <= 0.001 or rtur[1] <= 0.001:
-        #print("invalid_combination")
-        #print(rtur[0], rtur[1])
-        #print("\n")
-        return False # aways return true
-    return True
+    if wood:
+        if rtur[0] <= 0.01 or rtur[1] <= 0.01 or rtur[2] <= 0.01:
+            return False
+        return True
+    else:
+        if rtur[0] <= 0.01 or rtur[1] <= 0.01:
+            return False
+        return True
 
 
 def assertion_data_size(dsize):
@@ -70,10 +75,19 @@ def turnover_combinations(verbose=False):
     arootg = np.arange(15., 86.0, 0.25)
     awood = np.arange(15., 86.0, 0.25)
 
-    plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg for c in arootg \
-                   if (a + c) == 100.0]
-    plsa_wood = [[a / 100.0, b / 100.0, c / 100.0] for a in aleafw for b in awood \
-                  for c in arootw if (a + b + c) == 100.]
+    if os.path.exists(grassy_allocations_file):
+        plsa_grass = np.load(grassy_allocations_file)
+    else:
+        plsa_grass = [[a / 100.0, 0.0, c / 100.0] for a in aleafg \
+                      for c in arootg if (a + c) == 100.0]
+        np.save(grassy_allocations_file, plsa_grass)
+
+    if os.path.exists(woody_allocations_file):
+        plsa_wood = np.load(woody_allocations_file)
+    else:
+        plsa_wood = [[a / 100.0, b / 100.0, c / 100.0] for a in aleafw for b in awood \
+                     for c in arootw if (a + b + c) == 100.]
+        np.save(woody_allocations_file, plsa_wood)
 
     if verbose:
         print('Number of combinations = %d'%(len(plsa_grass) + len(plsa_wood)))
@@ -105,7 +119,7 @@ def table_gen(NPLS):
         restime[1] = 0.0
         restime[2] = restime_root[np.random.randint(1,10000)]
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
-        if check_viability(data_to_test0):
+        if check_viability(data_to_test0, False):
             alloc_g.append(data_to_test0)
             index0 += 1 
 
@@ -117,7 +131,7 @@ def table_gen(NPLS):
         restime[1] = restime_wood[np.random.randint(1,10000)]
         restime[2] = restime_root[np.random.randint(1,10000)]
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
-        if check_viability(data_to_test1):
+        if check_viability(data_to_test1, True):
             alloc_w.append(data_to_test1)
             index1 += 1
 
