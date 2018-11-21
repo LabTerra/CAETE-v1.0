@@ -78,7 +78,7 @@ contains
     
     real(kind=r_4) :: tleaf             !leaf turnover time (yr)
     real(kind=r_4) :: p21               !Maximum carboxilation rate (micromolC m-2 d-1)
-    real(kind=r_4) :: g1
+    real(kind=r_4) :: g1!, cv
     
     real(kind=r_4) :: sla          !specific leaf area (m2/kg)
     logical(l_1) :: no_cell = .false.
@@ -112,6 +112,7 @@ contains
     ! VPD function definition on funcs.f90
     !========
     vpd = vapor_p_defcit(temp,rh)
+   !  print *, 'rh', rh
     
     !Stomatal resistence
     !===================
@@ -119,10 +120,19 @@ contains
 
    !  f1a = amin1(1.32e-7, f1a)
    !  rc = (ca/(0.9*f1a*0.685*(p0*100)))
+    ! convwersion factor
+
+    !cv = 44.6 * (273.15/(273.17 + temp)) * ((p0/10.0)/101.3)
+    !cv = (8.314472 * (273.15 + temp)) / (p0/10.0)
+    !cv = 40.3
+    !cv = 41.0
+    !print *, 'cv', cv
    
     ! Novo Metodo - function definition on funcs.f90
-    rc = canopy_resistence(vpd, f1a, g1)
-    print *, 'rc', rc
+    rc = canopy_resistence(vpd, f1a, g1, temp, p0)
+   !  print *, '------------'
+   !  print *, 'vpd', vpd
+   !  print *, 'rc', rc
 
     ! Novo calculo da WUE
     wue = water_ue(f1a, rc, p0, vpd)
