@@ -322,7 +322,7 @@ contains
           
           ocp_mm(p) = ocp_mm(p) + ocp_coeffs(p)
           
-          if(p .eq. 1) epavg = epavg + emax !mm/day
+          ! epavg = epavg + (emax / real(npft, r_4)) !mm/day
           smavg(p) = smavg(p) + smelt(p)
           ruavg(p) = ruavg(p) + roff(p) * ocp_coeffs(p) ! mm day-1
           evavg(p) = evavg(p) + evap(p) * ocp_coeffs(p)  ! mm day-1
@@ -351,7 +351,7 @@ contains
 666    continue
            if(no_cell) then
             ! All*** outputs are set to zero except epavg
-             if(p .eq. 1) epavg = emax
+             epavg = 0.0
              smavg(p) = 0.0
              ruavg(p) = 0.0
              evavg(p) = 0.0
@@ -378,7 +378,8 @@ contains
             !  g2(p) = 0.0
             !  s2(p) = 0.0
            endif
-       enddo                  ! end pls loop  
+       enddo                  ! end pls loop 
+       epavg = epavg + emax
     enddo                     ! end ndmonth loop
     
     !     Final calculations
@@ -389,8 +390,9 @@ contains
     ice1 = sum(g * ocp_coeffs)
     snow1 = sum(s * ocp_coeffs)
 
-    do p=1,NPFT
-       if (p .eq. 1) epavg = epavg/real(ndmonth(month))
+    epavg = epavg/real(ndmonth(month))
+
+    do p=1,npft
        if (ocp_coeffs(p) .gt. 0.0) then
          w2(p) = water1
          g2(p) = ice1

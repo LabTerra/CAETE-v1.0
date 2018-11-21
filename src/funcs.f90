@@ -177,7 +177,7 @@ contains
     
     real(kind=r_4),intent(in) :: w      !soil water mm
     real(kind=r_4),intent(in) :: cfroot !carbon in fine roots kg m-2
-    real(kind=r_4),intent(in) :: rc     !Canopy resistence 1/(micromol(CO2) m-2 s-1)
+    real(kind=r_4),intent(in) :: rc     !Canopy resistence s m-2
     real(kind=r_4),intent(in) :: ep     !potential evapotranspiration
     real(kind=r_4) :: f5
     
@@ -194,18 +194,18 @@ contains
     !D = 
     ! αH2O = 1−exp(−S/D)
     f5_64 = 0.0
-    pt = csru*(cfroot*1000.)*wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
+    pt = csru * (cfroot * 1000.0) * wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
     if(rc .gt. 0.0) then
-       gc = (1.0/(rc * 1.15741e-08))  ! s/m
+       gc = (1.0 / (rc * 1.0e-3))    ! s/m
     else
-       gc =  1.0/(rcmin * 1.15741e-08) ! BIANCA E HELENA - Mudei este esquema..   
+       gc =  1.0 / (rcmin * 1.0e-3) ! BIANCA E HELENA - Mudei este esquema..   
     endif                     ! tentem entender o algoritmo
     
     !d =(ep * alfm) / (1. + gm/gc) !(based in Gerten et al. 2004)
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-1.0 * f5_64)
+       f5_64 = exp(-0.04 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = 1e-4
@@ -522,13 +522,13 @@ contains
     csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    !rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    !rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    !rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*tsoil))
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
+   !  rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
+   !  rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*tsoil))
+   !  rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 

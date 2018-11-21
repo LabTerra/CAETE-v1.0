@@ -218,7 +218,7 @@ contains
          &,cleaf1_pft,cawood1_pft,cfroot1_pft ,wfim,gfim,sfim,smes&
          &,rmes,emes,epmes,phmes,armes,nppmes,laimes,clmes,csmes,hrmes&
          &,rcmes,rmmes,rgmes,cleafmes,cawoodmes,cfrootmes, gridocpmes&
-         &,wuemes,cuemes)
+         &,wuemes,cuemes) ! inserir novo output (pls sobreviventes )
     
     emaxm(k) = epmes
     
@@ -284,7 +284,7 @@ contains
        do kk=1,nt
           wsaux1 = wsoilt(kk) + gsoilt(kk)   
           dwww = (wsaux1 - wg0(kk)) / wmax
-          if (abs(dwww) .gt. 1e-2) nerro = nerro + 1
+          if (abs(dwww) .gt. 1e-3) nerro = nerro + 1
        enddo
        c_change = abs(abs(land_c) - abs(carbon_test)) ! Kg/m2
        if(c_change .gt. 1e-2) then

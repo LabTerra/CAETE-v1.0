@@ -43,11 +43,11 @@ module global_pars
   real(kind=r_4),parameter :: rcmin = 100.0
   real(kind=r_4),parameter :: ca = 350.0 ! ppmv - atm[CO2]
   real(kind=r_4),parameter :: wmax = 500.0
-  real(kind=r_4),parameter :: cmin = 0.04 ! it restricts the possible combination of traits
+  real(kind=r_4),parameter :: cmin = 0.01 ! it restricts the possible combination of traits
   
-  real(kind=r_8),parameter :: csru = 0.5
-  real(kind=r_8),parameter :: alfm = 1.391
-  real(kind=r_8),parameter :: gm = 3.26 * 86400  !(*86400 transform s/mm to dia/mm)
+  real(kind=r_8),parameter :: csru = 0.5          ! mm g⁻¹C day⁻¹
+  real(kind=r_8),parameter :: alfm = 1.391      
+  real(kind=r_8),parameter :: gm = 3.26           ! mm s-1  
 
   real(kind=r_8),parameter :: ncl = (1.0/29.0)          !(gN/gC) 
   real(kind=r_8),parameter :: ncf = (1.0/29.0)          !(gN/gC)
