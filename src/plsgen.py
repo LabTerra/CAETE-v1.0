@@ -100,14 +100,16 @@ def table_gen(NPLS):
     diffg, diffw = assertion_data_size(NPLS)
     plsa_wood, plsa_grass = turnover_combinations(True)
 
-#    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
-    restime_leaf = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
-#    restime_leaf = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
-    restime_wood = vec_ranging(np.random.beta(1.4,6.24,10000),1.0, 80.0)
-#    restime_wood = vec_ranging(np.random.uniform(0,1,10000),1.0, 80.0)
-    restime_root = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
-#    restime_root = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
-    # Creating Grasses and others c3 and c4
+    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    #restime_leaf = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+    #restime_leaf = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
+
+    # restime_wood = vec_ranging(np.random.beta(1.4,6.24,10000),1.0, 80.0) 
+    restime_wood = vec_ranging(np.random.normal(0,1,10000),1.0, 80.0)
+
+    #restime_root = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+    restime_root = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    
     alloc_w = []
     alloc_g = []
 
@@ -121,7 +123,7 @@ def table_gen(NPLS):
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test0, False):
             alloc_g.append(data_to_test0)
-            index0 += 1 
+            index0 += 1
 
     index1 = 0
     while index1 < diffw:
@@ -148,12 +150,12 @@ def table_gen(NPLS):
     # # # Random variables
 
     # Mantendo g1 constante para todos os PLSs
-    # g1 = np.zeros(NPLS) + 3.77
-    g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
-    
+    #g1 = np.zeros(NPLS) + 3.77
+    g1 = np.random.uniform(low=1.5, high=9.1, size=NPLS) # dimensionles
+
     # Vcmax igual para todos os PLSs
-    # vcmax = np.zeros(NPLS) + 0.00004  # molCO2 m-2 s-1
-    vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
+    #vcmax = np.zeros(NPLS) + 0.0009  # molCO2 m-2 s-1
+    vcmax = np.random.uniform(low=15e-5, high=160e-5, size=NPLS)
 
     stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5])
