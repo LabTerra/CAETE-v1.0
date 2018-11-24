@@ -51,7 +51,7 @@ module global_pars
 
   real(kind=r_8),parameter :: ncl = (1.0/29.0)          !(gN/gC) 
   real(kind=r_8),parameter :: ncf = (1.0/29.0)          !(gN/gC)
-  real(kind=r_8),parameter :: ncs = (1.0/330.0)          !(gN/gC)
+  real(kind=r_8),parameter :: ncs = (1.0/33.0)          !(gN/gC)
 
   integer(kind=i_4) :: ndmonth(12)       !Number of months
   data ndmonth /31,28,31,30,31,30,31,31,30,31,30,31/ !Number of days for each month

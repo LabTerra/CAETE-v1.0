@@ -98,14 +98,18 @@ contains
     !call pft_par(2, p21)
     !call pft_par(3, tleaf)
     !call pft_par(1, g1)
-    
+        !     Leaf area index (m2/m2)
+    !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
+    sla = spec_leaf_area(tleaf)
+    laia = leaf_area_index(cl1,sla)
+    ! laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
     !     ==============
     !     Photosynthesis 
     !     ==============
     
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
-    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, 0.5 * ipar, light_limit)
     !print *, 'f1a',f1a
     !ipar * 0.5 for considering just the photossintetically active radiation    
     
@@ -130,12 +134,19 @@ contains
    
     ! Novo Metodo - function definition on funcs.f90
     rc = canopy_resistence(vpd, f1a, g1, temp, p0)
+        ! Novo calculo da WUE
+    wue = water_ue(f1a, rc, p0, vpd)
+    
+    ! Scaling to canopy
+    rc = rc * laia
+
+    if(rc < rcmin) rc = rcmin
+    if(rc > rcmax) rc = rcmax
    !  print *, '------------'
    !  print *, 'vpd', vpd
    ! print *, 'rc', rc
 
-    ! Novo calculo da WUE
-    wue = water_ue(f1a, rc, p0, vpd)
+
     
     !     Water stress response modifier (dimensionless)
    !  !     ----------------------------------------------
@@ -161,11 +172,6 @@ contains
     endif
     !print *, 'f1', f1
     
-    !     Leaf area index (m2/m2)
-    !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
-     sla = spec_leaf_area(tleaf)
-    !  laia = leaf_area_index(cl1*ocprod,sla)
-     laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x

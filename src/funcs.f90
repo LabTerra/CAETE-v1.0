@@ -251,11 +251,11 @@ contains
     gs = ((0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca))! Result is in mol m-2 s-1 (Medlyn et al. 2011)
     
     !convert gs mol m-2 s-1  to mm s-1
-    gs = gs * (8.314 * temp) / (p0 / 10.0) 
+    gs = gs * (8.314 *  (temp + 273.15)) / (p0 / 10.0) 
    
     rc2_in = real((1.0 / gs), r_4) * 1e3 ! mm s-1 to s mm-1 then s mm-1 to s m-1
-    if (rc2_in .lt. rcmin) rc2_in = rcmin
-    if (rc2_in .gt. rcmax) rc2_in = rcmax 
+   !  if (rc2_in .lt. rcmin) rc2_in = rcmin
+   !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
   end function canopy_resistence
   
   !=================================================================
@@ -522,9 +522,9 @@ contains
     csa= 0.05 * ca1           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = ((ncl * (cl1 * 1e3)) * 29. * exp(0.02*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 29. * exp(0.02*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 29. * exp(0.02*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
     !rml64 = ((ncl * (cl1 * 1e3)) * 40. * exp(0.06*temp))
     !rmf64 = ((ncf * (cf1 * 1e3)) * 40. * exp(0.06*tsoil))

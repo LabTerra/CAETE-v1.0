@@ -1,17 +1,33 @@
 
-def f1():
+import matplotlib.pyplot as plt
+import numpy as np
+
+def f1(mode = 'a'):
     import caete
 
-    a = caete.gridcell(405,227)   #south africa
-    caete.init_caete(a)
-    caete.run_model(a)
-    return a
+    if mode == 'a':
+        a = caete.gridcell(405,227)   #south africa
+        caete.init_caete(a)
+        caete.run_model(a)
+        return a
+    
+    if mode == 'b':
+        b = caete.gridcell(239,183)   # 
+        caete.init_caete(b)
+        caete.run_model(b)
+        return b
+    
+    if mode == 'c':
+        b = caete.gridcell(180,101)   # 
+        caete.init_caete(b)
+        caete.run_model(b)
+        return b
 
-
-    # b = caete.gridcell(239,183)   # 
-    # caete.init_caete(b)
-    # caete.run_model(b)
-    # return b
+    if mode == 'd':
+        b = caete.gridcell(162,60)   # 
+        caete.init_caete(b)
+        caete.run_model(b)
+        return b
 
 def f2():
     import caete_module as model
