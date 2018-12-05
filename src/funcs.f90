@@ -228,7 +228,7 @@ contains
     !implicit none
 
     real(r_4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
-    real(r_4),intent(in) :: vpd_in   !hPa
+    real(r_4),intent(in) :: vpd_in   !kPa
     real(r_4),intent(in) :: g1      ! model m (slope) (sqrt(kPa))
     real(r_4),intent(in) :: temp, p0      
     real(r_4) :: rc2_in              !Canopy resistence (sm-1)
@@ -248,12 +248,13 @@ contains
     D1 = sqrt(vpd_in)
     
     ! f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
-    gs = ((0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca))! Result is in mol m-2 s-1 (Medlyn et al. 2011)
+    gs = ((0.001 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca))! Result is in mol m-2 s-1 (Medlyn et al. 2011)
     
-    !convert gs mol m-2 s-1  to mm s-1
-    gs = gs * (8.314 *  (temp + 273.15)) / (p0 / 10.0) 
+    !convert gs mol m-2 s-1  to m s-1
+    gs = gs / (44.6 * (273.15 / (273.15 + temp)) * ((p0 * 0.1) / 101.3))
+    ! gs = (gs * 8.314 *  (temp + 273.15)) / (p0 / 10.0) 
    
-    rc2_in = real((1.0 / gs), r_4) * 1e3 ! mm s-1 to s mm-1 then s mm-1 to s m-1
+    rc2_in = real((1.0 / gs), r_4) ! mm s-1 to s mm-1 then s mm-1 to s m-1
    !  if (rc2_in .lt. rcmin) rc2_in = rcmin
    !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
   end function canopy_resistence
@@ -356,7 +357,7 @@ contains
     !VPD-REAL = Actual vapor pressure
     vpd_ac = es * rh       ! RESULT in hPa == mbar! we want kPa (DIVIDE by 10.)
     !Vapor Pressure Deficit
-    vpd_0 = (es - vpd_ac) / 10.
+    vpd_0 = (es - vpd_ac) / 10.0
   end function vapor_p_defcit
 
   !=================================================================
@@ -522,9 +523,9 @@ contains
     csa= 0.05 * ca1           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 29. * exp(0.02*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 29. * exp(0.02*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 29. * exp(0.02*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
     !rml64 = ((ncl * (cl1 * 1e3)) * 40. * exp(0.06*temp))
     !rmf64 = ((ncf * (cf1 * 1e3)) * 40. * exp(0.06*tsoil))

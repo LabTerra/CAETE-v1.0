@@ -42,3 +42,7 @@ def f2():
 
     plt.plot(a,b)
     plt.show()
+
+
+def convert_1(temp, p0):
+    return (8.314 *  (temp)) / (p0 / 10.0)

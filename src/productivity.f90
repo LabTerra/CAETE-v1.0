@@ -101,8 +101,8 @@ contains
         !     Leaf area index (m2/m2)
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
     sla = spec_leaf_area(tleaf)
-    laia = leaf_area_index(cl1,sla)
-    ! laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
+    !laia = leaf_area_index(cl1,sla)
+    laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
     !     ==============
     !     Photosynthesis 
     !     ==============
@@ -135,6 +135,7 @@ contains
     ! Novo Metodo - function definition on funcs.f90
     rc = canopy_resistence(vpd, f1a, g1, temp, p0)
         ! Novo calculo da WUE
+   !  print *, 'rc', rc
     wue = water_ue(f1a, rc, p0, vpd)
     
     ! Scaling to canopy
@@ -143,8 +144,8 @@ contains
     if(rc < rcmin) rc = rcmin
     if(rc > rcmax) rc = rcmax
    !  print *, '------------'
-   !  print *, 'vpd', vpd
-   ! print *, 'rc', rc
+   ! print *, 'vpd', vpd
+   !print *, 'rc', rc
 
 
     
