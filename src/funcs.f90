@@ -194,17 +194,20 @@ contains
     !D = 
     ! αH2O = 1−exp(−S/D)
     f5_64 = 0.0
-    pt = csru * (cfroot * 1000.0) * wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
+    pt = csru * (cfroot * 1000.0) * wa  ! mm d⁻¹ !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
     if(rc .gt. 0.0) then
-       gc = (1.0 / (rc * 1.0e-3))    ! s m-1
+       gc = 1.0 / rc   ! m s-1
+       ! too mm d-1
+       gc = gc * 8.64e7
     else
-       gc =  1.0 / (rcmin * 1.0e-3) ! s m-1  
-    endif
+       gc =  1.0 / rcmin ! m s-1  
+       gc = gc * 8.64e7
+      endif
     !d =(ep * alfm) / (1. + gm/gc) !(based in Gerten et al. 2004)
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-0.04 * f5_64)
+       f5_64 = exp(-1.0 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = 1e-4
@@ -235,26 +238,40 @@ contains
 
     !     Internal
     !     --------
-    real(r_8) :: gs       !Canopy conductance (molCO2 m-2 s-1)
-    real(r_8) :: D1       !sqrt(kPA)
-
+    real(r_4) :: gs       !Canopy conductance (molCO2 m-2 s-1)
+    real(r_4) :: D1       !sqrt(kPA)
+    real(r_4) :: aux1, aux2, pk
     ! Assertion
     if(vpd_in .le. 0.0) then
       print *, 'vpd less than zero in canopy_resistence'
       stop
    endif
 
-   !Convert C assimilatio n - from mol m-2 s-1 to micromol m-2 s-1
+   ! Calculate stomatal coductance
     D1 = sqrt(vpd_in)
+    aux1 = (f1_in * 1.0e6) / ca
+    aux2 = 1.6 * (1.0 + (g1/D1))
+    gs = 0.01  + aux2 * aux1! Result is in mol m-2 s-1 (Medlyn et al. 2011)
+   !  print *, gs, "gs - mol m-2 s-1 =--- fun call"
+    aux1 = 0.0
+    aux2 = 0.0
+   !  f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
+   !  gs = (0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca)! Result is in mol m-2 s-1 (Medlyn et al. 2011)
+    print *, gs, "gs - mol m-2 s-1 =--- fun call"
     
-    ! f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
-    gs = ((0.001 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca))! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-    
-    !convert gs mol m-2 s-1  to m s-1
-    gs = gs / (44.6 * (273.15 / (273.15 + temp)) * ((p0 * 0.1) / 101.3))
-    ! gs = (gs * 8.314 *  (temp + 273.15)) / (p0 / 10.0) 
-   
-    rc2_in = real((1.0 / gs), r_4) ! mm s-1 to s mm-1 then s mm-1 to s m-1
+    !convert  conductance units gs mol m-2 s-1  to m s-1
+    pk = p0 * 0.1
+    aux1 =  273.15 / (temp + 273.15)
+   !  print *, aux1 , 'fpeq'
+    aux2 =  pk / 101.325
+
+   !  print *, aux2 , 'fpeq2'
+    gs = (gs / (44.62 * aux1 * aux2)) ! m s-1
+    !gs = gs / (44.6 * (273.15 / (273.15 * temp)) * ((p0 * 0.1) / 101.325))
+    !gs = (gs * 8.314 *  (temp + 273.15)) / (p0 / 10.0)
+   !  print *, gs, "gs m s-1" 
+    rc2_in = gs**(-1) ! s m-1
+   ! print *, rc2_in, " s m-1 =--- fun call"
    !  if (rc2_in .lt. rcmin) rc2_in = rcmin
    !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
   end function canopy_resistence
@@ -330,7 +347,7 @@ contains
     real(kind=r_4) :: g_in, p0_in, e_in
     
     g_in = (1./g) * 41. ! convertendo a resistencia em condutancia mol m-2 s-1
-    p0_in = p0 /10. ! convertendo pressao atm (mbar/hPa) em kPa
+    p0_in = p0 / 10. ! convertendo pressao atm (mbar/hPa) em kPa
     e_in = g_in * (vpd/p0_in) ! calculando transpiracao
     
     wue = a/e_in

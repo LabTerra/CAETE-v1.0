@@ -135,7 +135,7 @@ contains
     ! Novo Metodo - function definition on funcs.f90
     rc = canopy_resistence(vpd, f1a, g1, temp, p0)
         ! Novo calculo da WUE
-   !  print *, 'rc', rc
+   ! print *, 'rc', rc
     wue = water_ue(f1a, rc, p0, vpd)
     
     ! Scaling to canopy
@@ -145,20 +145,19 @@ contains
     if(rc > rcmax) rc = rcmax
    !  print *, '------------'
    ! print *, 'vpd', vpd
-   !print *, 'rc', rc
+   ! print *, 'scaled rc', rc
 
 
     
     !     Water stress response modifier (dimensionless)
    !  !     ----------------------------------------------
     f5 = water_stress_modifier(w, cf1, rc, emax)
-!    print *, 'w', w
-!    print *, 'wa', w/500.0
-!    print *, 'f5', f5
-!    print *, 'f1a', f1a
-!    print *, 'cf1',cf1
-!    print *, 'rc',rc
-!    print *, 'emax', emax
+   !  print *, 'w', w
+   !  print *, 'wa', w/500.0
+   !  print *, 'f5', f5
+   !  print *, 'f1a', f1a
+   !  print *, 'cf1',cf1
+   !  print *, 'emax', emax
 
 !     print *, ' '
 !     print *, ' -------------------- -   -  -  -'
@@ -171,7 +170,7 @@ contains
     else
        f1 = 0.0               !Temperature above/below photosynthesis windown
     endif
-    !print *, 'f1', f1
+   !  print *, 'f1', f1
     
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
@@ -211,8 +210,8 @@ contains
 
     if(nppa .lt. 0.0) nppa = 0.0
 
-!    print *, nppa
-!    print *, '---------'
+   !  print *, n/ppa
+   !  print *, '---------'
     no_cell = .false.
    
    999 continue
