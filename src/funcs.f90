@@ -207,7 +207,7 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-1.0 * f5_64)
+       f5_64 = exp(-0.08 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = 1e-4
@@ -257,7 +257,7 @@ contains
     aux2 = 0.0
    !  f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
    !  gs = (0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca)! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-    print *, gs, "gs - mol m-2 s-1 =--- fun call"
+   !  print *, gs, "gs - mol m-2 s-1 =--- fun call"
     
     !convert  conductance units gs mol m-2 s-1  to m s-1
     pk = p0 * 0.1
@@ -540,9 +540,9 @@ contains
     csa= 0.05 * ca1           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
 
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.05*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
+    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
 
     !rml64 = ((ncl * (cl1 * 1e3)) * 40. * exp(0.06*temp))
     !rmf64 = ((ncf * (cf1 * 1e3)) * 40. * exp(0.06*tsoil))
@@ -566,7 +566,7 @@ contains
     use types, only: r_4,r_8
     implicit none
 
-    real(kind=r_4), intent(in) :: beta_leaf1
+    real(kind=r_4), intent(in) :: beta_leaf1   ! Kg m-2
     real(kind=r_4), intent(in) :: beta_froot1
     real(kind=r_4), intent(in) :: beta_awood1
     real(kind=r_4) :: rg
@@ -597,11 +597,11 @@ contains
 
     csai =  (beta_awood * 0.05)
    
-    rgl64 = 1.30 * beta_leaf  
-    rgf64 =  1.30 * beta_froot 
-    rgs64 =  1.30 * csai
+    rgl64 = 1.40 * (beta_leaf * 1e3)  
+    rgf64 =  1.40 * (beta_froot * 1e3)
+    rgs64 =  1.45 * (csai * 1e3)
     
-    rg64 = (rgl64 + rgf64 + rgs64)/1e3
+    rg64 = (rgl64 + rgf64 + rgs64)
 
     rg = real(rg64,kind=r_4)
     

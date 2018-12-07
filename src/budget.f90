@@ -184,9 +184,9 @@ contains
        cueavg(p)  = 0.0 
        ocp_mm(p)  = 0.0
        
-       alfa_leaf(p) = 1e-7
-       alfa_awood(p) = 1e-7
-       alfa_froot(p) = 1e-7
+       alfa_leaf(p) = 1e-3
+       alfa_awood(p) = 1e-3
+       alfa_froot(p) = 1e-3
     enddo
     
 
@@ -196,9 +196,9 @@ contains
     do i=1,ndmonth(month)
        emax  = 0.0
        
-       cl1 = cl1_pft
-       ca1 = ca1_pft
-       cf1 = cf1_pft
+       !cl1 = cl1_pft
+       !ca1 = ca1_pft
+       !cf1 = cf1_pft
        
        beta_leaf = alfa_leaf
        beta_awood = alfa_awood
@@ -219,7 +219,7 @@ contains
        
        !     Grid cell area fraction (%) ocp_coeffs(pft(1), pft(2), ...,pft(p))
        !     =================================================================     
-       call pft_area_frac(cl1, cf1, ca1, ocp_coeffs, ocp_wood) ! def in funcs.f90
+       call pft_area_frac(cl1_pft, cf1_pft, ca1_pft, ocp_coeffs, ocp_wood) ! def in funcs.f90
        
        !     Maximum evapotranspiration   (emax)
        !     =================================
@@ -235,14 +235,14 @@ contains
           !ocp = ocp_coeffs(p)
 
           call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
-               &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
+               &,ipar,rh,emax,cl1_pft(p),ca1_pft(p),cf1_pft(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))
           
           
           !c     Carbon allocation (carbon content on each compartment)
           !     =====================================================
-          call allocation (dt1, nppa(p), cl1(p), ca1(p),cf1(p),cl2(p),&
+          call allocation (dt1, nppa(p), cl1_pft(p), ca1_pft(p),cf1_pft(p),cl2(p),&
                & ca2(p), cf2(p), end_pls)!, dl(p)) 
           
           if(end_pls) then
@@ -259,7 +259,7 @@ contains
              cue(p) = 0.0
           endif
 
-          alfa_leaf(p)  = cl2(p) - cl1(p)
+          alfa_leaf(p)  = cl2(p) - cl1(p) ! kg m-2
           alfa_awood(p) = ca2(p) - ca1(p)
           alfa_froot(p) = cf2(p) - cf1(p)
           

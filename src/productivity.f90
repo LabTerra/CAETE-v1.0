@@ -185,7 +185,7 @@ contains
   
     ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
     ! c     2003; Levis et al. 2004)         
-    rg = g_resp(beta_leaf,beta_awood, beta_froot) 
+    rg = g_resp(beta_leaf, beta_awood, beta_froot) 
     
     if (rg.lt.0) then
        rg = 0.0
