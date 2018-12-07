@@ -101,8 +101,8 @@ contains
         !     Leaf area index (m2/m2)
     !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
     sla = spec_leaf_area(tleaf)
-    !laia = leaf_area_index(cl1,sla)
-    laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
+    laia = leaf_area_index(cl1,sla)
+    !laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
     !     ==============
     !     Photosynthesis 
     !     ==============
@@ -181,6 +181,10 @@ contains
     !     Autothrophic respiration
     !     ========================
     !     Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
+    !print *, cl1, "cl1 - before resp"
+    !print *, cf1, "cf1 --"
+    !print *, ca1, "ca1 --"
+    !print *, "----------------"
     rm = m_resp(temp,ts,cl1,cf1,ca1)
   
     ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.

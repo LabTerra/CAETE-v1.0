@@ -259,9 +259,9 @@ contains
              cue(p) = 0.0
           endif
 
-          alfa_leaf(p)  = cl2(p) - cl1(p) ! kg m-2
-          alfa_awood(p) = ca2(p) - ca1(p)
-          alfa_froot(p) = cf2(p) - cf1(p)
+          alfa_leaf(p)  = cl2(p) - cl1_pft(p) ! kg m-2
+          alfa_awood(p) = ca2(p) - ca1_pft(p)
+          alfa_froot(p) = cf2(p) - cf1_pft(p)
           
           !     Snow budget
           !     ===========     
@@ -303,7 +303,7 @@ contains
              
              evap(p) = penman(p0, temp, rh, ae, rc2(p)) !Actual evapotranspiration (evap, mm/day)
              vapo = amin1(emax,evap(p))
-             evap(p) = vapo
+             !evap(p) = vapo
              dw(p) = prain + smelt(p) - evap(p) - roff(p)
              w(p) = w(p) + dw(p)
              if (w(p).gt.wmax) then
@@ -334,12 +334,12 @@ contains
           wueavg(p) = wueavg(p) + wue(p) * ocp_coeffs(p)
           cueavg(p) = cueavg(p) + cue(p) * ocp_coeffs(p)
           
-          laiavg(p) = laiavg(p) + laia(p) !* ocp_coeffs(p)
+          laiavg(p) = laiavg(p) + laia(p) * ocp_coeffs(p)
           clavg(p) = clavg(p) + cl(p) !* ocp_coeffs(p) !kgC/m2/day
           csavg(p) = csavg(p) + cs(p) !* ocp_coeffs(p) !kgC/m2/day
           hravg(p) = hravg(p) + hr(p) !* ocp_coeffs(p) !kgC/m2/day
-          rmavg(p) = rmavg(p) + rm(p) * ocp_coeffs(p)
-          rgavg(p) = rgavg(p) + rg(p) * ocp_coeffs(p)
+          rmavg(p) = rmavg(p) + (rm(p) * ocp_coeffs(p))
+          rgavg(p) = rgavg(p) + (rg(p) * ocp_coeffs(p))
           cleafavg_pft(p)  =  cl2(p)
           cawoodavg_pft(p) =  ca2(p)
           cfrootavg_pft(p) =  cf2(p)

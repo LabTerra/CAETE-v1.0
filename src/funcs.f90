@@ -257,21 +257,30 @@ contains
     aux2 = 0.0
    !  f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
    !  gs = (0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca)! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-   !  print *, gs, "gs - mol m-2 s-1 =--- fun call"
+   ! print *, gs, "gs - mol m-2 s-1 =--- fun call"
     
     !convert  conductance units gs mol m-2 s-1  to m s-1
     pk = p0 * 0.1
-    aux1 =  273.15 / (temp + 273.15)
-   !  print *, aux1 , 'fpeq'
-    aux2 =  pk / 101.325
-
-   !  print *, aux2 , 'fpeq2'
-    gs = (gs / (44.62 * aux1 * aux2)) ! m s-1
+    aux1 = 44.62 * (temp + 273.15) * 101.325
+    aux2 = (aux1 / 273.15) / 101.325
+    gs = gs / aux2
+    
+    ! 2
+    !aux1 =  273.15 / (temp + 273.15)
+    !print *, aux1 , 'fpeq'
+    !aux2 =  pk / 101.325
+    !gs = (gs / (44.62 * aux1 * aux2)) ! m s-1
+    !print *, aux2 , 'fpeq2'
+    
+    ! 3
     !gs = gs / (44.6 * (273.15 / (273.15 * temp)) * ((p0 * 0.1) / 101.325))
+    
+    ! 4
     !gs = (gs * 8.314 *  (temp + 273.15)) / (p0 / 10.0)
    !  print *, gs, "gs m s-1" 
+    
     rc2_in = gs**(-1) ! s m-1
-   ! print *, rc2_in, " s m-1 =--- fun call"
+   !  print *, rc2_in, " s m-1 =--- fun call"
    !  if (rc2_in .lt. rcmin) rc2_in = rcmin
    !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
   end function canopy_resistence
