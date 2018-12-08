@@ -181,19 +181,24 @@ contains
     !     Autothrophic respiration
     !     ========================
     !     Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
-    !print *, cl1, "cl1 - before resp"
-    !print *, cf1, "cf1 --"
-    !print *, ca1, "ca1 --"
-    !print *, "----------------"
+!    print *, temp, 'temp'
+!    print *, ts,   'tsoil'
+!    print *, cl1, "cl1 - before resp"
+!    print *, cf1, "cf1 --"
+!    print *, ca1, "ca1 --"
+!    print *, "----------------"
+    
     rm = m_resp(temp,ts,cl1,cf1,ca1)
+!    print *, rm, 'rm'
   
     ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
     ! c     2003; Levis et al. 2004)         
     rg = g_resp(beta_leaf, beta_awood, beta_froot) 
-    
+!    print *, rg, 'rg'
     if (rg.lt.0) then
        rg = 0.0
     endif
+    !if (rm .le. 0.05) then
     
     !     c Autotrophic (plant) respiration -ar- (kgC/m2/yr)
     !     Respiration minimum and maximum temperature

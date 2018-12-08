@@ -279,15 +279,15 @@ contains
              roff(p) = smelt(p) + prain !mm/day
              evap(p) = 0.0
              ph(p) = 0.0
-             ar(p) = 0.0
+             !ar(p) = 0.0
              nppa(p) = 0.0
-             laia(p) = 0.0
-             cl(p) = 0.0
-             cs(p) = 0.0
-             hr(p) = 0.0
+             !laia(p) = 0.0
+             !cl(p) = 0.0
+             !cs(p) = 0.0
+             !hr(p) = 0.0
              rc2(p) = rcmin
-             rm(p) = 0.0
-             rg(p) = 0.0
+             !rm(p) = 0.0
+             !rg(p) = 0.0
              ! colocar as outras vars da prod aqui??
              
           else                !Non-frozen soil

@@ -207,7 +207,7 @@ contains
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-0.08 * f5_64)
+       f5_64 = exp(-0.06 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = 1e-4
@@ -252,37 +252,21 @@ contains
     aux1 = (f1_in * 1.0e6) / ca
     aux2 = 1.6 * (1.0 + (g1/D1))
     gs = 0.01  + aux2 * aux1! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-   !  print *, gs, "gs - mol m-2 s-1 =--- fun call"
+
     aux1 = 0.0
     aux2 = 0.0
-   !  f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
-   !  gs = (0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca)! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-   ! print *, gs, "gs - mol m-2 s-1 =--- fun call"
     
     !convert  conductance units gs mol m-2 s-1  to m s-1
     pk = p0 * 0.1
     aux1 = 44.62 * (temp + 273.15) * 101.325
     aux2 = (aux1 / 273.15) / 101.325
-    gs = gs / aux2
-    
-    ! 2
-    !aux1 =  273.15 / (temp + 273.15)
-    !print *, aux1 , 'fpeq'
-    !aux2 =  pk / 101.325
-    !gs = (gs / (44.62 * aux1 * aux2)) ! m s-1
-    !print *, aux2 , 'fpeq2'
-    
-    ! 3
-    !gs = gs / (44.6 * (273.15 / (273.15 * temp)) * ((p0 * 0.1) / 101.325))
-    
-    ! 4
-    !gs = (gs * 8.314 *  (temp + 273.15)) / (p0 / 10.0)
-   !  print *, gs, "gs m s-1" 
-    
+    gs = gs / aux2    
+
+
     rc2_in = gs**(-1) ! s m-1
-   !  print *, rc2_in, " s m-1 =--- fun call"
-   !  if (rc2_in .lt. rcmin) rc2_in = rcmin
-   !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
+    if(rc2_in .lt. rcmin) rc2_in = rcmin
+    if(rc2_in .gt. rcmax) rc2_in = rcmax
+
   end function canopy_resistence
   
   !=================================================================
@@ -546,16 +530,12 @@ contains
     !   ========================
     !   Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
 
-    csa= 0.05 * ca1           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
+    csa= 0.05 * ca1  !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
-
-    rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.05*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.05*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-
-    !rml64 = ((ncl * (cl1 * 1e3)) * 40. * exp(0.06*temp))
-    !rmf64 = ((ncf * (cf1 * 1e3)) * 40. * exp(0.06*tsoil))
-    !rms64 = ((ncs * (csa * 1e3)) * 40. * exp(0.06*temp))
+    !the original value are 27 and 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = (((ncl * (cl1 * 1e3)) * 15.0) * exp(0.05*temp))
+    rmf64 = (((ncf * (cf1 * 1e3)) * 15.0) * exp(0.05*tsoil)) 
+    rms64 = (((ncs * (csa * 1e3)) * 15.0) * exp(0.05*temp)) 
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -604,11 +584,11 @@ contains
        beta_awood = beta_awood1
     endif
 
-    csai =  (beta_awood * 0.05)
+    csai =  (beta_awood * 1.0) ! Fracao de Sapwood nao vale para crescimento (heartwood nao cresce)
    
-    rgl64 = 1.40 * (beta_leaf * 1e3)  
-    rgf64 =  1.40 * (beta_froot * 1e3)
-    rgs64 =  1.45 * (csai * 1e3)
+    rgl64 = 1.35 * beta_leaf  
+    rgf64 =  1.35 * beta_froot
+    rgs64 =  1.35 * csai
     
     rg64 = (rgl64 + rgf64 + rgs64)
 
