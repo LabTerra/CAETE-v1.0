@@ -98,14 +98,18 @@ contains
     !call pft_par(2, p21)
     !call pft_par(3, tleaf)
     !call pft_par(1, g1)
-    
+        !     Leaf area index (m2/m2)
+    !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
+    sla = spec_leaf_area(tleaf)
+    laia = leaf_area_index(cl1,sla)
+    !laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
     !     ==============
     !     Photosynthesis 
     !     ==============
     
     !Rubisco maximum carboxylaton rate (molCO2/m2/s)
     !-----------------------------------------------
-    f1a = photosynthesis_rate(p21, temp, p0, ipar, light_limit)
+    f1a = photosynthesis_rate(p21, temp, p0, 0.5 * ipar, light_limit)
     !print *, 'f1a',f1a
     !ipar * 0.5 for considering just the photossintetically active radiation    
     
@@ -130,23 +134,30 @@ contains
    
     ! Novo Metodo - function definition on funcs.f90
     rc = canopy_resistence(vpd, f1a, g1, temp, p0)
-   !  print *, '------------'
-   !  print *, 'vpd', vpd
+        ! Novo calculo da WUE
    ! print *, 'rc', rc
-
-    ! Novo calculo da WUE
     wue = water_ue(f1a, rc, p0, vpd)
+    
+    ! Scaling to canopy
+    rc = rc * laia
+
+    if(rc < rcmin) rc = rcmin
+    if(rc > rcmax) rc = rcmax
+   !  print *, '------------'
+   ! print *, 'vpd', vpd
+   ! print *, 'scaled rc', rc
+
+
     
     !     Water stress response modifier (dimensionless)
    !  !     ----------------------------------------------
     f5 = water_stress_modifier(w, cf1, rc, emax)
-!    print *, 'w', w
-!    print *, 'wa', w/500.0
-!    print *, 'f5', f5
-!    print *, 'f1a', f1a
-!    print *, 'cf1',cf1
-!    print *, 'rc',rc
-!    print *, 'emax', emax
+   !  print *, 'w', w
+   !  print *, 'wa', w/500.0
+   !  print *, 'f5', f5
+   !  print *, 'f1a', f1a
+   !  print *, 'cf1',cf1
+   !  print *, 'emax', emax
 
 !     print *, ' '
 !     print *, ' -------------------- -   -  -  -'
@@ -159,13 +170,8 @@ contains
     else
        f1 = 0.0               !Temperature above/below photosynthesis windown
     endif
-    !print *, 'f1', f1
+   !  print *, 'f1', f1
     
-    !     Leaf area index (m2/m2)
-    !laia = leaf_area_index(cl1,spec_leaf_area(tleaf(pft)))
-     sla = spec_leaf_area(tleaf)
-    !  laia = leaf_area_index(cl1*ocprod,sla)
-     laia = f_four(90, cl1, sla) + f_four(20, cl1, sla)
  
     !     Canopy gross photosynthesis (kgC/m2/yr)
     !     =======================================x
@@ -175,15 +181,24 @@ contains
     !     Autothrophic respiration
     !     ========================
     !     Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
+!    print *, temp, 'temp'
+!    print *, ts,   'tsoil'
+!    print *, cl1, "cl1 - before resp"
+!    print *, cf1, "cf1 --"
+!    print *, ca1, "ca1 --"
+!    print *, "----------------"
+    
     rm = m_resp(temp,ts,cl1,cf1,ca1)
+!    print *, rm, 'rm'
   
     ! c     Growth respiration (KgC/m2/yr)(based in Ryan 1991; Sitch et al.
     ! c     2003; Levis et al. 2004)         
-    rg = g_resp(beta_leaf,beta_awood, beta_froot) 
-    
+    rg = g_resp(beta_leaf, beta_awood, beta_froot) 
+!    print *, rg, 'rg'
     if (rg.lt.0) then
        rg = 0.0
     endif
+    !if (rm .le. 0.05) then
     
     !     c Autotrophic (plant) respiration -ar- (kgC/m2/yr)
     !     Respiration minimum and maximum temperature
@@ -204,8 +219,8 @@ contains
 
     if(nppa .lt. 0.0) nppa = 0.0
 
-!    print *, nppa
-!    print *, '---------'
+   !  print *, n/ppa
+   !  print *, '---------'
     no_cell = .false.
    
    999 continue

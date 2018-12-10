@@ -45,7 +45,7 @@ def vec_ranging(values, new_min, new_max):
 def check_viability(trait_values, wood):
     """ check the viability of allocation(a) &  residence time(ŧ) combinations"""
 
-    rtur = np.array(model.spinup3(0.1, trait_values))
+    rtur = np.array(model.spinup3(0.01, trait_values))
     if wood:
         if rtur[0] <= 0.01 or rtur[1] <= 0.01 or rtur[2] <= 0.01:
             return False
@@ -100,14 +100,18 @@ def table_gen(NPLS):
     diffg, diffw = assertion_data_size(NPLS)
     plsa_wood, plsa_grass = turnover_combinations(True)
 
-#    restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
-    restime_leaf = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
-#    restime_leaf = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
-    restime_wood = vec_ranging(np.random.beta(1.4,6.24,10000),1.0, 80.0)
-#    restime_wood = vec_ranging(np.random.uniform(0,1,10000),1.0, 80.0)
-    restime_root = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
-#    restime_root = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
-    # Creating Grasses and others c3 and c4
+    # restime_leaf = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    # restime_leaf = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+    restime_leaf = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
+
+    # restime_wood = vec_ranging(np.random.beta(1.4,6.24,10000),1.0, 80.0) 
+    # restime_wood = vec_ranging(np.random.normal(0,1,10000),1.0, 80.0)
+    restime_wood = vec_ranging(np.random.uniform(0,1,10000),1.0, 80.0)
+
+    # restime_root = vec_ranging(np.random.beta(1.4,6.24,10000),0.083, 8.3)
+    # restime_root = vec_ranging(np.random.normal(0,1,10000),0.083, 8.3)
+    restime_root = vec_ranging(np.random.uniform(0,1,10000),0.083, 8.3)
+
     alloc_w = []
     alloc_g = []
 
@@ -115,21 +119,21 @@ def table_gen(NPLS):
     while index0 < diffg:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_grass[np.random.randint(0, plsa_grass.shape[0])]
-        restime[0] = restime_leaf[np.random.randint(1,10000)]
+        restime[0] = restime_leaf[np.random.randint(0,9999)]
         restime[1] = 0.0
-        restime[2] = restime_root[np.random.randint(1,10000)]
+        restime[2] = restime_root[np.random.randint(0,9999)]
         data_to_test0 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test0, False):
             alloc_g.append(data_to_test0)
-            index0 += 1 
+            index0 += 1
 
     index1 = 0
     while index1 < diffw:
         restime = np.zeros(shape=(3,), dtype=np.float32)
         allocatio = plsa_wood[np.random.randint(0, plsa_wood.shape[0])]
-        restime[0] = restime_leaf[np.random.randint(1,10000)]
-        restime[1] = restime_wood[np.random.randint(1,10000)]
-        restime[2] = restime_root[np.random.randint(1,10000)]
+        restime[0] = restime_leaf[np.random.randint(0,9999)]
+        restime[1] = restime_wood[np.random.randint(0,9999)]
+        restime[2] = restime_root[np.random.randint(0,9999)]
         data_to_test1 = np.concatenate((restime, allocatio), axis=0,)
         if check_viability(data_to_test1, True):
             alloc_w.append(data_to_test1)
@@ -148,12 +152,12 @@ def table_gen(NPLS):
     # # # Random variables
 
     # Mantendo g1 constante para todos os PLSs
-    # g1 = np.zeros(NPLS) + 3.77
-    g1 = np.random.uniform(low=1.6, high=7.1, size=NPLS) # dimensionles
-    
+    g1 = np.zeros(NPLS) + 3.77
+    # g1 = np.random.uniform(low=1.3, high=7.0, size=NPLS) # dimensionles
+
     # Vcmax igual para todos os PLSs
-    # vcmax = np.zeros(NPLS) + 0.00004  # molCO2 m-2 s-1
-    vcmax = np.random.uniform(low=15e-5, high=150e-5, size=NPLS)
+    vcmax = np.zeros(NPLS) + 0.0004  # molCO2 m-2 s-1
+    #vcmax = np.random.uniform(low=15e-5, high=80e-5, size=NPLS)
 
     stack = (g1, vcmax, alloc[:, 0], alloc[:, 1], alloc[:, 2],
              alloc[:, 3], alloc[:, 4], alloc[:, 5])
@@ -175,7 +179,7 @@ def table_gen(NPLS):
         # writer.writerows(pls_table)
 
     out_arr = np.asfortranarray(pls_table, dtype=np.float32)
-    # np.savetxt('pls.txt', out_arr, fmt='%.12f')
+    # np.savetxt('pls.txt', out_arr, fmt='%.7f')
 
     return out_arr
 

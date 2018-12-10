@@ -16,8 +16,10 @@ implemented by the LabTerra team. Important files here are:
 	    budget.f90
 	    water_balance.f90
 
-In the /src/ folder execute ./build.sh to compile the shared object containing the model code.
-This will create a file named caete_module.cpython-35m-x86_64-linux-gnu.so or similar on the /src/ directory
+###Important:
+Copy the file in /aux_files/build.sh the /src/ folder, edit it to conform your system specificarion. Run with bash to compile the shared object containing the model code.
+This will create a file named caete_module.cpython-35m-x86_64-linux-gnu.so or similar on the /src/ directory.
+Copy the file /aux_files/homedir.py to the /src folder and edit it to conform your system.
 
 ## Model driver (Python 3)
 Files related to model execution: caete.py implements the type 
@@ -48,11 +50,14 @@ and follow the instructions. Don't execute the model in PFT mode.
 ## Compiling The Model
 
 # These instructions only for development
+
 **1-_Shared object_**
 
 Use f2py to compile fortran code:
 
-    $ f2py3 -c global.f90 funcs.f90 productivity.f90 budget.f90 waterbalance.f90 -m caete_module
+    $ f2py3 -c global.f90 funcs.f90 productivity.f90 budget.f90 water_balance.f90 -m caete_module
+
+
 
 _Hint:_ Be shure that f2py you're using is linked with python3.5 libraries
 

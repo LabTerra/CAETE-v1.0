@@ -150,7 +150,7 @@ def run_model(grd, at = ATTR_TABLE):
         grd.rcm = outputs[9]
         grd.runom = outputs[10]
         grd.evapm = outputs[11]
-        grd.wsoil = outputs[12]
+        grd.wsoil = outputs[12 ]#.max(0,)
         grd.rm = outputs[13]
         grd.rg = outputs[14]
         grd.cleaf = outputs[15]
@@ -187,7 +187,7 @@ def grd_dict(grd):
 
                              # Water balance attributes
                              'runom' : nan_remove(grd.runom).sum(axis=0,),
-                             'wsoil' : nan_remove(grd.wsoil).sum(axis=0,),
+                             'wsoil' : nan_remove(grd.wsoil).max(axis=0,),
                              'evapm' : nan_remove(grd.evapm).sum(axis=0,),
                              'wue'   : nan_remove(grd.wue).sum(axis=0,),
                              'cue'   : nan_remove(grd.cue).sum(axis=0,),

@@ -177,7 +177,7 @@ contains
     
     real(kind=r_4),intent(in) :: w      !soil water mm
     real(kind=r_4),intent(in) :: cfroot !carbon in fine roots kg m-2
-    real(kind=r_4),intent(in) :: rc     !Canopy resistence 1/(micromol(CO2) m-2 s-1)
+    real(kind=r_4),intent(in) :: rc     !Canopy resistence s m-2
     real(kind=r_4),intent(in) :: ep     !potential evapotranspiration
     real(kind=r_4) :: f5
     
@@ -194,18 +194,20 @@ contains
     !D = 
     ! αH2O = 1−exp(−S/D)
     f5_64 = 0.0
-    pt = csru*(cfroot*1000.)*wa  !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
+    pt = csru * (cfroot * 1000.0) * wa  ! mm d⁻¹ !(based in Pavlick et al. 2013; *1000. converts kgC/m2 to gC/m2)
     if(rc .gt. 0.0) then
-       gc = (1.0/(rc * 1.15741e-08))  ! s/m
+       gc = 1.0 / rc   ! m s-1
+       ! too mm d-1
+       gc = gc * 8.64e7
     else
-       gc =  1.0/(rcmin * 1.15741e-08) ! BIANCA E HELENA - Mudei este esquema..   
-    endif                     ! tentem entender o algoritmo
-    
+       gc =  1.0 / rcmin ! m s-1  
+       gc = gc * 8.64e7
+      endif
     !d =(ep * alfm) / (1. + gm/gc) !(based in Gerten et al. 2004)
     d = (ep * alfm) / (1. + (gm/gc))
     if(d .gt. 0.0) then
        f5_64 = pt/d
-       f5_64 = exp(-1.0 * f5_64)
+       f5_64 = exp(-0.06 * f5_64)
        f5_64 = 1.0 - f5_64
     else
        f5_64 = 1e-4
@@ -229,33 +231,42 @@ contains
     !implicit none
 
     real(r_4),intent(in) :: f1_in    !Photosynthesis (molCO2/m2/s)
-    real(r_4),intent(in) :: vpd_in   !hPa
+    real(r_4),intent(in) :: vpd_in   !kPa
     real(r_4),intent(in) :: g1      ! model m (slope) (sqrt(kPa))
     real(r_4),intent(in) :: temp, p0      
     real(r_4) :: rc2_in              !Canopy resistence (sm-1)
 
     !     Internal
     !     --------
-    real(r_8) :: gs       !Canopy conductance (molCO2 m-2 s-1)
-    real(r_8) :: D1       !sqrt(kPA)
-
+    real(r_4) :: gs       !Canopy conductance (molCO2 m-2 s-1)
+    real(r_4) :: D1       !sqrt(kPA)
+    real(r_4) :: aux1, aux2, pk
     ! Assertion
     if(vpd_in .le. 0.0) then
       print *, 'vpd less than zero in canopy_resistence'
       stop
    endif
 
-   !Convert C assimilatio n - from mol m-2 s-1 to micromol m-2 s-1
+   ! Calculate stomatal coductance
     D1 = sqrt(vpd_in)
-    ! f1_in = f1_in * 1.0e6 ! convert mol m-2 s-1 to µmol m-2 s-1
-    gs = ((0.01 + 1.6) * (1.0 + (g1/D1)) * ((f1_in * 1.0e6) / ca))! Result is in mol m-2 s-1 (Medlyn et al. 2011)
-    !convert gs mmol m-2 s-1  to mm s-1
-    gs = gs * (8.3 * temp) / (p0 / 10.0) 
-    ! rc2_in = real(1./gs, r_4)
-    ! gs = gs  * 0.001
-    rc2_in = real((1.0 / gs), r_4) * 1e3! mm s-1 to s mm-1! transform mmol m-2 s-1 to mm-1 s then s mm-1 to s m-1
-   !  if (rc2_in .lt. rcmin) rc2_in = rcmin
-   !  if (rc2_in .gt. rcmax) rc2_in = rcmax 
+    aux1 = (f1_in * 1.0e6) / ca
+    aux2 = 1.6 * (1.0 + (g1/D1))
+    gs = 0.01  + aux2 * aux1! Result is in mol m-2 s-1 (Medlyn et al. 2011)
+
+    aux1 = 0.0
+    aux2 = 0.0
+    
+    !convert  conductance units gs mol m-2 s-1  to m s-1
+    pk = p0 * 0.1
+    aux1 = 44.62 * (temp + 273.15) * 101.325
+    aux2 = (aux1 / 273.15) / 101.325
+    gs = gs / aux2    
+
+
+    rc2_in = gs**(-1) ! s m-1
+    if(rc2_in .lt. rcmin) rc2_in = rcmin
+    if(rc2_in .gt. rcmax) rc2_in = rcmax
+
   end function canopy_resistence
   
   !=================================================================
@@ -329,7 +340,7 @@ contains
     real(kind=r_4) :: g_in, p0_in, e_in
     
     g_in = (1./g) * 41. ! convertendo a resistencia em condutancia mol m-2 s-1
-    p0_in = p0 /10. ! convertendo pressao atm (mbar/hPa) em kPa
+    p0_in = p0 / 10. ! convertendo pressao atm (mbar/hPa) em kPa
     e_in = g_in * (vpd/p0_in) ! calculando transpiracao
     
     wue = a/e_in
@@ -356,7 +367,7 @@ contains
     !VPD-REAL = Actual vapor pressure
     vpd_ac = es * rh       ! RESULT in hPa == mbar! we want kPa (DIVIDE by 10.)
     !Vapor Pressure Deficit
-    vpd_0 = (es - vpd_ac) / 10.
+    vpd_0 = (es - vpd_ac) / 10.0
   end function vapor_p_defcit
 
   !=================================================================
@@ -393,7 +404,7 @@ contains
     
     !============================================================
     vm_in = (vm*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0))) 
-    !vm_in = (0.00004*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0)))
+    ! vm_in = (0.00004*2.0**(0.1*(temp-25.0)))/(1.0+exp(0.3*(temp-36.0)))
 
     !Photo-respiration compensation point (Pa)
     mgama = p3/(p8*(p9**(p10*(temp-p11))))
@@ -485,12 +496,12 @@ contains
     real(kind=r_4) :: es
     
     if (t .ge. 0.) then
-       es = 6.1078*exp((7.5*t/(237.3+t))*log(10.))
-       ! es = 6.1121 * exp((18.678-(t/234.5))*(t/(257.14+t))) ! mbar == hPa
+       !es = 6.1078*exp((7.5*t/(237.3+t))*log(10.))
+       es = 6.1121 * exp((18.678-(t/234.5))*(t/(257.14+t))) ! mbar == hPa
        return
     else
-       es = 6.1078*exp((9.5*t/(265.5+t))*log(10.))
-       ! es = 6.1115 * exp((23.036-(t/333.7))*(t/(279.82+t))) ! mbar == hPa
+       !es = 6.1078*exp((9.5*t/(265.5+t))*log(10.))
+       es = 6.1115 * exp((23.036-(t/333.7))*(t/(279.82+t))) ! mbar == hPa
        return
     endif
     
@@ -519,16 +530,12 @@ contains
     !   ========================
     !   Maintenance respiration (kgC/m2/yr) (based in Ryan 1991)
 
-    csa= 0.05 * (ca1)           !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
+    csa= 0.05 * ca1  !sapwood carbon content (kgC/m2). 5% of woody tissues (Pavlick, 2013)
 
-
-    !rml64 = ((ncl * (cl1 * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    !rmf64 = ((ncf * (cf1 * 1e3)) * 15. * exp(0.03*tsoil)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-    !rms64 = ((ncs * (csa * 1e3)) * 15. * exp(0.03*temp)) !the original value is 0.07 but we have modified to diminish the temperature sensibility
-
-    rml64 = ((ncl * (cl1 * 1e3)) * 27. * exp(0.07*temp))
-    rmf64 = ((ncf * (cf1 * 1e3)) * 27. * exp(0.07*tsoil))
-    rms64 = ((ncs * (csa * 1e3)) * 27. * exp(0.07*temp))
+    !the original value are 27 and 0.07 but we have modified to diminish the temperature sensibility
+    rml64 = (((ncl * (cl1 * 1e3)) * 15.0) * exp(0.05*temp))
+    rmf64 = (((ncf * (cf1 * 1e3)) * 15.0) * exp(0.05*tsoil)) 
+    rms64 = (((ncs * (csa * 1e3)) * 15.0) * exp(0.05*temp)) 
 
     rm64 = (rml64 + rmf64 + rms64)/1e3
 
@@ -536,6 +543,7 @@ contains
 
     if (rm.lt.0) then
        rm = 0.0
+
     endif
 
   end function m_resp
@@ -547,7 +555,7 @@ contains
     use types, only: r_4,r_8
     implicit none
 
-    real(kind=r_4), intent(in) :: beta_leaf1
+    real(kind=r_4), intent(in) :: beta_leaf1   ! Kg m-2
     real(kind=r_4), intent(in) :: beta_froot1
     real(kind=r_4), intent(in) :: beta_awood1
     real(kind=r_4) :: rg
@@ -576,14 +584,13 @@ contains
        beta_awood = beta_awood1
     endif
 
-    csai =  (beta_awood * 0.05)
+    csai =  (beta_awood * 1.0) ! Fracao de Sapwood nao vale para crescimento (heartwood nao cresce)
    
-    rgl64 = 1.25 * beta_leaf  
-    rgf64 =  1.25 * beta_froot 
-    rgs64 =  1.25 * csai 
-!=======
+    rgl64 = 1.35 * beta_leaf  
+    rgf64 =  1.35 * beta_froot
+    rgs64 =  1.35 * csai
     
-    rg64 = (rgl64 + rgf64 + rgs64)/1e3
+    rg64 = (rgl64 + rgf64 + rgs64)
 
     rg = real(rg64,kind=r_4)
     

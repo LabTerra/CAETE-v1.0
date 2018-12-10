@@ -184,9 +184,9 @@ contains
        cueavg(p)  = 0.0 
        ocp_mm(p)  = 0.0
        
-       alfa_leaf(p) = 1e-7
-       alfa_awood(p) = 1e-7
-       alfa_froot(p) = 1e-7
+       alfa_leaf(p) = 1e-3
+       alfa_awood(p) = 1e-3
+       alfa_froot(p) = 1e-3
     enddo
     
 
@@ -196,9 +196,9 @@ contains
     do i=1,ndmonth(month)
        emax  = 0.0
        
-       cl1 = cl1_pft
-       ca1 = ca1_pft
-       cf1 = cf1_pft
+       !cl1 = cl1_pft
+       !ca1 = ca1_pft
+       !cf1 = cf1_pft
        
        beta_leaf = alfa_leaf
        beta_awood = alfa_awood
@@ -219,7 +219,7 @@ contains
        
        !     Grid cell area fraction (%) ocp_coeffs(pft(1), pft(2), ...,pft(p))
        !     =================================================================     
-       call pft_area_frac(cl1, cf1, ca1, ocp_coeffs, ocp_wood) ! def in funcs.f90
+       call pft_area_frac(cl1_pft, cf1_pft, ca1_pft, ocp_coeffs, ocp_wood) ! def in funcs.f90
        
        !     Maximum evapotranspiration   (emax)
        !     =================================
@@ -235,14 +235,14 @@ contains
           !ocp = ocp_coeffs(p)
 
           call prod(dt1,OCP_WOOD(P),temp,ts,p0,w(p)&
-               &,ipar,rh,emax,cl1(p),ca1(p),cf1(p),beta_leaf(p)&
+               &,ipar,rh,emax,cl1_pft(p),ca1_pft(p),cf1_pft(p),beta_leaf(p)&
                &,beta_awood(p),beta_froot(p),ph(p),ar(p),nppa(p)&
                &,laia(p),f5(p),f1(p),vpd(p),rm(p),rg(p),rc2(p),wue(p))
           
           
           !c     Carbon allocation (carbon content on each compartment)
           !     =====================================================
-          call allocation (dt1, nppa(p), cl1(p), ca1(p),cf1(p),cl2(p),&
+          call allocation (dt1, nppa(p), cl1_pft(p), ca1_pft(p),cf1_pft(p),cl2(p),&
                & ca2(p), cf2(p), end_pls)!, dl(p)) 
           
           if(end_pls) then
@@ -259,9 +259,9 @@ contains
              cue(p) = 0.0
           endif
 
-          alfa_leaf(p)  = cl2(p) - cl1(p)
-          alfa_awood(p) = ca2(p) - ca1(p)
-          alfa_froot(p) = cf2(p) - cf1(p)
+          alfa_leaf(p)  = cl2(p) - cl1_pft(p) ! kg m-2
+          alfa_awood(p) = ca2(p) - ca1_pft(p)
+          alfa_froot(p) = cf2(p) - cf1_pft(p)
           
           !     Snow budget
           !     ===========     
@@ -279,15 +279,15 @@ contains
              roff(p) = smelt(p) + prain !mm/day
              evap(p) = 0.0
              ph(p) = 0.0
-             ar(p) = 0.0
+             !ar(p) = 0.0
              nppa(p) = 0.0
-             laia(p) = 0.0
-             cl(p) = 0.0
-             cs(p) = 0.0
-             hr(p) = 0.0
+             !laia(p) = 0.0
+             !cl(p) = 0.0
+             !cs(p) = 0.0
+             !hr(p) = 0.0
              rc2(p) = rcmin
-             rm(p) = 0.0
-             rg(p) = 0.0
+             !rm(p) = 0.0
+             !rg(p) = 0.0
              ! colocar as outras vars da prod aqui??
              
           else                !Non-frozen soil
@@ -303,7 +303,7 @@ contains
              
              evap(p) = penman(p0, temp, rh, ae, rc2(p)) !Actual evapotranspiration (evap, mm/day)
              vapo = amin1(emax,evap(p))
-             evap(p) = vapo
+             !evap(p) = vapo
              dw(p) = prain + smelt(p) - evap(p) - roff(p)
              w(p) = w(p) + dw(p)
              if (w(p).gt.wmax) then
@@ -322,7 +322,7 @@ contains
           
           ocp_mm(p) = ocp_mm(p) + ocp_coeffs(p)
           
-          if(p .eq. 1) epavg = epavg + emax !mm/day
+          ! epavg = epavg + (emax / real(npft, r_4)) !mm/day
           smavg(p) = smavg(p) + smelt(p)
           ruavg(p) = ruavg(p) + roff(p) * ocp_coeffs(p) ! mm day-1
           evavg(p) = evavg(p) + evap(p) * ocp_coeffs(p)  ! mm day-1
@@ -334,12 +334,12 @@ contains
           wueavg(p) = wueavg(p) + wue(p) * ocp_coeffs(p)
           cueavg(p) = cueavg(p) + cue(p) * ocp_coeffs(p)
           
-          laiavg(p) = laiavg(p) + laia(p) !* ocp_coeffs(p)
+          laiavg(p) = laiavg(p) + laia(p) * ocp_coeffs(p)
           clavg(p) = clavg(p) + cl(p) !* ocp_coeffs(p) !kgC/m2/day
           csavg(p) = csavg(p) + cs(p) !* ocp_coeffs(p) !kgC/m2/day
           hravg(p) = hravg(p) + hr(p) !* ocp_coeffs(p) !kgC/m2/day
-          rmavg(p) = rmavg(p) + rm(p) * ocp_coeffs(p)
-          rgavg(p) = rgavg(p) + rg(p) * ocp_coeffs(p)
+          rmavg(p) = rmavg(p) + (rm(p) * ocp_coeffs(p))
+          rgavg(p) = rgavg(p) + (rg(p) * ocp_coeffs(p))
           cleafavg_pft(p)  =  cl2(p)
           cawoodavg_pft(p) =  ca2(p)
           cfrootavg_pft(p) =  cf2(p)
@@ -351,7 +351,7 @@ contains
 666    continue
            if(no_cell) then
             ! All*** outputs are set to zero except epavg
-             if(p .eq. 1) epavg = emax
+             epavg = 0.0
              smavg(p) = 0.0
              ruavg(p) = 0.0
              evavg(p) = 0.0
@@ -378,7 +378,8 @@ contains
             !  g2(p) = 0.0
             !  s2(p) = 0.0
            endif
-       enddo                  ! end pls loop  
+       enddo                  ! end pls loop 
+       epavg = epavg + emax
     enddo                     ! end ndmonth loop
     
     !     Final calculations
@@ -389,8 +390,9 @@ contains
     ice1 = sum(g * ocp_coeffs)
     snow1 = sum(s * ocp_coeffs)
 
-    do p=1,NPFT
-       if (p .eq. 1) epavg = epavg/real(ndmonth(month))
+    epavg = epavg/real(ndmonth(month))
+
+    do p=1,npft
        if (ocp_coeffs(p) .gt. 0.0) then
          w2(p) = water1
          g2(p) = ice1
